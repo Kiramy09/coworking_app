@@ -1,0 +1,50 @@
+<div class="profile-container">
+    <div class="form-wrapper">
+      <h2 class="text-center fw-bold mb-1">Complétez votre profil</h2>
+      <p class="text-center text-muted mb-4">Informations personnelles</p>
+  
+      <form (ngSubmit)="onSubmit()" #profileForm="ngForm">
+        <!-- Avatar -->
+        <div class="text-center mb-4">
+          <div class="avatar-wrapper position-relative mx-auto">
+            <img [src]="previewUrl || 'assets/avatar.jpg'" class="avatar-preview" alt="Avatar">
+
+            <label for="avatarInput" class="edit-icon"><i class="bi bi-pencil"></i></label>
+
+            <input type="file" id="avatarInput" hidden (change)="onFileSelected($event)">
+          </div>
+        </div>
+  
+        <!-- Genre -->
+        <div class="mb-3 text-center gender-radio">
+          <label class="me-3">
+            <input type="radio" name="gender" value="F" [(ngModel)]="profile.gender" required> Madame
+          </label>
+          <label>
+            <input type="radio" name="gender" value="M" [(ngModel)]="profile.gender"> Monsieur
+          </label>
+        </div>
+  
+        <!-- Champs -->
+        <div class="mb-3">
+          <input type="date" class="form-control form-control-lg" [(ngModel)]="profile.birth_date" name="birth_date" required>
+        </div>
+  
+        <div class="mb-3">
+          <input class="form-control form-control-lg" placeholder="Adresse" [(ngModel)]="profile.address" name="address" required>
+        </div>
+  
+        <div class="mb-4">
+          <select class="form-select form-select-lg" [(ngModel)]="profile.activity" name="activity" required>
+            <option selected disabled value="">Type d'activité</option>
+            <option>Développeur</option>
+            <option>Designer</option>
+            <option>Freelance</option>
+          </select>
+        </div>
+  
+        <button class="btn btn-warning btn-lg w-100" type="submit">Continuer</button>
+      </form>
+    </div>
+  </div>
+  

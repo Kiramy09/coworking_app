@@ -1,0 +1,24 @@
+<div class="auth-container">
+    <div class="form-wrapper">
+      <h2 class="text-center fw-bold mb-1">Bienvenue !</h2>
+      <p class="text-center text-muted mb-4">Connectez-vous pour accéder à nos espaces</p>
+  
+      <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+        <div class="mb-3">
+          <input class="form-control form-control-lg" type="email" name="email" placeholder="Email" [(ngModel)]="credentials.email" required>
+        </div>
+        <div class="mb-4">
+          <input class="form-control form-control-lg" type="password" name="password" placeholder="Mot de passe" [(ngModel)]="credentials.password" required>
+        </div>
+  
+        <div class="d-grid">
+          <button class="btn btn-warning btn-lg" type="submit">Me connecter</button>
+        </div>
+      </form>
+  
+      <div class="text-center mt-3 small">
+        Pas encore de compte ? <a routerLink="/register" class="text-warning fw-semibold">Créer un compte</a>
+      </div>
+    </div>
+  </div>
+  

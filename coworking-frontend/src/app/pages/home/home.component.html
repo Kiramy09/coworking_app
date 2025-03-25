@@ -1,0 +1,39 @@
+<!-- Header -->
+<header class="bg-brown text-white py-3">
+  <div class="container d-flex justify-content-between align-items-center">
+    <h4 class="m-0">COWO</h4>
+    <div>
+      <a class="btn btn-outline-light me-2 btn-sm" routerLink="/register">S’inscrire</a>
+      <a class="btn btn-dark btn-sm" routerLink="/login">Connexion</a>
+    </div>
+  </div>
+</header>
+
+<!-- Banner -->
+<section class="bg-dark text-white py-5 text-center" style="background-image: url('assets/banner.jpg'); background-size: cover; background-position: center;">
+    <div class="container">
+      <h1 class="display-4 fw-bold">Bienvenue sur <span class="text-warning">COWO</span></h1>
+      <p class="lead">Un espace de travail pour les PME</p>
+      <a class="btn btn-warning mt-3" routerLink="/explore">Découvrir</a>
+    </div>
+  </section>
+  
+  <!-- Espaces -->
+  <section class="py-5 bg-light">
+    <div class="container">
+      <h2 class="text-center mb-4">Découvrez nos espaces</h2>
+      <div class="row g-4">
+        <div class="col-md-4" *ngFor="let space of spaces">
+          <div class="card h-100 shadow-sm">
+            <img [src]="space.image" class="card-img-top" alt="Espace">
+            <div class="card-body">
+              <h5 class="card-title">{{ space.title }}</h5>
+              <p class="card-text">{{ space.description }}</p>
+              <a class="btn btn-outline-warning" routerLink="/explore" [queryParams]="{ type: space.type }">Voir les espaces</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  

@@ -1,0 +1,23 @@
+.register-container {
+    min-height: 100vh;
+    background-color: #fdf7f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  
+  .form-wrapper {
+    background: white;
+    padding: 2rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  input::placeholder {
+    color: #bbb;
+    font-size: 0.95rem;
+  }
+  

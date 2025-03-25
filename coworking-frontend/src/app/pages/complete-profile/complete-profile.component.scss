@@ -1,0 +1,55 @@
+.profile-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #fff6f3;
+  
+    .form-wrapper {
+      background-color: #fff;
+      padding: 2rem;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+  
+    .avatar-wrapper {
+      width: 150px;
+      height: 150px;
+      background-color: #ddd;
+      border-radius: 50%;
+      overflow: hidden;
+      position: relative;
+  
+      .avatar-preview {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+  
+      .edit-icon {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        background-color: #888;
+        color: white;
+        border-radius: 50%;
+        padding: 5px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+    }
+  
+    .gender-radio {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+  
+      input[type="radio"] {
+        margin-right: 5px;
+      }
+    }
+  }
+  
