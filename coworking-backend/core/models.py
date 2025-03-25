@@ -18,10 +18,19 @@ class Equipment(models.Model):
 
 #  Espace de coworking
 class CoworkingSpace(models.Model):
+
+    SPACE_TYPES = [
+    ('office', 'Office'),
+    ('meeting_room', 'Meeting Room'),
+    ('open_space', 'Open Space'),
+    ('other', 'Other'),
+    ]
+
     name = models.CharField(max_length=100)
     description = models.TextField()
     city = models.CharField(max_length=100)
     address = models.CharField(max_length=255)
+    space_type = models.CharField(max_length=20, choices=SPACE_TYPES, default='other')
     image_url = models.URLField(blank=True, null=True)
     equipments = models.ManyToManyField(Equipment, related_name='spaces')
     price_per_hour = models.DecimalField(max_digits=5, decimal_places=2)
@@ -35,8 +44,7 @@ class CoworkingSpace(models.Model):
         db_table = 'coworking_spaces'
 
     def __str__(self):
-        return self.name
-
+        return f"{self.name} ({self.get_space_type_display()})"
 
 #  Client / Admin
 class UserManager(BaseUserManager):
@@ -106,3 +114,22 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
         
+
+class Profile(models.Model):
+    GENDER_CHOICES = (
+        ('F', 'Madame'),
+        ('M', 'Monsieur'),
+    )
+
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True, null=True)
+    birth_date = models.DateField(null=True, blank=True)
+    address = models.CharField(max_length=255, blank=True)
+    activity = models.CharField(max_length=100, blank=True)
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+
+    class Meta:
+        db_table = 'users_profiles'
+
+    def __str__(self):
+        return f"Profil de {self.user.email}"
