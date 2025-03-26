@@ -12,10 +12,12 @@ class EquipmentSerializer(serializers.ModelSerializer):
 
 class CoworkingSpaceSerializer(serializers.ModelSerializer):
     equipments = EquipmentSerializer(many=True, read_only=True)
+    image = serializers.ImageField(required=False)
 
     class Meta:
         model = CoworkingSpace
         fields = '__all__'
+
 
 
 class UserSerializer(serializers.ModelSerializer):

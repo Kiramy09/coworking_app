@@ -31,7 +31,7 @@ class CoworkingSpace(models.Model):
     city = models.CharField(max_length=100)
     address = models.CharField(max_length=255)
     space_type = models.CharField(max_length=20, choices=SPACE_TYPES, default='other')
-    image_url = models.URLField(blank=True, null=True)
+    image = models.ImageField(upload_to='coworking_images/', null=True, blank=True)
     equipments = models.ManyToManyField(Equipment, related_name='spaces')
     price_per_hour = models.DecimalField(max_digits=5, decimal_places=2)
     capacity = models.PositiveIntegerField()

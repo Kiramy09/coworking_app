@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-
 import * as L from 'leaflet';
 import { CoworkingService } from '../../services/coworking.service';
 import { ActivatedRoute } from '@angular/router';
@@ -45,9 +44,7 @@ export class MapViewComponent implements OnInit {
   }
 
   loadSpaces(): void {
-    const observable = this.selectedType
-      ? this.coworkingService.getSpacesByType(this.selectedType)
-      : this.coworkingService.getSpaces();
+    const observable = this.selectedType? this.coworkingService.getSpacesByType(this.selectedType): this.coworkingService.getSpaces();
   
     observable.subscribe({
       next: (spaces) => {
