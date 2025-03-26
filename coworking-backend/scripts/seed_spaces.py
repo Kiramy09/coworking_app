@@ -5,17 +5,28 @@ import random
 import requests
 from faker import Faker
 from django.core.files.base import ContentFile
+from dotenv import load_dotenv
 
-# 🔧 Configuration de Django
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# 🔧 Charger les variables d'environnement (.env)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv(os.path.join(BASE_DIR, '.env'))
+
+# 🔧 Ajouter le dossier du projet dans le path
+sys.path.append(BASE_DIR)
+
+# 🔧 Configurer Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
 django.setup()
 
-# ✅ Assure-toi que les modèles viennent de LA BONNE APP
-from core.models import CoworkingSpace, Equipment  # <- CORRIGÉ ICI
+# ✅ Vérif Cloudinary activé
+from django.conf import settings
+print("✅ Storage backend :", settings.DEFAULT_FILE_STORAGE)
 
+# ✅ Import des modèles
+from core.models import CoworkingSpace, Equipment
+from cloudinary_storage.storage import MediaCloudinaryStorage
 
-# 📦 Initialisation
+# 📦 Génération des données
 faker = Faker("fr_FR")
 
 SPACE_TYPES = ['office', 'meeting_room', 'open_space', 'other']
@@ -37,20 +48,17 @@ IMAGE_URLS = [
 ]
 
 def run():
-    # 🧹 Nettoyage
     CoworkingSpace.objects.all().delete()
-    print("✅ Tous les espaces de coworking supprimés")
+    print("🧹 Espaces de coworking supprimés")
 
-    # 📌 Créer des équipements si aucun n'existe
     if Equipment.objects.count() == 0:
         equipment_names = ["Wi-Fi", "Café", "Projecteur", "Salle de réunion", "Climatisation", "Imprimante"]
         for name in equipment_names:
             Equipment.objects.create(name=name)
-        print("✅ Équipements créés")
+        print("🛠️ Équipements générés")
 
     all_equipment = list(Equipment.objects.all())
 
-    # 🏗️ Création de 30 espaces
     for i in range(30):
         space_type = random.choice(SPACE_TYPES)
         image_url = random.choice(IMAGE_URLS)
@@ -67,20 +75,24 @@ def run():
             longitude=round(random.uniform(-0.65, -0.55), 6),
         )
 
-        # 🔌 Équipements aléatoires
+        # Associer des équipements
         if all_equipment:
             cowork.equipments.set(random.sample(all_equipment, k=random.randint(1, min(4, len(all_equipment)))))
 
-        # 🖼️ Image depuis Unsplash
+        # Télécharger et uploader vers Cloudinary
         try:
             response = requests.get(image_url)
             if response.status_code == 200:
                 file_name = f"coworking_{i}.jpg"
+                cowork.image.storage = MediaCloudinaryStorage()
                 cowork.image.save(file_name, ContentFile(response.content), save=True)
+                print(f"✅ Image ajoutée pour : {cowork.name}")
+            else:
+                print(f"❌ Erreur image ({response.status_code}) pour {cowork.name}")
         except Exception as e:
-            print(f"Erreur image pour {cowork.name} : {e}")
+            print(f"❌ Erreur image pour {cowork.name} : {e}")
 
-    print("🎉 30 espaces de coworking créés avec images et équipements !")
+    print("🎉 30 espaces de coworking créés avec images sur Cloudinary !")
 
 if __name__ == "__main__":
     run()
