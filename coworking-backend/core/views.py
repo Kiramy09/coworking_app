@@ -3,8 +3,11 @@ from rest_framework import viewsets, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
+from rest_framework.permissions import IsAuthenticated
+from .serializers import ProfileSerializer
+from .models import Profile
 
-from .models import CoworkingSpace, Equipment, Booking, CoworkingPayment  
+from .models import CoworkingSpace, Equipment, Booking, CoworkingPayment 
 from .serializers import (
     CoworkingSpaceSerializer,
     EquipmentSerializer,
@@ -59,3 +62,17 @@ class RegisterView(APIView):
             serializer.save()  # Le serializer s'occupe de créer User + Profile
             return Response({'message': 'Utilisateur créé avec succès'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class ProfileUpdateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        profile, created = Profile.objects.get_or_create(user=request.user)
+        serializer = ProfileSerializer(profile, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Profil mis à jour avec succès'}, status=200)
+        return Response(serializer.errors, status=400)

@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils import timezone
 from django.conf import settings 
+from cloudinary_storage.storage import MediaCloudinaryStorage
 
 
 # Equipements génériques (ManyToMany)
@@ -31,7 +32,9 @@ class CoworkingSpace(models.Model):
     city = models.CharField(max_length=100)
     address = models.CharField(max_length=255)
     space_type = models.CharField(max_length=20, choices=SPACE_TYPES, default='other')
-    image = models.ImageField(upload_to='coworking_images/', null=True, blank=True)
+
+    image = models.ImageField(upload_to='coworking_images/',storage=MediaCloudinaryStorage(),null=True,blank=True)
+    # image = models.ImageField(upload_to='coworking_images/', null=True, blank=True)
     equipments = models.ManyToManyField(Equipment, related_name='spaces')
     price_per_hour = models.DecimalField(max_digits=5, decimal_places=2)
     capacity = models.PositiveIntegerField()
@@ -126,7 +129,8 @@ class Profile(models.Model):
     birth_date = models.DateField(null=True, blank=True)
     address = models.CharField(max_length=255, blank=True)
     activity = models.CharField(max_length=100, blank=True)
-    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    # avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    avatar = models.ImageField(upload_to='avatars/',storage=MediaCloudinaryStorage(),null=True,blank=True )
 
     class Meta:
         db_table = 'users_profiles'
