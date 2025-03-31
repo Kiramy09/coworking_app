@@ -95,6 +95,7 @@ export class MapViewComponent implements OnInit, AfterViewInit {
         });
 
         spaces.forEach(space => {
+          console.log(spaces);
           if (space.latitude && space.longitude) {
             const marker = L.marker(
               [space.latitude, space.longitude],

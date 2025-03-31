@@ -27,9 +27,14 @@ class CoworkingSpaceViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = super().get_queryset()
         space_type = self.request.query_params.get('type')
+        city = self.request.query_params.get('city')
         if space_type:
             queryset = queryset.filter(space_type=space_type)
+        if city:
+            queryset = queryset.filter(city__iexact=city)
+
         return queryset
+
 
 
 class UserViewSet(viewsets.ModelViewSet):
