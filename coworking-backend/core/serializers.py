@@ -99,3 +99,12 @@ class UserWithProfileSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         Profile.objects.create(user=user, **profile_data)
         return user
+    
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ['gender', 'birth_date', 'address', 'activity', 'avatar']
+    
+
+    

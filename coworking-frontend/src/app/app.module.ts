@@ -8,6 +8,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './pages/home/home.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { CompleteProfileComponent } from './pages/complete-profile/complete-profile.component';
+import { NavbarComponent } from './shared/navbar/navbar.component';
 import { MapViewComponent } from './pages/map-view/map-view.component';
 import { LoginComponent } from './pages/login/login.component';
 
@@ -19,6 +20,7 @@ import { LoginComponent } from './pages/login/login.component';
     CompleteProfileComponent,
     LoginComponent,
     MapViewComponent,
+    NavbarComponent,
   ],
   imports: [
     BrowserModule,
