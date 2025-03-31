@@ -1,12 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CoworkingService } from '../../services/coworking.service';
 
 @Component({
   selector: 'app-reservation',
-  standalone: true,
-  imports: [],
   templateUrl: './reservation.component.html',
-  styleUrl: './reservation.component.scss'
+  styleUrls: ['./reservation.component.scss']
 })
-export class ReservationComponent {
+export class ReservationComponent implements OnInit {
+  bookings: any[] = [];
 
+  constructor(private coworkingService: CoworkingService) {}
+
+  ngOnInit(): void {
+    this.fetchBookings();
+  }
+
+  fetchBookings(): void {
+    this.coworkingService.getBookings().subscribe(data => {
+      this.bookings = data;
+    });
+  }
 }

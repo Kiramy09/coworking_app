@@ -25,5 +25,9 @@ export class CoworkingService {
   getSpacesFiltered(params: any) {
     return this.http.get<any[]>('/api/coworking-spaces/', { params });
   }
-  
+
+  getBookings(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/bookings/`);
+  }
+
 }

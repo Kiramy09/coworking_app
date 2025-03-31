@@ -6,6 +6,10 @@ from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAuthenticated
 from .serializers import ProfileSerializer
 from .models import Profile
+from .models import Booking
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from .serializers import BookingSerializer  
 
 from .models import CoworkingSpace, Equipment, Booking, CoworkingPayment 
 from .serializers import (
@@ -19,6 +23,11 @@ from .serializers import (
 
 User = get_user_model()
 
+@api_view(['GET'])
+def get_bookings(request):
+    bookings = Booking.objects.all()
+    serializer = BookingSerializer(bookings, many=True)
+    return Response(serializer.data)
 # views.py
 class CoworkingSpaceViewSet(viewsets.ModelViewSet):
     queryset = CoworkingSpace.objects.all()
@@ -67,7 +76,6 @@ class RegisterView(APIView):
             serializer.save()  # Le serializer s'occupe de créer User + Profile
             return Response({'message': 'Utilisateur créé avec succès'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class ProfileUpdateView(APIView):

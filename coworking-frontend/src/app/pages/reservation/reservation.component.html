@@ -1,1 +1,19 @@
-<p>reservation works!</p>
+<div class="container">
+    <h2>Mes Réservations</h2>
+    <div *ngIf="bookings.length > 0; else noBookings">
+        <h2>Liste des Réservations</h2>
+        <ul>
+          <li *ngFor="let booking of bookings">
+            Réservation {{ booking.id }} : 
+            {{ booking.start_time }} - {{ booking.end_time }} 
+            (Payé: {{ booking.is_paid ? 'Oui' : 'Non' }})
+          </li>
+        </ul>
+      </div>
+      
+      <ng-template #noBookings>
+        <p>Aucune réservation trouvée.</p>
+      </ng-template>
+      
+  </div>
+  

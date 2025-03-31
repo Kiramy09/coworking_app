@@ -11,6 +11,7 @@ import { CompleteProfileComponent } from './pages/complete-profile/complete-prof
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { MapViewComponent } from './pages/map-view/map-view.component';
 import { LoginComponent } from './pages/login/login.component';
+import { ReservationComponent } from './pages/reservation/reservation.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { LoginComponent } from './pages/login/login.component';
     LoginComponent,
     MapViewComponent,
     NavbarComponent,
+    ReservationComponent,
   ],
   imports: [
     BrowserModule,
