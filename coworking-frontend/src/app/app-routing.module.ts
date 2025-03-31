@@ -4,6 +4,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { CompleteProfileComponent } from './pages/complete-profile/complete-profile.component';
 import { LoginComponent } from './pages/login/login.component';
+import { ReservationComponent } from './pages/reservation/reservation.component';
 import { MapViewComponent } from './pages/map-view/map-view.component';
 
 
@@ -14,7 +15,8 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent }, 
   { path: 'complete-profile', component: CompleteProfileComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'explore', component: MapViewComponent }
+  { path: 'explore', component: MapViewComponent },
+  { path: 'reservations', component: ReservationComponent }
 
 ];
 
