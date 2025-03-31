@@ -1,4 +1,29 @@
-.bg-brown {
-    background-color:#DDA800;
+.hero-banner {
+  height: 83vh;
+  background-size: cover;
+  background-position: center;
+  padding: 3rem 1rem;
+
+  h1 {
+    font-size: 3rem;
   }
-  
+
+  .btn {
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+  }
+}
+
+.card {
+  border-radius: 20px;
+  overflow: hidden;
+
+  img {
+    height: 200px;
+    object-fit: cover;
+  }
+
+  .btn {
+    font-weight: bold;
+  }
+}
