@@ -1,22 +1,52 @@
-<div class="container-fluid px-0 d-flex flex-column min-vh-100">
-    <!-- Carte -->
-    <div id="map" class="w-100" style="height: 50vh;"></div>
+<!-- Modal sélection ville -->
+<div class="modal fade" id="cityModal" tabindex="-1" aria-labelledby="cityModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cityModalLabel">Choisissez une ville</h5>
+      </div>
+      <div class="modal-body">
+        <p>Dans quelle ville voulez-vous chercher un espace de coworking ?</p>
+        <select class="form-select" [(ngModel)]="selectedCity">
+          <option value="" disabled selected>-- Sélectionner une ville --</option>
+          <option value="paris">Paris</option>
+          <option value="marseille">Marseille</option>
+          <option value="lyon">Lyon</option>
+          <option value="toulouse">Toulouse</option>
+          <option value="nice">Nice</option>
+          <option value="bordeaux">Bordeaux</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" [disabled]="!selectedCity" (click)="confirmCity()">Valider</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="map-container d-flex">
   
-    <!-- Liste horizontale -->
-    <div class="d-flex overflow-auto px-3 py-3 gap-3 bg-white">
-      <div class="card flex-shrink-0" style="width: 160px;" *ngFor="let space of spaces">
-        <!-- <img [src]="space.image_url" class="card-img-top" style="height: 100px; object-fit: cover;" alt="..."> -->
-        <img *ngIf="space.image" [src]="space.image" class="card-img-top" style="height: 100px; object-fit: cover;" alt="{{ space.name }}">
+  <!-- Sidebar gauche -->
+  <div class="map-sidebar p-3 bg-white">
+    <!-- Filtres -->
+    <div class="mb-3">
+      <a class="btn btn-warning w-100">Ajouter des filtres</a>
+    </div>
+
+    <!-- Liste des cards -->
+    <div class="scrollable-list">
+      <div class="card mb-3" *ngFor="let space of spaces">
+        <img *ngIf="space.image" [src]="space.image" class="card-img-top" style="height: 120px; object-fit: cover;" alt="{{ space.name }}">
         <div class="card-body p-2">
-          <h6 class="card-title mb-1 text-truncate">{{ space.name }}</h6>
-          <small class="text-muted d-block text-truncate">{{ space.address }}</small>
+          <h6 class="card-title mb-1">{{ space.name }}</h6>
+          <small class="text-muted d-block">{{ space.address }}</small>
+          <a href="#" class="btn btn-primary btn-sm mt-2">Réserver</a>
         </div>
       </div>
     </div>
-  
-    <!-- Voir la liste -->
-    <div class="text-center mt-2 mb-3">
-      <a routerLink="/explore" class="text-warning fw-semibold text-decoration-underline">Voir la liste</a>
-    </div>
   </div>
-  
+
+  <!-- Map à droite -->
+  <div id="map" class="map-main"></div>
+
+</div>

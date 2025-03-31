@@ -1,36 +1,34 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-warning px-3">
-    <div class="container-fluid">
-      <a class="navbar-brand fw-bold text-white" routerLink="/">COWO</a>
-  
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-  
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav align-items-center">
-          <!-- <li *ngIf="!isLoggedIn()" class="nav-item me-2">
-            <a class="btn btn-outline-light btn-sm" routerLink="/register">Inscription</a>
-          </li> -->
-          <li *ngIf="!isLoggedIn()" class="nav-item">
-            <a class="btn btn-dark btn-sm" routerLink="/login">Connexion</a>
-          </li>
-  
-          <li *ngIf="isLoggedIn()" class="nav-item dropdown">
-            <button
-              class="btn btn-dark btn-sm dropdown-toggle"
-              data-bs-toggle="dropdown"
-              aria-expanded="false">
-              Mon compte
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end">
-              <li><a class="dropdown-item" routerLink="/profile">Voir mon profil</a></li>
-              <li><a class="dropdown-item" routerLink="/reservations">Mes réservations</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item text-danger" (click)="logout()">Déconnexion</a></li>
-            </ul>
-          </li>
-        </ul>
-      </div>
+<nav class="navbar navbar-expand-lg navbar-dark custom-navbar px-3">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold text-white" routerLink="/">COWO</a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav align-items-center">
+        <li *ngIf="!isLoggedIn()" class="nav-item">
+          <a class="btn btn-outline-light btn-sm me-2" routerLink="/register">S’inscrire</a>
+        </li>
+        <li *ngIf="!isLoggedIn()" class="nav-item">
+          <a class="btn btn-dark btn-sm" routerLink="/login">Connexion</a>
+        </li>
+
+        <li *ngIf="isLoggedIn()" class="nav-item dropdown">
+          <!-- <a class="btn btn-dark btn-sm me-2" routerLink="">Rechercher</a> -->
+
+          <button class="btn btn-dark btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+            Mon compte
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" routerLink="/profile">Voir mon profil</a></li>
+            <li><a class="dropdown-item" routerLink="/reservations">Mes réservations</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" (click)="logout()">Déconnexion</a></li>
+          </ul>
+        </li>
+      </ul>
     </div>
-  </nav>
-  
+  </div>
+</nav>
