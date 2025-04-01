@@ -24,10 +24,13 @@ from .serializers import (
 User = get_user_model()
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])  # L'utilisateur doit être connecté
 def get_bookings(request):
-    bookings = Booking.objects.all()
+    user = request.user  # Récupère l'utilisateur connecté
+    bookings = Booking.objects.filter(customer_id=user.id)  # Filtre par utilisateur
     serializer = BookingSerializer(bookings, many=True)
     return Response(serializer.data)
+
 # views.py
 class CoworkingSpaceViewSet(viewsets.ModelViewSet):
     queryset = CoworkingSpace.objects.all()

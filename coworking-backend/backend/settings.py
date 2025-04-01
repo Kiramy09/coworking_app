@@ -35,6 +35,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -42,13 +43,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # Third-party apps
     'rest_framework',
     'corsheaders',
-    'core',
     'cloudinary',
-'cloudinary_storage',
-
+    'cloudinary_storage',
+    
+    # Local apps
+    'core',
 ]
+
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware', 
@@ -170,10 +175,11 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer', 
-        'rest_framework.renderers.BrowsableAPIRenderer', 
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
     ]
 }
+
 
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'

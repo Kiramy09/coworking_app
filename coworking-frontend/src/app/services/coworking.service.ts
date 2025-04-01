@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient,HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -26,8 +26,12 @@ export class CoworkingService {
     return this.http.get<any[]>('/api/coworking-spaces/', { params });
   }
 
+  
   getBookings(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/bookings/`);
+    const token = localStorage.getItem('token'); // Récupère le token stocké
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`); // Ajoute le token dans l'entête
+
+    return this.http.get<any[]>(`${this.apiUrl}/bookings/`, { headers });
   }
 
 }
