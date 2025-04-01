@@ -77,14 +77,12 @@ export class MapViewComponent implements OnInit, AfterViewInit {
       params.type = this.selectedType;
     }
     if (this.selectedCity) {
-      params.city = this.selectedCity;
+      params.metropole  = this.selectedCity;
     }
 
-    this.coworkingService.getSpacesFiltered(params).subscribe({
+    this.coworkingService.getSpaceFiltered(params).subscribe({
       next: (spaces) => {
         this.spaces = spaces;
-        console.log("hey");
-
 
         // Nettoyer les anciens marqueurs
         this.clearMapMarkers();
@@ -97,6 +95,7 @@ export class MapViewComponent implements OnInit, AfterViewInit {
         });
 
         spaces.forEach(space => {
+          console.log(spaces);
           if (space.latitude && space.longitude) {
             const marker = L.marker(
               [space.latitude, space.longitude],
@@ -120,4 +119,58 @@ export class MapViewComponent implements OnInit, AfterViewInit {
       }
     });
   }
+
+  filters = {
+    minCapacity: null,
+    maxPrice: null,
+    projector: false,
+    meetingRoom: false,
+    ac: false,
+    printer: false
+  };
+
+  addMarkers(spaces: any[]): void {
+    const customIcon = L.divIcon({
+      className: 'custom-div-icon',
+      html: `<div class="marker-pin"><i class="bi bi-geo-alt-fill text-primary fs-4"></i></div>`,
+      iconSize: [30, 42],
+      iconAnchor: [15, 42]
+    });
+  
+    spaces.forEach(space => {
+      if (space.latitude && space.longitude) {
+        const marker = L.marker(
+          [space.latitude, space.longitude],
+          { icon: customIcon }
+        ).addTo(this.map);
+        marker.bindPopup(`<b>${space.name}</b><br>${space.address}`);
+      }
+    });
+  }
+  
+  applyAdvancedFilters(): void {
+    const params: any = {};
+  
+    if (this.selectedType) params.type = this.selectedType;
+    if (this.selectedCity) params.metropole = this.selectedCity;
+  
+    if (this.filters.minCapacity) params.min_capacity = this.filters.minCapacity;
+    if (this.filters.maxPrice) params.max_price = this.filters.maxPrice;
+    if (this.filters.projector) params.equipment = 'Projecteur';
+    if (this.filters.meetingRoom) params.equipment = 'Salle de réunion';
+    if (this.filters.ac) params.equipment = 'Climatisation';
+    if (this.filters.printer) params.equipment = 'Imprimante';
+  
+    this.coworkingService.getSpaceFiltered(params).subscribe({
+      next: (spaces) => {
+        this.spaces = spaces;
+        this.clearMapMarkers();
+        this.addMarkers(spaces);
+      },
+      error: (err) => {
+        console.error('Erreur chargement avec filtres :', err);
+      }
+    });
+  }
+    
 }

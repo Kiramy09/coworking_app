@@ -13,6 +13,8 @@ class EquipmentSerializer(serializers.ModelSerializer):
 class CoworkingSpaceSerializer(serializers.ModelSerializer):
     equipments = EquipmentSerializer(many=True, read_only=True)
     image = serializers.ImageField(required=False)
+    metropole = serializers.StringRelatedField()
+
 
     class Meta:
         model = CoworkingSpace
@@ -99,7 +101,7 @@ class UserWithProfileSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         Profile.objects.create(user=user, **profile_data)
         return user
-    
+        
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:

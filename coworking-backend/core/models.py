@@ -15,7 +15,14 @@ class Equipment(models.Model):
 
     def __str__(self):
         return self.name
+class Metropole(models.Model):
+    name = models.CharField(max_length=100, unique=True)
 
+    class Meta:
+        db_table = 'metropoles'
+
+    def __str__(self):
+        return self.name
 
 #  Espace de coworking
 class CoworkingSpace(models.Model):
@@ -30,6 +37,8 @@ class CoworkingSpace(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     city = models.CharField(max_length=100)
+    metropole = models.ForeignKey(Metropole,on_delete=models.SET_NULL,null=True,blank=True,related_name='spaces')
+
     address = models.CharField(max_length=255)
     space_type = models.CharField(max_length=20, choices=SPACE_TYPES, default='other')
 
@@ -46,8 +55,36 @@ class CoworkingSpace(models.Model):
     class Meta:
         db_table = 'coworking_spaces'
 
+    def save(self, *args, **kwargs):
+        # Mapping ville → métropole
+        VILLE_METROPOLE = {
+            "Bordeaux Métropole": [
+                "Bordeaux", "Pessac", "Talence", "Mérignac", "Bègles",
+                "Gradignan", "Cenon", "Le Bouscat", "Floirac", "Lormont"
+            ],
+            "Paris": ["Paris", "Nanterre", "Issy-les-Moulineaux", "Saint-Denis"],
+            "Lyon": ["Lyon", "Villeurbanne", "Vénissieux"],
+            "Marseille": ["Marseille", "Aubagne"],
+            "Toulouse": ["Toulouse", "Blagnac", "Colomiers"],
+            "Nice": ["Nice", "Cagnes-sur-Mer"],
+        }
+
+        # Déterminer la métropole à partir de la ville
+        for metro_name, cities in VILLE_METROPOLE.items():
+            if self.city in cities:
+                from core.models import Metropole  # éviter l'import circulaire
+                try:
+                    self.metropole = Metropole.objects.get(name=metro_name)
+                except Metropole.DoesNotExist:
+                    self.metropole = None
+                break
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.name} ({self.get_space_type_display()})"
+    
+    
 
 #  Client / Admin
 class UserManager(BaseUserManager):
@@ -134,6 +171,9 @@ class Profile(models.Model):
 
     class Meta:
         db_table = 'users_profiles'
+
+
+
 
     def __str__(self):
         return f"Profil de {self.user.email}"

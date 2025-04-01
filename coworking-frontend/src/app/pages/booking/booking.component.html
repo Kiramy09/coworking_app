@@ -1,0 +1,29 @@
+<div class="booking-container">
+    <div class="card shadow booking-card" *ngIf="space">
+      <img *ngIf="space.image" [src]="space.image" class="booking-image" alt="Coworking space image">
+      <div class="card-body">
+        <h4 class="mb-2">{{ space.name }}</h4>
+        <p class="text-muted">{{ space.address }}</p>
+        <p>{{ space.description }}</p>
+        <p><strong>Capacité :</strong> {{ space.capacity }} personnes</p>
+        <p><strong>Tarif :</strong> {{ space.price_per_hour }} € / heure</p>
+  
+        <form (ngSubmit)="submitBooking()" #form="ngForm" class="mt-4">
+          <div class="mb-3">
+            <label class="form-label">Date</label>
+            <input type="date" class="form-control" [(ngModel)]="bookingForm.date" name="date" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Heure de début</label>
+            <input type="time" class="form-control" [(ngModel)]="bookingForm.startTime" name="startTime" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Heure de fin</label>
+            <input type="time" class="form-control" [(ngModel)]="bookingForm.endTime" name="endTime" required>
+          </div>
+          <button type="submit" class="btn btn-success w-100" [disabled]="form.invalid">Confirmer la réservation</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  

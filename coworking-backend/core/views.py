@@ -27,13 +27,28 @@ class CoworkingSpaceViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = super().get_queryset()
         space_type = self.request.query_params.get('type')
-        city = self.request.query_params.get('city')
+        metropole = self.request.query_params.get('metropole')
+
         if space_type:
             queryset = queryset.filter(space_type=space_type)
-        if city:
-            queryset = queryset.filter(city__iexact=city)
+        if metropole:
+            queryset = queryset.filter(metropole__name__iexact=metropole)
 
-        return queryset
+        # Filtres avancés
+        min_capacity = self.request.query_params.get('min_capacity')
+        if min_capacity:
+            queryset = queryset.filter(capacity__gte=min_capacity)
+
+        max_price = self.request.query_params.get('max_price')
+        if max_price:
+            queryset = queryset.filter(price_per_hour__lte=max_price)
+
+        equipment = self.request.query_params.get('equipment')
+        if equipment:
+            queryset = queryset.filter(equipments__name__icontains=equipment)
+
+        return queryset.distinct()
+
 
 
 

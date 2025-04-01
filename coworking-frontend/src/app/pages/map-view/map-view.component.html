@@ -29,9 +29,67 @@
   <!-- Sidebar gauche -->
   <div class="map-sidebar p-3 bg-white">
     <!-- Filtres -->
-    <div class="mb-3">
-      <a class="btn btn-warning w-100">Ajouter des filtres</a>
+    <button class="btn btn-warning w-100" data-bs-toggle="modal" data-bs-target="#filterModal">
+      <i class="bi bi-filter"></i> Ajouter des filtres
+    </button>
+    
+
+    <!--  MODALE DE FILTRE -->
+    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="filterModalLabel">Filtres avancés</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+          </div>
+          <div class="modal-body">
+            <form (ngSubmit)="applyAdvancedFilters()">
+              <!-- Capacité -->
+              <div class="mb-3">
+                <label for="minCapacity" class="form-label">Capacité minimale</label>
+                <input type="number" class="form-control" [(ngModel)]="filters.minCapacity" name="minCapacity">
+              </div>
+
+              <!-- Prix -->
+              <div class="mb-3">
+                <label for="maxPrice" class="form-label">Prix max (€ / heure)</label>
+                <input type="number" class="form-control" [(ngModel)]="filters.maxPrice" name="maxPrice">
+              </div>
+
+              <!-- Projecteur -->
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" [(ngModel)]="filters.projector" name="projector" id="projectorCheck">
+                <label class="form-check-label" for="projectorCheck">Projecteur</label>
+              </div>
+
+              <!-- Salle de réunion -->
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" [(ngModel)]="filters.meetingRoom" name="meetingRoom" id="meetingRoomCheck">
+                <label class="form-check-label" for="meetingRoomCheck">Salle de réunion</label>
+              </div>
+
+              <!-- Climatisation -->
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" [(ngModel)]="filters.ac" name="ac" id="acCheck">
+                <label class="form-check-label" for="acCheck">Climatisation</label>
+              </div>
+
+              <!-- Imprimante -->
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" [(ngModel)]="filters.printer" name="printer" id="printerCheck">
+                <label class="form-check-label" for="printerCheck">Imprimante</label>
+              </div>
+
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Appliquer</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
+
 
     <!-- Liste des cards -->
     <div class="scrollable-list">
@@ -40,7 +98,7 @@
         <div class="card-body p-2">
           <h6 class="card-title mb-1">{{ space.name }}</h6>
           <small class="text-muted d-block">{{ space.address }}</small>
-          <a href="#" class="btn btn-primary btn-sm mt-2">Réserver</a>
+          <a [routerLink]="['/booking', space.id]" class="btn btn-primary btn-sm mt-2">Réserver</a>
         </div>
       </div>
     </div>
