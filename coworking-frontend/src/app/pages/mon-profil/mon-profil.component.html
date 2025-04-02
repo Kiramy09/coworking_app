@@ -1,0 +1,142 @@
+<div class="profile-container">
+    <!-- Header de la page de profil -->
+    <div class="profile-header">
+      <h1>Mon Profil</h1>
+      <div class="action-buttons" *ngIf="!isEditing">
+        <button (click)="enableEditing()" class="btn-edit">
+          <i class="fas fa-edit"></i> Modifier mon profil
+        </button>
+      </div>
+      <div class="action-buttons" *ngIf="isEditing">
+        <button (click)="updateProfile()" class="btn-save">
+          <i class="fas fa-save"></i> Enregistrer
+        </button>
+        <button (click)="cancelEditing()" class="btn-cancel">
+          <i class="fas fa-times"></i> Annuler
+        </button>
+      </div>
+    </div>
+  
+    <!-- Contenu principal du profil -->
+    <div class="profile-content">
+      <div class="profile-main">
+        <!-- Section photo de profil -->
+        <div class="profile-avatar-section">
+          <div class="profile-avatar">
+            <img [src]="avatarUrl || 'assets/images/default-avatar.png'" alt="Photo de profil">
+            <div class="avatar-overlay" *ngIf="isEditing">
+              <label for="avatar-upload" class="avatar-upload-btn">
+                <i class="fas fa-camera"></i>
+                <span>Modifier</span>
+              </label>
+              <input type="file" id="avatar-upload" (change)="onFileSelected($event)" accept="image/*" hidden>
+            </div>
+          </div>
+          <h2 class="profile-name">{{ userProfile.prenom }} {{ userProfile.nom }}</h2>
+          <p class="profile-role">{{ userProfile.activity }}</p>
+        </div>
+  
+        <!-- Section informations personnelles -->
+        <div class="profile-section">
+          <h3>Informations personnelles</h3>
+          <div class="profile-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="prenom">Prénom</label>
+                <input 
+                  type="text" 
+                  id="prenom" 
+                  [(ngModel)]="userProfile.prenom" 
+                  [readonly]="!isEditing"
+                  [class.readonly]="!isEditing">
+              </div>
+              <div class="form-group">
+                <label for="nom">Nom</label>
+                <input 
+                  type="text" 
+                  id="nom" 
+                  [(ngModel)]="userProfile.nom" 
+                  [readonly]="!isEditing"
+                  [class.readonly]="!isEditing">
+              </div>
+            </div>
+  
+            <div class="form-row">
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  [(ngModel)]="userProfile.email" 
+                  readonly
+                  class="readonly">
+              </div>
+              <div class="form-group">
+                <label for="gender">Genre</label>
+                <select 
+                  id="gender" 
+                  [(ngModel)]="userProfile.gender" 
+                  [disabled]="!isEditing"
+                  [class.readonly]="!isEditing">
+                  <option value="">Sélectionner</option>
+                  <!-- Utilisation des options de genre définies dans le composant -->
+                  <option *ngFor="let option of genderOptions" [value]="option.value">
+                    {{ option.label }}
+                  </option>
+                </select>
+              </div>
+            </div>
+  
+            <div class="form-row">
+              <div class="form-group">
+                <label for="birth_date">Date de naissance</label>
+                <input 
+                  type="date" 
+                  id="birth_date" 
+                  [(ngModel)]="userProfile.birth_date" 
+                  [readonly]="!isEditing"
+                  [class.readonly]="!isEditing">
+              </div>
+              <div class="form-group">
+                <label for="activity">Activité professionnelle</label>
+                <input 
+                  type="text" 
+                  id="activity" 
+                  [(ngModel)]="userProfile.activity" 
+                  [readonly]="!isEditing"
+                  [class.readonly]="!isEditing"
+                  placeholder="Ex: Développeur, Designer, Chef de projet...">
+              </div>
+            </div>
+  
+            <div class="form-group full-width">
+              <label for="address">Adresse</label>
+              <textarea 
+                id="address" 
+                [(ngModel)]="userProfile.address" 
+                [readonly]="!isEditing"
+                [class.readonly]="!isEditing" 
+                rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+  
+        
+      </div>
+  
+      <!-- Barre latérale avec statistiques et liens rapides -->
+      <div class="profile-sidebar">
+        
+  
+        <div class="profile-section">
+          <h3>Accès rapide</h3>
+          <ul class="quick-links">
+            <li><a routerLink="/reservations"><i class="fas fa-calendar"></i> Mes réservations</a></li>
+            <li><a routerLink="/favoris"><i class="fas fa-heart"></i> Mes espaces favoris</a></li>
+            <li><a routerLink="/factures"><i class="fas fa-file-invoice"></i> Mes factures</a></li>
+            <li><a routerLink="/notifications"><i class="fas fa-bell"></i> Notifications</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -11,6 +11,9 @@ import { CompleteProfileComponent } from './pages/complete-profile/complete-prof
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { MapViewComponent } from './pages/map-view/map-view.component';
 import { LoginComponent } from './pages/login/login.component';
+import { MonProfilComponent } from './pages/mon-profil/mon-profil.component';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -21,6 +24,8 @@ import { LoginComponent } from './pages/login/login.component';
     LoginComponent,
     MapViewComponent,
     NavbarComponent,
+    MonProfilComponent
+  
   ],
   imports: [
     BrowserModule,
@@ -28,7 +33,14 @@ import { LoginComponent } from './pages/login/login.component';
     HttpClientModule,
     FormsModule,
   ],
-  providers: [],
+  providers: [
+    // Ajoutez cette configuration pour l'intercepteur
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
