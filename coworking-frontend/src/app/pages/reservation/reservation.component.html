@@ -1,19 +1,34 @@
-<div class="container">
-    <h2>Mes Réservations</h2>
-    <div *ngIf="bookings.length > 0; else noBookings">
-        <h2>Liste des Réservations</h2>
-        <ul>
-          <li *ngFor="let booking of bookings">
-            Réservation {{ booking.id }} : 
-            {{ booking.start_time }} - {{ booking.end_time }} 
-            (Payé: {{ booking.is_paid ? 'Oui' : 'Non' }})
-          </li>
-        </ul>
-      </div>
-      
-      <ng-template #noBookings>
-        <p>Aucune réservation trouvée.</p>
-      </ng-template>
-      
-  </div>
+<div class="container mt-4">
+  <h2 class="mb-3">Mes Réservations</h2>
   
+  <div *ngIf="bookings.length > 0; else noBookings">
+      <table class="table table-striped table-bordered">
+          <thead class="thead-dark">
+              <tr>
+                  <th>#</th>
+                  <th>Date de début</th>
+                  <th>Date de fin</th>
+                  <th>Payé</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr *ngFor="let booking of bookings">
+                  <td>{{ booking.id }}</td>
+                  <td>{{ booking.start_time | date:'dd/MM/yyyy, HH:mm' }}</td>
+                  <td>{{ booking.end_time | date:'dd/MM/yyyy, HH:mm' }}</td>
+                  <td>
+                      <span class="badge" [ngClass]="booking.is_paid ? 'badge-success' : 'badge-danger'">
+                          {{ booking.is_paid ? 'Oui' : 'Non' }}
+                      </span>
+                  </td>
+              </tr>
+          </tbody>
+      </table>
+  </div>
+
+  <ng-template #noBookings>
+      <div class="alert alert-warning" role="alert">
+          Aucune réservation trouvée.
+      </div>
+  </ng-template>
+</div>

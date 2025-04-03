@@ -7,9 +7,11 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import ProfileSerializer
 from .models import Profile
 from .models import Booking
+from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .serializers import BookingSerializer  
+from rest_framework.decorators import action
 
 from .models import CoworkingSpace, Equipment, Booking, CoworkingPayment 
 from .serializers import (
@@ -23,13 +25,15 @@ from .serializers import (
 
 User = get_user_model()
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])  # L'utilisateur doit être connecté
+def get_all_bookings(request):
+    bookings = Booking.objects.all().values('id', 'start_time', 'end_time', 'is_paid')
+    return JsonResponse(list(bookings), safe=False)
+
+
 def get_bookings(request):
-    user = request.user  # Récupère l'utilisateur connecté
-    bookings = Booking.objects.filter(customer_id=user.id)  # Filtre par utilisateur
-    serializer = BookingSerializer(bookings, many=True)
-    return Response(serializer.data)
+    bookings = Booking.objects.all().values('id', 'start_time', 'end_time', 'is_paid')
+    return JsonResponse(list(bookings), safe=False)
+
 
 # views.py
 class CoworkingSpaceViewSet(viewsets.ModelViewSet):
@@ -49,9 +53,17 @@ class CoworkingSpaceViewSet(viewsets.ModelViewSet):
 
 
 
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
+    def me(self, request):
+        """Retourne les informations de l'utilisateur connecté"""
+        user = request.user
+        serializer = self.get_serializer(user)
+        return Response(serializer.data)
 
 class BookingViewSet(viewsets.ModelViewSet):
     queryset = Booking.objects.all()

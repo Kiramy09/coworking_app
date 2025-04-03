@@ -8,27 +8,22 @@ import { CoworkingService } from '../../services/coworking.service';
 })
 export class ReservationComponent implements OnInit {
   bookings: any[] = [];
-  isAuthenticated: boolean = false;
 
   constructor(private coworkingService: CoworkingService) {}
 
   ngOnInit(): void {
-    this.checkAuth();
-    if (this.isAuthenticated) {
-      this.fetchBookings();
-    }
-  }
-
-  checkAuth(): void {
-    const token = localStorage.getItem('token');
-    this.isAuthenticated = !!token; // Vérifie si un token existe
+    this.fetchBookings();
   }
 
   fetchBookings(): void {
-    this.coworkingService.getBookings().subscribe((data: any[]) => {
-      this.bookings = data;
-    }, error => {
-      console.error('Erreur lors du chargement des réservations', error);
-    });
+    this.coworkingService.getBookings().subscribe(
+      (data: any[]) => {
+        this.bookings = data;
+        console.log('Réservations récupérées:', this.bookings);
+      },
+      error => {
+        console.error('Erreur lors de la récupération des réservations:', error);
+      }
+    );
   }
 }

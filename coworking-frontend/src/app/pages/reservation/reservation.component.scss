@@ -17,3 +17,16 @@
     font-size: 24px;
   }
   
+  .table th, .table td {
+    text-align: center;
+    vertical-align: middle;
+  }
+  
+  .badge-success {
+    background-color: #28a745;
+  }
+  
+  .badge-danger {
+    background-color: #dc3545;
+  }
+  
