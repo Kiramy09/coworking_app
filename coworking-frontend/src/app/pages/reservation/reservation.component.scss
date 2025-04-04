@@ -1,32 +1,221 @@
-/* reservation.component.css */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap');
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  color: #8b8b8b;
+}
+
 .container {
-    margin-top: 20px;
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+h2 {
+  color: #000000;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+/* Carte de réservation */
+.card {
+  position: relative;
+  border-radius: 20px;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.5);
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 40px rgba(0, 255, 255, 0.2), 0 10px 20px rgba(0, 0, 0, 0.4);
+}
+
+.card-past {
+  opacity: 0.4;
+}
+
+/* Image de la carte */
+.card-img-top {
+  height: 220px;
+  object-fit: cover;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  opacity: 0.9;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.card-img-top:hover {
+  opacity: 1;
+}
+
+/* Contenu de la carte */
+.card-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Titre et sous-titre */
+.card-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+  color: #333333;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.card-subtitle {
+  font-size: 1.1rem;
+  color: #737c80;
+  margin-bottom: 0.5rem;
+}
+
+/* Texte de la carte */
+.card-text {
+  font-size: 1rem;
+  margin-top: 10px;
+  color: #444444;
+  line-height: 1.4;
+}
+
+.badge {
+  font-size: 0.9rem;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.bg-success {
+  background-color: #4caf50 !important;
+}
+
+.bg-danger {
+  background-color: #f44336 !important;
+}
+
+.text-muted {
+  font-size: 0.9rem;
+  color: #676767;
+}
+
+.alert {
+  text-align: center;
+  font-size: 1.2rem;
+  background: rgba(255, 0, 0, 0.2);
+  border: 1px solid rgba(255, 0, 0, 0.4);
+  backdrop-filter: blur(5px);
+  color: #5c5c5c;
+}
+
+/* Animation d'apparition */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  
-  table {
-    width: 100%;
-    margin-top: 20px;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  th, td {
-    padding: 10px;
-    text-align: left;
-  }
-  
-  h2 {
-    font-size: 24px;
-  }
-  
-  .table th, .table td {
-    text-align: center;
-    vertical-align: middle;
-  }
-  
-  .badge-success {
-    background-color: #28a745;
-  }
-  
-  .badge-danger {
-    background-color: #dc3545;
-  }
-  
+}
+
+.card {
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+/* Effet lumineux sur le survol */
+.card:hover {
+  border: 1px solid rgba(202, 130, 54, 0.5);
+  box-shadow: 0 0 20px rgba(255, 145, 0, 0.3), 0 0 40px rgba(255, 157, 0, 0.319);
+}
+
+/* Effet de verre sur les cartes */
+.card {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.card:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+.btn-outline-danger {
+  color: #f44336;
+  border: 1px solid #f44336;
+  background-color: transparent;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-danger:hover {
+  color: #fff;
+  background-color: #f44336;
+}
+
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 0.9rem;
+  border-radius: 8px;
+}
+
+.mt-3 {
+  margin-top: 1rem;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content h4 {
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.modal-content p {
+  margin: 10px 0;
+}
+
+.modal-content button {
+  margin: 5px;
+}
+
+.btn-danger {
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+}
+
+.btn-secondary {
+  background-color: #7f8c8d;
+  color: #fff;
+  border: none;
+}
+
+.btn-danger:hover, .btn-secondary:hover {
+  opacity: 0.9;
+}

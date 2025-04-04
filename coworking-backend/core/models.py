@@ -66,22 +66,20 @@ class UserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
-#  Réservation
+
+# Booking Model
 class Booking(models.Model):
     customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    coworking_space = models.ForeignKey(CoworkingSpace, on_delete=models.CASCADE)
+    coworking_space = models.ForeignKey('CoworkingSpace', on_delete=models.CASCADE)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
     is_paid = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'bookings'
 
     def __str__(self):
-        return f"{self.id} - {self.coworking_space.name} - {self.customer}"
-
+        return f"Booking {self.id} by {self.customer}"
 
 #  Paiement
 class CoworkingPayment(models.Model):

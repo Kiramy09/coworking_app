@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import *
 from .models import User
 from .models import Profile
-
+from .models import Booking
 
 class EquipmentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -40,13 +40,14 @@ class UserSerializer(serializers.ModelSerializer):
         rep['full_name'] = f"{instance.first_name} {instance.last_name}"
         return rep
 
+
+
 class BookingSerializer(serializers.ModelSerializer):
-    customer = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-    coworking_space = serializers.PrimaryKeyRelatedField(queryset=CoworkingSpace.objects.all())
+    customer = serializers.StringRelatedField()
 
     class Meta:
         model = Booking
-        fields = '__all__'
+        fields = ['id', 'start_time', 'end_time', 'is_paid', 'customer', 'coworking_space']
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
