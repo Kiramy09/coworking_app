@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { catchError, Observable, of, throwError, tap, switchMap } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+//import { catchError, Observable, of, throwError, tap, switchMap } from 'rxjs';
+import { catchError, Observable, of, throwError, tap, switchMap, BehaviorSubject } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -8,9 +10,17 @@ import { catchError, Observable, of, throwError, tap, switchMap } from 'rxjs';
 export class AuthService {
   private baseUrl = 'http://127.0.0.1:8000/api/';
   private refreshTokenInProgress = false;
-  
-  constructor(private http: HttpClient) {}
-  
+  private tokenSubject = new BehaviorSubject<string | null>(null);
+
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {
+    // Initialiser le token au démarrage
+    const token = localStorage.getItem('access_token');
+    this.tokenSubject.next(token);
+  }
+
   register(user: any): Observable<any> {
     const completeUser = {
       email: user.email,
@@ -61,13 +71,7 @@ export class AuthService {
     );
   }
   
-  logout(): void {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    console.log('Logged out, tokens removed');
-    // Rediriger vers la page de connexion si nécessaire
-    // window.location.href = '/login';
-  }
+  
   
   updateProfile(profileData: FormData): Observable<any> {
     return this.http.post(`${this.baseUrl}profile/`, profileData);
@@ -75,40 +79,47 @@ export class AuthService {
   
   getUserProfile(): Observable<any> {
     return this.http.get(`${this.baseUrl}user/profile/`).pipe(
-      catchError(error => {
-        if (error.status === 401 && error.error?.code === 'token_not_valid') {
-          console.log('Token expired, attempting to refresh...');
-          return this.handleTokenExpired(() => this.getUserProfile());
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 401) {
+          return this.handleTokenExpired(() => 
+            this.http.get(`${this.baseUrl}user/profile/`)
+          );
         }
-        return this.handleError('getUserProfile')(error);
+        return throwError(() => error);
       })
     );
   }
-  
-  updateUserProfile(formData: FormData): Observable<any> {
-    return this.http.post(`${this.baseUrl}user/profile/update/`, formData).pipe(
-      catchError(error => {
-        if (error.status === 401 && error.error?.code === 'token_not_valid') {
-          return this.handleTokenExpired(() => this.updateUserProfile(formData));
-        }
-        return this.handleError('updateUserProfile')(error);
-      })
-    );
-  }
-  
-  uploadAvatar(file: File): Observable<any> {
+
+updateUserProfile(formData: FormData): Observable<any> {
+  return this.http.post(`${this.baseUrl}user/profile/update/`, formData).pipe(
+    catchError((error: HttpErrorResponse) => {
+      if (error.status === 401) {
+        return this.handleTokenExpired(() => 
+          this.http.post(`${this.baseUrl}user/profile/update/`, formData)
+        );
+      }
+      return throwError(() => error);
+    })
+  );
+}
+
+
+ uploadAvatar(file: File): Observable<any> {
     const formData = new FormData();
     formData.append('avatar', file);
     
     return this.http.post(`${this.baseUrl}user/avatar/upload/`, formData).pipe(
-      catchError(error => {
-        if (error.status === 401 && error.error?.code === 'token_not_valid') {
-          return this.handleTokenExpired(() => this.uploadAvatar(file));
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 401) {
+          return this.handleTokenExpired(() => 
+            this.http.post(`${this.baseUrl}user/avatar/upload/`, formData)
+          );
         }
-        return this.handleError('uploadAvatar')(error);
+        return throwError(() => error);
       })
     );
   }
+
   
   refreshToken(): Observable<any> {
     const refresh = localStorage.getItem('refresh_token');
@@ -124,6 +135,7 @@ export class AuthService {
       tap((response: any) => {
         if (response.access) {
           localStorage.setItem('access_token', response.access);
+          this.tokenSubject.next(response.access);
           console.log('Token refreshed successfully');
         }
       }),
@@ -134,22 +146,18 @@ export class AuthService {
       })
     );
   }
-  
-  private handleTokenExpired<T>(retryCallback: () => Observable<T>): Observable<T> {
+
+  public handleTokenExpired<T>(retryCallback: () => Observable<T>): Observable<T> {
     if (this.refreshTokenInProgress) {
-      // Wait for the current refresh to complete
-      return new Observable<T>(observer => {
-        const checkInterval = setInterval(() => {
-          if (!this.refreshTokenInProgress) {
-            clearInterval(checkInterval);
-            retryCallback().subscribe({
-              next: value => observer.next(value),
-              error: err => observer.error(err),
-              complete: () => observer.complete()
-            });
+      // Attendre que le rafraîchissement en cours se termine
+      return this.tokenSubject.pipe(
+        switchMap(token => {
+          if (token) {
+            return retryCallback();
           }
-        }, 100);
-      });
+          throw new Error('Authentication failed');
+        })
+      );
     }
     
     this.refreshTokenInProgress = true;
@@ -161,18 +169,21 @@ export class AuthService {
       }),
       catchError(error => {
         this.refreshTokenInProgress = false;
+        this.logout();
+        this.router.navigate(['/login']);
         return throwError(() => error);
       })
     );
   }
-  
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      console.error(`${operation} failed:`, error);
-      return of(result as T);
-    };
+
+  logout(): void {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    this.tokenSubject.next(null);
+    console.log('Logged out, tokens removed');
+    this.router.navigate(['/login']);
   }
-  
+
   isAuthenticated(): boolean {
     return !!localStorage.getItem('access_token');
   }

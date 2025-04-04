@@ -3,36 +3,67 @@ import {
   HttpRequest,
   HttpHandler,
   HttpEvent,
-  HttpInterceptor
+  HttpInterceptor,
+  HttpErrorResponse
 } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError, switchMap } from 'rxjs';
+import { AuthService } from '../services/auth.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   
-  constructor() {}
+  constructor(private authService: AuthService) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    // Récupérer le token d'authentification du localStorage
+    // Récupérer le token d'accès
     const token = localStorage.getItem('access_token');
 
-    console.log('Intercepteur appelé pour URL:', request.url);
-    console.log('Token disponible:', token ? 'Oui' : 'Non');
-    
-    
     // Si un token existe, l'ajouter à l'en-tête de la requête
     if (token) {
-      const cloned = request.clone({
-        headers: request.headers.set('Authorization', `Bearer ${token}`)
+      console.log('Ajout du token à la requête:', request.url);
+      request = request.clone({
+        setHeaders: {
+          Authorization: `Bearer ${token}`
+        }
       });
-      
-      // Vérifier si l'en-tête a été correctement ajouté
-      console.log('En-tête Authorization ajouté:', cloned.headers.get('Authorization'));
-
-      return next.handle(cloned);
     }
-    
-    // Si aucun token n'existe, poursuivre avec la requête originale
-    return next.handle(request);
+
+    // Gérer les erreurs de requête
+    return next.handle(request).pipe(
+      catchError((error: HttpErrorResponse) => {
+        // Vérifier si l'erreur est une erreur d'autorisation (401)
+        if (error.status === 401) {
+          // Tenter de rafraîchir le token
+          return this.handleUnauthorizedError(request, next);
+        }
+        
+        // Pour toutes les autres erreurs, renvoyer l'erreur
+        return throwError(() => error);
+      })
+    );
+  }
+
+  private handleUnauthorizedError(request: HttpRequest<unknown>, next: HttpHandler) {
+    return this.authService.refreshToken().pipe(
+      switchMap(() => {
+        // Récupérer le nouveau token
+        const newToken = localStorage.getItem('access_token');
+        
+        // Cloner la requête originale avec le nouveau token
+        const newRequest = request.clone({
+          setHeaders: {
+            Authorization: `Bearer ${newToken}`
+          }
+        });
+        
+        // Renvoyer la requête avec le nouveau token
+        return next.handle(newRequest);
+      }),
+      catchError((refreshError) => {
+        // Si le rafraîchissement échoue, déconnecter l'utilisateur
+        this.authService.logout();
+        return throwError(() => refreshError);
+      })
+    );
   }
 }

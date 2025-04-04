@@ -14,6 +14,7 @@ import { LoginComponent } from './pages/login/login.component';
 import { MonProfilComponent } from './pages/mon-profil/mon-profil.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
+    NgbModule,
   ],
   providers: [
     // Ajoutez cette configuration pour l'intercepteur

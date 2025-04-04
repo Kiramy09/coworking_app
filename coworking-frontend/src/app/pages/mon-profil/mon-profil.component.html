@@ -73,17 +73,12 @@
               </div>
               <div class="form-group">
                 <label for="gender">Genre</label>
-                <select 
+                <input 
                   id="gender" 
                   [(ngModel)]="userProfile.gender" 
-                  [disabled]="!isEditing"
-                  [class.readonly]="!isEditing">
-                  <option value="">Sélectionner</option>
-                  <!-- Utilisation des options de genre définies dans le composant -->
-                  <option *ngFor="let option of genderOptions" [value]="option.value">
-                    {{ option.label }}
-                  </option>
-                </select>
+                  readonly
+                  class="readonly">
+                  
               </div>
             </div>
   
@@ -140,3 +135,27 @@
       </div>
     </div>
   </div>
+
+  <!--  code à la pour l'ajout de bootsrap de votre template HTML -->
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;">
+  <div 
+    class="toast" 
+    [ngClass]="{'show': showToast, 'bg-success text-white': toastType === 'success', 'bg-danger text-white': toastType === 'danger'}" 
+    role="alert" 
+    aria-live="assertive" 
+    aria-atomic="true"
+  >
+    <div class="toast-header">
+      <strong class="me-auto">Notification</strong>
+      <button 
+        type="button" 
+        class="btn-close" 
+        (click)="showToast = false"
+        aria-label="Close"
+      ></button>
+    </div>
+    <div class="toast-body">
+      {{ toastMessage }}
+    </div>
+  </div>
+</div>
