@@ -96,3 +96,24 @@ class ProfileUpdateView(APIView):
             serializer.save()
             return Response({'message': 'Profil mis à jour avec succès'}, status=200)
         return Response(serializer.errors, status=400)
+
+
+class BookingViewSet(viewsets.ModelViewSet):
+    queryset = Booking.objects.all()
+    serializer_class = BookingSerializer
+
+    def create(self, request, *args, **kwargs):
+        space = request.data['coworking_space']
+        start = request.data['start_time']
+        end = request.data['end_time']
+
+        overlap = Booking.objects.filter(
+            coworking_space_id=space,
+            start_time__lt=end,
+            end_time__gt=start
+        ).exists()
+
+        if overlap:
+            return Response({'error': 'Ce créneau est déjà réservé.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        return super().create(request, *args, **kwargs)

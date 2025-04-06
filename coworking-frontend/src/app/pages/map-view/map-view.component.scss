@@ -27,3 +27,12 @@
   display: inline-block;
   transform: translateY(-10%);
 }
+
+.leaflet-popup-content {
+  font-size: 14px;
+  padding: 4px;
+}
+
+.leaflet-popup-content img {
+  border-radius: 8px;
+}

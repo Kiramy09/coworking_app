@@ -101,7 +101,18 @@ export class MapViewComponent implements OnInit, AfterViewInit {
               [space.latitude, space.longitude],
               { icon: customIcon }
             ).addTo(this.map);
-            marker.bindPopup(`<b>${space.name}</b><br>${space.address}`);
+
+            const popupContent = `
+              <div style="width: 200px;">
+                <img src="${space.image}" alt="${space.name}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 8px;">
+                <strong>${space.name}</strong><br>
+                <small>${space.address}</small>
+              </div>
+            `;
+
+            marker.bindPopup(popupContent);
+
+            // marker.bindPopup(`<b>${space.name}</b><br>${space.address}`);
           }
         });
       },

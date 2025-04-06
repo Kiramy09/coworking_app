@@ -10,8 +10,12 @@
   
         <form (ngSubmit)="submitBooking()" #form="ngForm" class="mt-4">
           <div class="mb-3">
-            <label class="form-label">Date</label>
-            <input type="date" class="form-control" [(ngModel)]="bookingForm.date" name="date" required>
+            <label class="form-label">Date de début</label>
+            <input type="date" class="form-control" [(ngModel)]="bookingForm.startDate" name="startDate" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Date de fin</label>
+            <input type="date" class="form-control" [(ngModel)]="bookingForm.endDate" name="endDate" required>
           </div>
           <div class="mb-3">
             <label class="form-label">Heure de début</label>
@@ -23,6 +27,7 @@
           </div>
           <button type="submit" class="btn btn-success w-100" [disabled]="form.invalid">Confirmer la réservation</button>
         </form>
+        
       </div>
     </div>
   </div>
