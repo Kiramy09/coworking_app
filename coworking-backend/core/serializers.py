@@ -25,7 +25,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'email', 'first_name', 'last_name', 'password']
+        fields = ['id', 'email', 'first_name', 'last_name', 'password', 'is_staff']
 
     def create(self, validated_data):
         # On utilise le manager pour hasher le mot de passe

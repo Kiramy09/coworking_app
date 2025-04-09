@@ -8,6 +8,8 @@
 
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
       <ul class="navbar-nav align-items-center">
+        
+        <!-- Lien d'inscription et de connexion si non connecté -->
         <li *ngIf="!isLoggedIn()" class="nav-item">
           <a class="btn btn-outline-light btn-sm me-2" routerLink="/register">S’inscrire</a>
         </li>
@@ -15,15 +17,19 @@
           <a class="btn btn-dark btn-sm" routerLink="/login">Connexion</a>
         </li>
 
+        <!-- Menu Mon Compte si connecté -->
         <li *ngIf="isLoggedIn()" class="nav-item dropdown">
-          <!-- <a class="btn btn-dark btn-sm me-2" routerLink="">Rechercher</a> -->
-
           <button class="btn btn-dark btn-sm dropdown-toggle" data-bs-toggle="dropdown">
             Mon compte
           </button>
           <ul class="dropdown-menu dropdown-menu-end">
             <li><a class="dropdown-item" routerLink="/profile">Voir mon profil</a></li>
             <li><a class="dropdown-item" routerLink="/reservation" routerLinkActive="active">Mes réservations</a></li>
+            
+            <!-- Menu Administrateur (visible uniquement pour les admins) -->
+            <li *ngIf="isAdmin"><hr class="dropdown-divider"></li>
+            <li *ngIf="isAdmin"><a class="dropdown-item text-primary" routerLink="/admin-dashboard">Admin Dashboard</a></li>
+            
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item text-danger" (click)="logout()">Déconnexion</a></li>
           </ul>

@@ -1,0 +1,35 @@
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Tableau de bord Administrateur</h2>
+  
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card dashboard-card">
+          <div class="card-body">
+            <h5 class="card-title">Utilisateurs inscrits</h5>
+            <p class="card-text">Nombre total : <strong>120</strong></p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card dashboard-card">
+          <div class="card-body">
+            <h5 class="card-title">Réservations</h5>
+            <p class="card-text">Total réservations : <strong>85</strong></p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card dashboard-card">
+          <div class="card-body">
+            <h5 class="card-title">Revenus</h5>
+            <p class="card-text">Total : <strong>1500 €</strong></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="mt-4 text-center">
+      <button class="btn btn-danger" (click)="authService.logout()">Déconnexion Admin</button>
+    </div>
+  </div>
+  
