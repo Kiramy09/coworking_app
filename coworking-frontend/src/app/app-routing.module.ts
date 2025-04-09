@@ -8,8 +8,9 @@ import { LoginComponent } from './pages/login/login.component';
 import { MapViewComponent } from './pages/map-view/map-view.component';
 import { ReservationComponent } from './pages/reservation/reservation.component';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
-// Optionnel : si tu veux plus tard ajouter une guard d'accès admin
-// import { AdminGuard } from './guards/admin.guard';
+import { AdminUsersComponent } from './pages/admin-users/admin-users.component';
+import { AdminReservationsComponent } from './pages/admin-reservations/admin-reservations.component';
+import { AdminSpacesComponent } from './pages/admin-spaces/admin-spaces.component';
 
 const routes: Routes = [
   // 🌍 Page d'accueil
@@ -29,7 +30,10 @@ const routes: Routes = [
 
   // 🔐 Dashboard admin (tu peux ajouter une guard plus tard)
   { path: 'admin-dashboard', component: AdminDashboardComponent },
-  
+  { path: 'admin-users', component: AdminUsersComponent },
+  { path: 'admin-reservations', component: AdminReservationsComponent },
+  { path: 'admin-spaces', component: AdminSpacesComponent },
+
   // ❌ Catch-all si la route n'existe pas
   { path: '**', redirectTo: 'home' }
 ];
