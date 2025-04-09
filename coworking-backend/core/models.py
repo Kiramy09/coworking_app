@@ -109,8 +109,8 @@ class Booking(models.Model):
     coworking_space = models.ForeignKey(CoworkingSpace, on_delete=models.CASCADE)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    # created_at = models.DateTimeField(auto_now_add=True)
+    # updated_at = models.DateTimeField(auto_now=True)
     is_paid = models.BooleanField(default=False)
 
     class Meta:

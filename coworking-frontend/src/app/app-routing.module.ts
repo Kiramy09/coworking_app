@@ -6,6 +6,7 @@ import { CompleteProfileComponent } from './pages/complete-profile/complete-prof
 import { LoginComponent } from './pages/login/login.component';
 import { MapViewComponent } from './pages/map-view/map-view.component';
 import { BookingComponent } from './pages/booking/booking.component';
+import { PaymentComponent } from './pages/payment/payment.component';
 
 
 
@@ -16,7 +17,9 @@ const routes: Routes = [
   { path: 'complete-profile', component: CompleteProfileComponent },
   { path: 'login', component: LoginComponent },
   { path: 'explore', component: MapViewComponent },
-  { path: 'booking/:id',component: BookingComponent}
+  { path: 'booking/:id',component: BookingComponent},
+  { path: 'payment/:bookingId', component: PaymentComponent }
+
   
 
 ];

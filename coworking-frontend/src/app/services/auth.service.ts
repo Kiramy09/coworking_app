@@ -65,6 +65,11 @@ export class AuthService {
     const refresh = localStorage.getItem('refresh_token');
     return this.http.post(`${this.baseUrl}refresh/`, { refresh });
   }
+
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('access_token');
+  }
+  
   
   
 }

@@ -32,5 +32,18 @@ export class CoworkingService {
     return this.http.post(`${this.apiUrl}/bookings/`, data);
   }
 
+  createPayment(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/payments/`, data);
+  }
+  
+  getBooking(id: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/bookings/${id}/`);
+  }
+
+  checkAvailability(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/bookings/check/`, data);
+  }
+  
+  
 
 }

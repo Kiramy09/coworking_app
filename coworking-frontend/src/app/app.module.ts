@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './services/auth.interceptor';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -12,6 +14,7 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
 import { MapViewComponent } from './pages/map-view/map-view.component';
 import { LoginComponent } from './pages/login/login.component';
 import { BookingComponent } from './pages/booking/booking.component';
+import { PaymentComponent } from './pages/payment/payment.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +26,7 @@ import { BookingComponent } from './pages/booking/booking.component';
     MapViewComponent,
     NavbarComponent,
     BookingComponent,
+    PaymentComponent,
   ],
   imports: [
     BrowserModule,
@@ -30,7 +34,13 @@ import { BookingComponent } from './pages/booking/booking.component';
     HttpClientModule,
     FormsModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

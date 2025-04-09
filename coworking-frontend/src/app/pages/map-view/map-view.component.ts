@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import * as L from 'leaflet';
 import { CoworkingService } from '../../services/coworking.service';
 import { ActivatedRoute } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 // Supprimer l'icône Leaflet par défaut
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -30,7 +31,8 @@ export class MapViewComponent implements OnInit, AfterViewInit {
 
   constructor(
     private coworkingService: CoworkingService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    public authService: AuthService,
   ) {}
 
   ngOnInit(): void {

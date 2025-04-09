@@ -6,6 +6,9 @@ from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAuthenticated
 from .serializers import ProfileSerializer
 from .models import Profile
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
+from django.utils.dateparse import parse_datetime
 
 from .models import CoworkingSpace, Equipment, Booking, CoworkingPayment 
 from .serializers import (
@@ -57,8 +60,19 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
 class BookingViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
+
+    def create(self, request, *args, **kwargs):
+        data = request.data.copy()
+        data['customer'] = request.user.id 
+        data['is_paid'] = False
+
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class CoworkingPaymentViewSet(viewsets.ModelViewSet):
     queryset = CoworkingPayment.objects.all()
@@ -97,8 +111,8 @@ class ProfileUpdateView(APIView):
             return Response({'message': 'Profil mis à jour avec succès'}, status=200)
         return Response(serializer.errors, status=400)
 
-
 class BookingViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
 
@@ -107,6 +121,7 @@ class BookingViewSet(viewsets.ModelViewSet):
         start = request.data['start_time']
         end = request.data['end_time']
 
+        # Vérifier conflits
         overlap = Booking.objects.filter(
             coworking_space_id=space,
             start_time__lt=end,
@@ -116,4 +131,40 @@ class BookingViewSet(viewsets.ModelViewSet):
         if overlap:
             return Response({'error': 'Ce créneau est déjà réservé.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        return super().create(request, *args, **kwargs)
+        # Injecter automatiquement le customer connecté
+        data = request.data.copy()
+        data['customer'] = request.user.id
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    
+
+class MyBookingsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        bookings = Booking.objects.filter(customer=request.user)
+        serializer = BookingSerializer(bookings, many=True)
+        return Response(serializer.data)
+    
+
+class CheckBookingAvailabilityView(APIView):
+    permission_classes = [AllowAny]  # Ou IsAuthenticated si tu veux le restreindre
+
+    def post(self, request):
+        space = request.data.get('coworking_space')
+        start = parse_datetime(request.data.get('start_time'))
+        end = parse_datetime(request.data.get('end_time'))
+
+        if not (space and start and end):
+            return Response({'error': 'Paramètres manquants'}, status=400)
+
+        overlap = Booking.objects.filter(
+            coworking_space_id=space,
+            start_time__lt=end,
+            end_time__gt=start
+        ).exists()
+
+        return Response({'available': not overlap})

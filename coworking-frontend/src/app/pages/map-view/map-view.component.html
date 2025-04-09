@@ -98,7 +98,14 @@
         <div class="card-body p-2">
           <h6 class="card-title mb-1">{{ space.name }}</h6>
           <small class="text-muted d-block">{{ space.address }}</small>
-          <a [routerLink]="['/booking', space.id]" class="btn btn-primary btn-sm mt-2">Réserver</a>
+          <!-- <a [routerLink]="['/booking', space.id]" class="btn btn-primary btn-sm mt-2">Réserver</a> -->
+          <a *ngIf="authService.isLoggedIn()" [routerLink]="['/booking', space.id]" class="btn btn-primary btn-sm mt-2">
+            Réserver
+          </a>
+          <span *ngIf="!authService.isLoggedIn()" class="text-muted small">
+            <a [routerLink]="['/login']">Connectez-vous</a> pour réserver
+          </span>
+          
         </div>
       </div>
     </div>

@@ -1,0 +1,32 @@
+<div class="container py-5">
+    <div class="card shadow p-4 mx-auto" style="max-width: 500px;">
+      <h4 class="mb-3 text-center">Paiement</h4>
+  
+      <div *ngIf="booking">
+        <p><strong>Espace :</strong> {{ booking.coworking_space.name }}</p>
+        <p><strong>Total à payer :</strong> {{ totalAmount }} €</p>
+      </div>
+  
+      <form (ngSubmit)="confirmPayment()" #form="ngForm" class="mt-4">
+  
+        <div class="mb-3">
+          <label class="form-label">Numéro de carte</label>
+          <input type="text" class="form-control" [(ngModel)]="card.number" name="number" required>
+        </div>
+  
+        <div class="row mb-3">
+          <div class="col">
+            <label class="form-label">Date d'expiration</label>
+            <input type="text" class="form-control" placeholder="MM/AA" [(ngModel)]="card.expiry" name="expiry" required>
+          </div>
+          <div class="col">
+            <label class="form-label">CVV</label>
+            <input type="text" class="form-control" [(ngModel)]="card.cvv" name="cvv" required>
+          </div>
+        </div>
+  
+        <button type="submit" class="btn btn-primary w-100" [disabled]="form.invalid">Payer maintenant</button>
+      </form>
+    </div>
+  </div>
+  
