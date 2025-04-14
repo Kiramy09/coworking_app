@@ -13,9 +13,17 @@ export class CoworkingService {
 
   // Gérer les erreurs de manière centralisée
   private handleError(error: any): Observable<never> {
-    console.error('Une erreur est survenue :', error);
+    console.error('❌ Une erreur est survenue :', error);
+  
+    // 🔍 Ajoute ce log pour voir les erreurs précises renvoyées par Django
+    if (error.error) {
+      console.error('💥 Erreur renvoyée par l\'API :', error.error);
+      alert('Erreur API : ' + JSON.stringify(error.error)); // Ajout temporaire pour test
+    }
+  
     return throwError(() => new Error('Une erreur est survenue lors de la requête.'));
   }
+  
 
   // Générer les en-têtes d'authentification
   private getAuthHeaders(): HttpHeaders {
@@ -103,4 +111,30 @@ export class CoworkingService {
     const url = `${this.apiUrl}/bookings/${id}/`;
     return this.http.delete(url, { headers: this.getAuthHeaders() });
   }
+  
+   // ✅ POST - Ajouter un espace
+   addSpace(space: any): Observable<any> {
+    if (!this.checkToken()) return throwError(() => new Error('Utilisateur non authentifié.'));
+    
+    const url = `${this.apiUrl}/spaces/`; // ✅ c’est cette URL qu’il faut !
+    
+    return this.http.post<any>(url, space, { headers: this.getAuthHeaders() })
+      .pipe(catchError(this.handleError));
+      
+  }
+
+  // 🗑️ DELETE - Supprimer un espace
+  deleteSpace(id: number): Observable<any> {
+    if (!this.checkToken()) return throwError(() => new Error('Utilisateur non authentifié.'));
+    return this.http.delete(`${this.apiUrl}${id}/`, { headers: this.getAuthHeaders() })
+      .pipe(catchError(this.handleError));
+  }
+
+  // ✏️ PUT - Modifier un espace
+  updateSpace(id: number, space: any): Observable<any> {
+    if (!this.checkToken()) return throwError(() => new Error('Utilisateur non authentifié.'));
+    return this.http.put(`${this.apiUrl}${id}/`, space, { headers: this.getAuthHeaders() })
+      .pipe(catchError(this.handleError));
+  }
+  
 }  

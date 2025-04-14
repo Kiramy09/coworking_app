@@ -35,7 +35,7 @@ class CoworkingSpace(models.Model):
 
     image = models.ImageField(upload_to='coworking_images/',storage=MediaCloudinaryStorage(),null=True,blank=True)
     # image = models.ImageField(upload_to='coworking_images/', null=True, blank=True)
-    equipments = models.ManyToManyField(Equipment, related_name='spaces')
+    
     price_per_hour = models.DecimalField(max_digits=5, decimal_places=2)
     capacity = models.PositiveIntegerField()
     latitude = models.FloatField(null=True, blank=True)
@@ -43,6 +43,7 @@ class CoworkingSpace(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    equipments = models.ManyToManyField(Equipment, blank=True)
     class Meta:
         db_table = 'coworking_spaces'
 

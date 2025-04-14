@@ -3,19 +3,19 @@
 
   <div class="row justify-content-center">
     <div class="col-md-4 mb-4">
-      <button class="admin-btn" routerLink="'/admin-users'">
+      <button class="admin-btn" (click)="goTo('admin-users')">
         👤 Gestion des Utilisateurs
       </button>
-
-
     </div>
+
     <div class="col-md-4 mb-4">
-      <button class="admin-btn" routerLink="/admin-reservations">
+      <button class="admin-btn" (click)="goTo('admin-reservations')">
         📅 Gestion des Réservations
       </button>
     </div>
+
     <div class="col-md-4 mb-4">
-      <button class="admin-btn" routerLink="/admin-spaces">
+      <button class="admin-btn" (click)="goTo('admin-spaces')">
         🏢 Gestion des Espaces
       </button>
     </div>

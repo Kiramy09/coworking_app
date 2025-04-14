@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 
+
 @Component({
   selector: 'app-admin-dashboard',
   templateUrl: './admin-dashboard.component.html',
@@ -12,6 +13,9 @@ export class AdminDashboardComponent implements OnInit {
 
   constructor(public authService: AuthService, private router: Router) {}
 
+  goTo(path: string): void {
+    this.router.navigate([`/${path}`]);
+  }
   ngOnInit(): void {
     this.authService.getCurrentUser().subscribe({
       next: (user) => {

@@ -6,25 +6,23 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class UserService {
-  private baseUrl = 'http://127.0.0.1:8000/api/admin/users/';
+  private apiUrl = 'http://127.0.0.1:8000/api/users/';
 
   constructor(private http: HttpClient) {}
 
-  private getHeaders(): HttpHeaders {
+  private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('access_token');
     return new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
     });
   }
 
-  // 🔍 Récupérer tous les utilisateurs
   getAllUsers(): Observable<any[]> {
-    return this.http.get<any[]>(this.baseUrl, { headers: this.getHeaders() });
+    return this.http.get<any[]>(this.apiUrl, { headers: this.getAuthHeaders() });
   }
 
-  // ❌ Supprimer un utilisateur
-  deleteUser(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}${id}/`, { headers: this.getHeaders() });
+  deleteUser(userId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}${userId}/`, { headers: this.getAuthHeaders() });
   }
 }

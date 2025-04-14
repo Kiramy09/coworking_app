@@ -1,1 +1,54 @@
-<p>admin-spaces works!</p>
+<div class="container mt-4">
+    <h2>Gestion des Espaces de Coworking</h2>
+  
+    <form (submit)="addSpace(); $event.preventDefault()" class="mb-4">
+      <div class="row g-2">
+        <div class="col-md-6">
+          <input class="form-control" placeholder="Nom" [(ngModel)]="newSpace.name" name="name" required>
+        </div>
+        <div class="col-md-6">
+          <input class="form-control" placeholder="Description" [(ngModel)]="newSpace.description" name="description">
+        </div>
+        <div class="col-md-4">
+          <input class="form-control" placeholder="Ville" [(ngModel)]="newSpace.city" name="city">
+        </div>
+        <div class="col-md-4">
+          <input class="form-control" placeholder="Adresse" [(ngModel)]="newSpace.address" name="address">
+        </div>
+        <div class="col-md-4">
+          <input class="form-control" placeholder="Prix/heure" type="number" [(ngModel)]="newSpace.price_per_hour" name="price_per_hour">
+        </div>
+        <div class="col-md-4">
+          <input class="form-control" placeholder="Capacité" type="number" [(ngModel)]="newSpace.capacity" name="capacity">
+        </div>
+        <div class="col-md-4">
+          <input class="form-control" placeholder="Latitude" type="number" [(ngModel)]="newSpace.latitude" name="latitude">
+        </div>
+        <div class="col-md-4">
+          <input class="form-control" placeholder="Longitude" type="number" [(ngModel)]="newSpace.longitude" name="longitude">
+        </div>
+        <div class="col-md-4">
+          <input class="form-control" placeholder="Type d'espace" [(ngModel)]="newSpace.space_type" name="space_type">
+        </div>
+        <div class="col-md-4">
+          <input class="form-control" placeholder="Image (URL)" [(ngModel)]="newSpace.image" name="image">
+        </div>
+        <div class="col-md-4">
+          <input class="form-control" placeholder="ID Métropole" [(ngModel)]="newSpace.metropole_id" name="metropole_id">
+        </div>
+      </div>
+      <button class="btn btn-dark mt-3" type="submit">➕ Ajouter</button>
+    </form>
+  
+    <hr>
+  
+    <div *ngIf="spaces.length">
+      <h4>📋 Espaces enregistrés :</h4>
+      <ul class="list-group">
+        <li *ngFor="let space of spaces" class="list-group-item">
+          <strong>{{ space.name }}</strong> – {{ space.city }} ({{ space.space_type }})
+        </li>
+      </ul>
+    </div>
+  </div>
+  

@@ -11,8 +11,10 @@ class EquipmentSerializer(serializers.ModelSerializer):
 
 
 class CoworkingSpaceSerializer(serializers.ModelSerializer):
-    equipments = EquipmentSerializer(many=True, read_only=True)
-    image = serializers.ImageField(required=False)
+    equipments = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Equipment.objects.all(), required=False
+    )
+    image = serializers.ImageField(required=False, allow_null=True)
 
     class Meta:
         model = CoworkingSpace

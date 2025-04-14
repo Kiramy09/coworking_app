@@ -11,6 +11,9 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
 import { MapViewComponent } from './pages/map-view/map-view.component';
 import { LoginComponent } from './pages/login/login.component';
 import { ReservationComponent } from './pages/reservation/reservation.component';
+import { AdminUsersComponent } from './pages/admin-users/admin-users.component';
+import { AdminSpacesComponent } from './pages/admin-spaces/admin-spaces.component';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -22,6 +25,8 @@ import { ReservationComponent } from './pages/reservation/reservation.component'
     MapViewComponent,
     NavbarComponent,
     ReservationComponent,
+    AdminUsersComponent,
+    AdminSpacesComponent,
   ],
   imports: [
     BrowserModule,
