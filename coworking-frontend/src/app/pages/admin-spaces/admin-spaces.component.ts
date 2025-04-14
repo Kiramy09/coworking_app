@@ -41,7 +41,21 @@ export class AdminSpacesComponent implements OnInit {
     this.coworkingService.addSpace(this.newSpace).subscribe({
       next: (res) => {
         alert('Espace ajouté avec succès');
-        this.newSpace = {};
+        this.newSpace = {
+          name: '',
+          description: '',
+          city: '',
+          address: '',
+          price_per_hour: 1,
+          capacity: 1,
+          latitude: 1,
+          longitude: 1,
+          space_type: '',
+          image: null,
+          metropole_id: 0,
+          equipments: []
+        };
+        
         this.loadSpaces();
       },
       error: (err) => {
@@ -53,6 +67,13 @@ export class AdminSpacesComponent implements OnInit {
       }
       
     });
+  }
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      this.newSpace.image = input.files[0]; // 👈 un vrai fichier
+      console.log('📸 Fichier sélectionné :', this.newSpace.image);
+    }
   }
   
 }

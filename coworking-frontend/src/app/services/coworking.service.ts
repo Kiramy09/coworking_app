@@ -11,36 +11,31 @@ export class CoworkingService {
 
   constructor(private http: HttpClient) {}
 
-  // Gérer les erreurs de manière centralisée
   private handleError(error: any): Observable<never> {
     console.error('❌ Une erreur est survenue :', error);
-  
-    // 🔍 Ajoute ce log pour voir les erreurs précises renvoyées par Django
+
     if (error.error) {
       console.error('💥 Erreur renvoyée par l\'API :', error.error);
-      alert('Erreur API : ' + JSON.stringify(error.error)); // Ajout temporaire pour test
+      alert('Erreur API : ' + JSON.stringify(error.error)); // Temporaire pour debug
     }
-  
+
     return throwError(() => new Error('Une erreur est survenue lors de la requête.'));
   }
-  
 
-  // Générer les en-têtes d'authentification
-  private getAuthHeaders(): HttpHeaders {
+  private getAuthHeaders(skipContentType = false): HttpHeaders {
     const token = localStorage.getItem('access_token');
-    if (token) {
-      console.log('En-tête d\'authentification envoyé:', `Bearer ${token}`);
-      return new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`  // Bien utiliser Bearer pour JWT
-      });
-    } else {
-      console.error('Aucun token trouvé dans le localStorage');
-      return new HttpHeaders({'Content-Type': 'application/json'});
+
+    let headers = new HttpHeaders({
+      'Authorization': token ? `Bearer ${token}` : ''
+    });
+
+    if (!skipContentType) {
+      headers = headers.set('Content-Type', 'application/json');
     }
+
+    return headers;
   }
 
-  // Vérification du token avant d'envoyer la requête
   private checkToken(): boolean {
     const token = localStorage.getItem('access_token');
     if (!token) {
@@ -50,28 +45,24 @@ export class CoworkingService {
     return true;
   }
 
-  // Récupérer tous les espaces
   getSpaces(): Observable<any[]> {
     if (!this.checkToken()) return throwError(() => new Error('Utilisateur non authentifié.'));
     return this.http.get<any[]>(`${this.apiUrl}/spaces/`, { headers: this.getAuthHeaders() })
       .pipe(catchError(this.handleError));
   }
 
-  // Récupérer les espaces par type
   getSpacesByType(type: string): Observable<any[]> {
     if (!this.checkToken()) return throwError(() => new Error('Utilisateur non authentifié.'));
     return this.http.get<any[]>(`${this.apiUrl}/spaces/?type=${type}`, { headers: this.getAuthHeaders() })
       .pipe(catchError(this.handleError));
   }
 
-  // Récupérer un espace par ID
   getSpace(id: number): Observable<any> {
     if (!this.checkToken()) return throwError(() => new Error('Utilisateur non authentifié.'));
     return this.http.get<any>(`${this.apiUrl}/spaces/${id}/`, { headers: this.getAuthHeaders() })
       .pipe(catchError(this.handleError));
   }
 
-  // Récupérer les espaces avec des filtres dynamiques
   getSpacesFiltered(params: any): Observable<any[]> {
     if (!this.checkToken()) return throwError(() => new Error('Utilisateur non authentifié.'));
     const httpParams = new HttpParams({ fromObject: params });
@@ -79,25 +70,16 @@ export class CoworkingService {
       .pipe(catchError(this.handleError));
   }
 
-  // Récupérer les réservations de l'utilisateur connecté
   getUserBookings(): Observable<any> {
     if (!this.checkToken()) return throwError(() => new Error('Utilisateur non authentifié.'));
     return this.http.get<any>(`${this.apiUrl}/bookings/`, { headers: this.getAuthHeaders() })
-      .pipe(
-        catchError(error => {
-          console.error('Erreur lors du chargement des réservations:', error);
-          return throwError(() => new Error('Erreur lors du chargement des réservations.'));
-        })
-      );
+      .pipe(catchError(this.handleError));
   }
 
-  // Vérifier si l'utilisateur est authentifié
   isAuthenticated(): boolean {
-    const token = localStorage.getItem('access_token');
-    return !!token;
+    return !!localStorage.getItem('access_token');
   }
 
-  // Déconnexion de l'utilisateur
   logout(): void {
     try {
       localStorage.removeItem('access_token');
@@ -107,34 +89,52 @@ export class CoworkingService {
       console.error('Erreur lors de la déconnexion:', error);
     }
   }
+
   cancelBooking(id: number): Observable<any> {
-    const url = `${this.apiUrl}/bookings/${id}/`;
-    return this.http.delete(url, { headers: this.getAuthHeaders() });
-  }
-  
-   // ✅ POST - Ajouter un espace
-   addSpace(space: any): Observable<any> {
-    if (!this.checkToken()) return throwError(() => new Error('Utilisateur non authentifié.'));
-    
-    const url = `${this.apiUrl}/spaces/`; // ✅ c’est cette URL qu’il faut !
-    
-    return this.http.post<any>(url, space, { headers: this.getAuthHeaders() })
+    return this.http.delete(`${this.apiUrl}/bookings/${id}/`, { headers: this.getAuthHeaders() })
       .pipe(catchError(this.handleError));
-      
   }
 
-  // 🗑️ DELETE - Supprimer un espace
+  // ✅ POST - Ajouter un espace avec image (FormData)
+  addSpace(space: any): Observable<any> {
+    if (!this.checkToken()) return throwError(() => new Error('Utilisateur non authentifié.'));
+
+    const formData = new FormData();
+    formData.append('name', space.name);
+    formData.append('description', space.description);
+    formData.append('city', space.city);
+    formData.append('address', space.address);
+    formData.append('price_per_hour', space.price_per_hour.toString());
+
+    if (space.type) formData.append('type', space.type);
+    if (space.image) formData.append('image', space.image); // 👈 MUST be File!
+
+    return this.http.post<any>(`${this.apiUrl}/spaces/`, formData, {
+      headers: this.getAuthHeaders(true) // 🚫 skip Content-Type
+    }).pipe(catchError(this.handleError));
+  }
+
   deleteSpace(id: number): Observable<any> {
     if (!this.checkToken()) return throwError(() => new Error('Utilisateur non authentifié.'));
-    return this.http.delete(`${this.apiUrl}${id}/`, { headers: this.getAuthHeaders() })
+    return this.http.delete(`${this.apiUrl}/spaces/${id}/`, { headers: this.getAuthHeaders() })
       .pipe(catchError(this.handleError));
   }
 
-  // ✏️ PUT - Modifier un espace
   updateSpace(id: number, space: any): Observable<any> {
     if (!this.checkToken()) return throwError(() => new Error('Utilisateur non authentifié.'));
-    return this.http.put(`${this.apiUrl}${id}/`, space, { headers: this.getAuthHeaders() })
-      .pipe(catchError(this.handleError));
+
+    const formData = new FormData();
+    formData.append('name', space.name);
+    formData.append('description', space.description);
+    formData.append('city', space.city);
+    formData.append('address', space.address);
+    formData.append('price_per_hour', space.price_per_hour.toString());
+
+    if (space.type) formData.append('type', space.type);
+    if (space.image) formData.append('image', space.image); // 👈 support maj image
+
+    return this.http.put<any>(`${this.apiUrl}/spaces/${id}/`, formData, {
+      headers: this.getAuthHeaders(true)
+    }).pipe(catchError(this.handleError));
   }
-  
-}  
+}

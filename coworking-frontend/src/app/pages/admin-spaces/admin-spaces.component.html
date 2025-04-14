@@ -31,7 +31,8 @@
           <input class="form-control" placeholder="Type d'espace" [(ngModel)]="newSpace.space_type" name="space_type">
         </div>
         <div class="col-md-4">
-          <input class="form-control" placeholder="Image (URL)" [(ngModel)]="newSpace.image" name="image">
+          <input class="form-control" type="file" (change)="onFileSelected($event)" name="image" accept="image/*">
+
         </div>
         <div class="col-md-4">
           <input class="form-control" placeholder="ID Métropole" [(ngModel)]="newSpace.metropole_id" name="metropole_id">
