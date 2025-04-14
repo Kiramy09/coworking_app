@@ -1,3 +1,4 @@
+from django.utils import timezone  
 from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
@@ -20,7 +21,7 @@ from .serializers import (
 
 User = get_user_model()
 
-# 📝 Récupérer toutes les réservations (pour l'admin uniquement)
+# Récupérer toutes les réservations (pour l'admin uniquement)
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_all_bookings(request):
@@ -41,7 +42,7 @@ def cancel_booking(request, id):
     except Booking.DoesNotExist:
         return Response({'error': 'Réservation non trouvée ou non autorisée'}, status=status.HTTP_404_NOT_FOUND)
     
-# 📝 Récupérer les réservations de l'utilisateur connecté
+#  Récupérer les réservations de l'utilisateur connecté
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user_bookings(request):
@@ -71,7 +72,7 @@ def get_user_bookings(request):
         return JsonResponse({'error': 'Erreur lors de la récupération des réservations.'}, status=500)
 
 
-# 🚀 ViewSet pour les espaces de coworking
+#  ViewSet pour les espaces de coworking
 class CoworkingSpaceViewSet(viewsets.ModelViewSet):
     queryset = CoworkingSpace.objects.all()
     serializer_class = CoworkingSpaceSerializer
@@ -89,7 +90,7 @@ class CoworkingSpaceViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-# 🚀 ViewSet pour les utilisateurs
+#  ViewSet pour les utilisateurs
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -103,7 +104,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-# 🚀 ViewSet pour les réservations
+#  ViewSet pour les réservations
 class BookingViewSet(viewsets.ModelViewSet):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
@@ -111,17 +112,43 @@ class BookingViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         # Filtrer uniquement les réservations de l'utilisateur connecté
-        return Booking.objects.filter(customer=self.request.user)
+       return Booking.objects.filter(customer=self.request.user)
+ 
+    @action(detail=True, methods=['post'])
+    def add_review(self, request, pk=None):
+        booking = self.get_object()
 
+        # Vérifier explicitement l'authentification
+        if not request.user.is_authenticated:
+            return Response({"error": "Authentification requise"}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        # Vérifier que l'utilisateur est bien le propriétaire de la réservation
+        if booking.customer != request.user:
+            return Response({"error": "Vous ne pouvez évaluer que vos propres réservations"}, 
+                        status=status.HTTP_403_FORBIDDEN)
+        
+        # Vérifier que la réservation n'a pas déjà été évaluée
+        if booking.rating is not None:
+            return Response({"error": "Cette réservation a déjà été évaluée"}, 
+                        status=status.HTTP_400_BAD_REQUEST)
+        
+        # Mettre à jour les champs d'avis
+        booking.rating = request.data.get('rating')
+        booking.review_comment = request.data.get('review_comment')
+        booking.review_date = timezone.now()
+        booking.save()
+        
+        serializer = self.get_serializer(booking)
+        return Response(serializer.data)
 
-# 🚀 ViewSet pour les paiements de coworking
+#  ViewSet pour les paiements de coworking
 class CoworkingPaymentViewSet(viewsets.ModelViewSet):
     queryset = CoworkingPayment.objects.all()
     serializer_class = CoworkingPaymentSerializer
     permission_classes = [IsAuthenticated]
 
 
-# 🚀 Inscription d'un nouvel utilisateur
+#  Inscription d'un nouvel utilisateur
 class RegisterView(APIView):
     def post(self, request):
         serializer = UserWithProfileSerializer(data=request.data)
@@ -131,7 +158,7 @@ class RegisterView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# 🚀 Mise à jour du profil utilisateur
+#  Mise à jour du profil utilisateur
 class ProfileUpdateView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -143,3 +170,29 @@ class ProfileUpdateView(APIView):
             serializer.save()
             return Response({'message': 'Profil mis à jour avec succès'}, status=200)
         return Response(serializer.errors, status=400)
+
+
+# views pour les   avis
+""" class ReviewViewSet(viewsets.ModelViewSet):
+    serializer_class = ReviewSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_queryset(self):
+        # Filtre pour voir tous les avis ou seulement les siens selon les besoins
+        if self.request.query_params.get('all', False):
+            return Review.objects.all()
+        return Review.objects.filter(booking__customer=self.request.user)
+    
+    def perform_create(self, serializer):
+        booking_id = self.request.data.get('booking')
+        booking = Booking.objects.get(id=booking_id)
+        
+        # Vérifiez que l'utilisateur est bien le propriétaire de la réservation
+        if booking.customer != self.request.user:
+            raise PermissionDenied("Vous ne pouvez ajouter un avis que sur vos propres réservations")
+        
+        # Vérifiez qu'il n'y a pas déjà un avis pour cette réservation
+        if Review.objects.filter(booking=booking).exists():
+            raise ValidationError("Un avis existe déjà pour cette réservation")
+            
+        serializer.save() """

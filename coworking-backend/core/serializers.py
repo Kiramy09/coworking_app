@@ -47,7 +47,8 @@ class BookingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Booking
-        fields = ['id', 'start_time', 'end_time', 'is_paid', 'customer', 'coworking_space']
+        fields = ['id', 'start_time', 'end_time', 'is_paid', 'customer', 'coworking_space',
+                  'rating', 'review_comment', 'review_date']
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
@@ -109,3 +110,12 @@ class ProfileSerializer(serializers.ModelSerializer):
     
 
     
+# serializers pour les avis
+""" class ReviewSerializer(serializers.ModelSerializer):
+    customer_name = serializers.ReadOnlyField(source='booking.customer.username')
+    coworking_space_name = serializers.ReadOnlyField(source='booking.coworking_space.name')
+    
+    class Meta:
+        model = Review
+        fields = ['id', 'booking', 'rating', 'comment', 'created_at', 'customer_name', 'coworking_space_name']
+        read_only_fields = ['customer_name', 'coworking_space_name'] """

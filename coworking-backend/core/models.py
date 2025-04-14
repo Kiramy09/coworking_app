@@ -68,7 +68,7 @@ class UserManager(BaseUserManager):
 
 
 # Booking Model
-class Booking(models.Model):
+""" class Booking(models.Model):
     customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     coworking_space = models.ForeignKey('CoworkingSpace', on_delete=models.CASCADE)
     start_time = models.DateTimeField()
@@ -79,7 +79,28 @@ class Booking(models.Model):
         db_table = 'bookings'
 
     def __str__(self):
+        return f"Booking {self.id} by {self.customer}" """
+
+class Booking(models.Model):
+    # Champs existants
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    is_paid = models.BooleanField(default=False)
+    customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='bookings')
+    coworking_space = models.ForeignKey('CoworkingSpace', on_delete=models.CASCADE)
+    
+    # Nouveaux champs pour les avis
+    rating = models.IntegerField(choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')], null=True, blank=True)
+    review_comment = models.TextField(null=True, blank=True)
+    review_date = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'bookings'
+
+    def __str__(self):
         return f"Booking {self.id} by {self.customer}"
+    
+    
 
 #  Paiement
 class CoworkingPayment(models.Model):
@@ -135,3 +156,18 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"Profil de {self.user.email}"
+    
+#pour les avis
+
+""" class Review(models.Model):
+    booking = models.OneToOneField(Booking, on_delete=models.CASCADE, related_name='review')
+    rating = models.IntegerField(choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')])
+    comment = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        # Assurez-vous que Django ne touche pas à la table Booking
+        db_table = 'review'
+        
+    def __str__(self):
+        return f"Avis sur la réservation {self.booking_id}" """

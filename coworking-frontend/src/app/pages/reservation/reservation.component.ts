@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CoworkingService } from '../../services/coworking.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-reservation',
@@ -11,8 +12,18 @@ export class ReservationComponent implements OnInit {
   userId: number | null = null;
   selectedBooking: any = null;  // Réservation sélectionnée pour l'annulation
   showModal: boolean = false;
+  showReviewModal: boolean = false;
+  reviewForm: FormGroup;
 
-  constructor(private coworkingService: CoworkingService) {}
+  constructor(
+    private coworkingService: CoworkingService,
+    private fb: FormBuilder
+  ) {
+    this.reviewForm = this.fb.group({
+      rating: ['', [Validators.required, Validators.min(1), Validators.max(5)]],
+      review_comment: ['']
+    });
+  }
 
   ngOnInit(): void {
     this.fetchUserBookings();
@@ -48,6 +59,7 @@ export class ReservationComponent implements OnInit {
 
   closeModal(): void {
     this.showModal = false;
+    this.showReviewModal = false;
   }
 
   confirmCancel(): void {
@@ -64,5 +76,43 @@ export class ReservationComponent implements OnInit {
         }
       );
     }
+  }
+
+  // Nouvelles méthodes pour les avis
+  openReviewModal(booking: any): void {
+    this.selectedBooking = booking;
+    this.showReviewModal = true;
+  }
+
+  submitReview(): void {
+    if (this.reviewForm.valid && this.selectedBooking) {
+      const reviewData = {
+        rating: this.reviewForm.value.rating,
+        review_comment: this.reviewForm.value.review_comment
+      };
+
+      this.coworkingService.addReview(this.selectedBooking.id, reviewData).subscribe(
+        (response) => {
+          // Mettre à jour la réservation dans la liste locale
+          const index = this.bookings.findIndex(b => b.id === this.selectedBooking.id);
+          if (index !== -1) {
+            this.bookings[index] = response;
+          }
+          
+          alert('Avis ajouté avec succès.');
+          this.reviewForm.reset();
+          this.closeModal();
+        },
+        error => {
+          console.error('Erreur lors de l\'ajout de l\'avis:', error);
+          alert('Erreur lors de l\'ajout de l\'avis.');
+        }
+      );
+    }
+  }
+
+  // Méthode utilitaire pour l'affichage des étoiles
+  getStarsArray(rating: number): number[] {
+    return Array(rating).fill(0);
   }
 }

@@ -9,13 +9,14 @@ router.register(r'spaces', CoworkingSpaceViewSet, basename='spaces')
 router.register(r'users', UserViewSet)
 router.register(r'bookings', BookingViewSet, basename='bookings')
 router.register(r'payments', CoworkingPaymentViewSet, basename='payments')
+# urls.py
+#router.register(r'reviews', ReviewViewSet, basename='review')
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
     path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/bookings/', get_user_bookings, name='get_user_bookings'),
-    path('api/bookings/<int:id>/', cancel_booking, name='cancel_booking'),
+  
     path('api/', include(router.urls)),
     path('', include(router.urls)),
 ]

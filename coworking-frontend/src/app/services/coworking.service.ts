@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,7 @@ import { catchError } from 'rxjs/operators';
 export class CoworkingService {
   private apiUrl = 'http://127.0.0.1:8000/api';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,  private authService: AuthService) {}
 
   // Gérer les erreurs de manière centralisée
   private handleError(error: any): Observable<never> {
@@ -102,5 +103,35 @@ export class CoworkingService {
   cancelBooking(id: number): Observable<any> {
     const url = `${this.apiUrl}/bookings/${id}/`;
     return this.http.delete(url, { headers: this.getAuthHeaders() });
+  }
+
+  // Dans coworking.service.ts
+  addReview(bookingId: number, reviewData: any): Observable<any> {
+    const token = this.authService.getAccessToken();
+    console.log('Token utilisé pour addReview:', token);
+    
+    if (!token) {
+      return throwError(() => new Error('Token manquant'));
+    }
+  
+  // Construisez l'en-tête explicitement
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  });
+  
+  console.log('Headers envoyés:', headers);
+  
+  // Faites la requête avec ces en-têtes
+  return this.http.post<any>(
+    `${this.apiUrl}/bookings/${bookingId}/add_review/`, 
+    reviewData, 
+    { headers: headers }
+  ).pipe(
+    catchError(error => {
+      console.error('Erreur détaillée:', error);
+      return throwError(() => error);
+    })
+  );
   }
 }  

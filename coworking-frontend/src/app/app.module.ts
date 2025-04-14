@@ -11,6 +11,7 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
 import { MapViewComponent } from './pages/map-view/map-view.component';
 import { LoginComponent } from './pages/login/login.component';
 import { ReservationComponent } from './pages/reservation/reservation.component';
+import { ReactiveFormsModule } from '@angular/forms';  // Ajoutez cette ligne
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { ReservationComponent } from './pages/reservation/reservation.component'
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
+    ReactiveFormsModule,  // Ajoutez cette ligne
   ],
   providers: [],
   bootstrap: [AppComponent]
