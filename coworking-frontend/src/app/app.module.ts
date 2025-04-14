@@ -4,9 +4,9 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './services/auth.interceptor';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+import { CommonModule } from '@angular/common';
 import { HomeComponent } from './pages/home/home.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { CompleteProfileComponent } from './pages/complete-profile/complete-profile.component';
@@ -15,6 +15,10 @@ import { MapViewComponent } from './pages/map-view/map-view.component';
 import { LoginComponent } from './pages/login/login.component';
 import { BookingComponent } from './pages/booking/booking.component';
 import { PaymentComponent } from './pages/payment/payment.component';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { NgChartsModule } from 'ng2-charts';
+import { StatsComponent } from './pages/stats/stats.component';
+
 
 @NgModule({
   declarations: [
@@ -27,19 +31,23 @@ import { PaymentComponent } from './pages/payment/payment.component';
     NavbarComponent,
     BookingComponent,
     PaymentComponent,
+    StatsComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
+    NgChartsModule,
+    CommonModule,
   ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
-    }
+    },
+    provideAnimationsAsync()
   ],
   bootstrap: [AppComponent]
 })

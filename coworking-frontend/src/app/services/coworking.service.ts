@@ -43,6 +43,19 @@ export class CoworkingService {
   checkAvailability(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/bookings/check/`, data);
   }
+
+  // getTakenSlots(data: { coworking_space: number; date: string }) {
+  //   return this.http.post<{ taken_slots: string[] }>(`${this.apiUrl}/bookings/taken-slots/`,data);
+  // }
+  
+  
+  getTakenSlots(payload: { coworking_space: number; start_date: string; end_date?: string }) {
+    return this.http.post<any>(`${this.apiUrl}/bookings/taken-slots/`, payload);
+  }
+  
+  getDashboardStats(payload: { start_date: string, end_date: string, view_mode: 'global' | 'metropole' | 'type' }) {
+    return this.http.post<any>(`${this.apiUrl}/dashboard/`, payload);
+  }
   
   
 

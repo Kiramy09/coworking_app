@@ -7,6 +7,7 @@ import { LoginComponent } from './pages/login/login.component';
 import { MapViewComponent } from './pages/map-view/map-view.component';
 import { BookingComponent } from './pages/booking/booking.component';
 import { PaymentComponent } from './pages/payment/payment.component';
+import { StatsComponent } from './pages/stats/stats.component';
 
 
 
@@ -18,7 +19,9 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'explore', component: MapViewComponent },
   { path: 'booking/:id',component: BookingComponent},
-  { path: 'payment/:bookingId', component: PaymentComponent }
+  { path: 'payment/:bookingId', component: PaymentComponent },
+  { path: 'stats', component: StatsComponent }
+
 
   
 

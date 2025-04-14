@@ -22,17 +22,17 @@
         <div class="row g-3 mb-3">
           <div class="col-md-6">
             <label class="form-label">Date de début</label>
-            <input type="date" class="form-control" [(ngModel)]="bookingForm.startDate" name="startDate" [min]="today" (change)="calculateTotal()" required>
+            <input type="date" class="form-control" [(ngModel)]="bookingForm.startDate" name="startDate" [min]="today" (change)="calculateTotal() ;loadTakenSlotsForDate()" required>
           </div>
 
           <div class="col-md-6" *ngIf="isMultiDay">
             <label class="form-label">Date de fin</label>
-            <input type="date" class="form-control" [(ngModel)]="bookingForm.endDate" name="endDate" [min]="bookingForm.startDate || today" (change)="calculateTotal()" required>
+            <input type="date" class="form-control" [(ngModel)]="bookingForm.endDate" name="endDate" [min]="bookingForm.startDate || today" (change)="calculateTotal() ; loadTakenSlotsForDate()" required>
           </div>
         </div>
 
         <!-- Heures sous forme de bouton ouvrant un modal -->
-        <div class="row g-3 mb-4">
+        <!-- <div class="row g-3 mb-4">
           <div class="col-md-6">
             <label class="form-label">Heure de début</label>
             <button class="btn btn-outline-primary w-100" type="button" data-bs-toggle="modal" data-bs-target="#startTimeModal">
@@ -46,7 +46,35 @@
               {{ bookingForm.endTime || 'Sélectionner une heure' }}
             </button>
           </div>
+        </div> -->
+        <div class="row g-3 mb-4">
+          <div class="col-md-6">
+            <label class="form-label">Heure de début</label>
+            <button
+              class="btn btn-outline-primary w-100"
+              type="button"
+              data-bs-toggle="modal"
+              data-bs-target="#startTimeModal"
+              (click)="openStartTimeModal()"
+            >
+              {{ bookingForm.startTime || 'Sélectionner une heure' }}
+            </button>
+          </div>
+        
+          <div class="col-md-6">
+            <label class="form-label">Heure de fin</label>
+            <button
+              class="btn btn-outline-success w-100"
+              type="button"
+              data-bs-toggle="modal"
+              data-bs-target="#endTimeModal"
+              (click)="openEndTimeModal()"
+            >
+              {{ bookingForm.endTime || 'Sélectionner une heure' }}
+            </button>
+          </div>
         </div>
+        
 
         <!-- Modals -->
         <div class="modal fade" id="startTimeModal" tabindex="-1" aria-hidden="true">
@@ -54,6 +82,7 @@
             <div class="modal-content">
               <div class="modal-header"><h5 class="modal-title">Choisir l’heure de début</h5></div>
               <div class="modal-body d-flex flex-wrap gap-2">
+                <!-- Chaque petit créneau horaire -->
                 <button *ngFor="let slot of timeSlots"
                         class="btn btn-sm"
                         [ngClass]="{
@@ -61,10 +90,11 @@
                           'btn-primary': bookingForm.startTime === slot.time,
                           'btn-outline-secondary': !slot.available
                         }"
-                        [disabled]="!slot.available"
-                        (click)="selectStartTime(slot.time); closeModal('startTimeModal')">
+                        [title]="!slot.available ? 'Créneau indisponible' : ''"
+                        (click)="slot.available && selectStartTime(slot.time); slot.available && closeModal('startTimeModal')">
                   {{ slot.time }}
                 </button>
+
               </div>
             </div>
           </div>
@@ -76,28 +106,52 @@
               <div class="modal-header"><h5 class="modal-title">Choisir l’heure de fin</h5></div>
               <div class="modal-body d-flex flex-wrap gap-2">
                 <button *ngFor="let slot of timeSlots"
-                        class="btn btn-sm"
-                        [ngClass]="{
-                          'btn-outline-success': bookingForm.endTime !== slot.time && slot.available,
-                          'btn-success': bookingForm.endTime === slot.time,
-                          'btn-outline-secondary': !slot.available
-                        }"
-                        [disabled]="!slot.available"
-                        (click)="selectEndTime(slot.time); closeModal('endTimeModal')">
-                  {{ slot.time }}
-                </button>
+                class="btn btn-sm"
+                [ngClass]="{
+                  'btn-outline-success': bookingForm.endTime !== slot.time && slot.available && !isEndTimeDisabled(slot.time),
+                  'btn-success': bookingForm.endTime === slot.time,
+                  'btn-outline-secondary': !slot.available || isEndTimeDisabled(slot.time)
+                }"
+                [title]="
+                  !slot.available
+                    ? 'Créneau indisponible'
+                    : isEndTimeDisabled(slot.time)
+                      ? 'Heure invalide (avant heure de début)'
+                      : ''
+                "
+                (click)="
+                  slot.available && !isEndTimeDisabled(slot.time)
+                    && selectEndTime(slot.time);
+                  slot.available && !isEndTimeDisabled(slot.time)
+                    && closeModal('endTimeModal')
+                      ">
+                {{ slot.time }}
+              </button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Répéter sur plusieurs jours -->
-        <div class="form-check mb-3" *ngIf="isMultiDay">
-          <input class="form-check-input" type="checkbox" id="sameHours" [(ngModel)]="sameHoursEachDay" name="sameHoursEachDay" (change)="calculateTotal()">
-          <label class="form-check-label ms-2" for="sameHours">
-            Appliquer les mêmes heures chaque jour
-          </label>
+        <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+          <div id="timeSlotToast" class="toast align-items-center bg-light text-dark border border-warning shadow" role="alert">
+            <div class="d-flex align-items-center">
+              <div class="toast-body">
+                <i class="bi bi-exclamation-circle me-2 text-warning"></i>
+                L’heure sélectionnée est indisponible pour cette date.
+              </div>
+              <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fermer"></button>
+            </div>
+          </div>
         </div>
+        
+        
+
+        <!-- Répéter sur plusieurs jours -->
+        <div class="mb-3 d-flex align-items-center text-muted small" *ngIf="isMultiDay">
+          <i class="bi bi-info-circle me-2" title="Les mêmes horaires seront appliqués à chaque jour."></i>
+          Les mêmes horaires seront appliqués à chaque jour sélectionné.
+        </div>
+        
 
         <!-- Messages d’erreur -->
         <div *ngIf="dateError" class="alert alert-danger py-2">
@@ -114,7 +168,6 @@
             Total estimé : {{ totalAmount }} €
           </div>
         </div>
-
         <button type="submit" class="btn btn-success w-100" [disabled]="form.invalid || dateError || slotUnavailable">
           Continuer
         </button>

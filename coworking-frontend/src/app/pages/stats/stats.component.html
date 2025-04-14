@@ -1,0 +1,89 @@
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3>Statistiques d’occupation</h3>
+      <button class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#filtersOffcanvas" aria-controls="filtersOffcanvas">
+        <i class="bi bi-funnel"></i> Filtres
+      </button>
+    </div>
+  
+    <!-- Toast affiché au-dessus -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div class="toast show bg-light text-dark border border-secondary shadow" role="alert">
+        <div class="d-flex align-items-center">
+          <div class="toast-body">
+            <i class="bi bi-bar-chart-fill me-2 text-primary"></i>
+            Affichage des statistiques du {{ startDate }} au {{ endDate }} en vue "{{ viewMode }}"
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Statistiques ou chargement -->
+    <div *ngIf="stats; else loading">
+      <div class="card shadow-sm border-0 p-3 mb-4">
+        <h5 class="mb-3">Taux d’occupation</h5>
+  
+        <!-- Composant Chart -->
+        <canvas
+        baseChart
+        [data]="stats?.chartData"
+        [type]="chartType"
+        [options]="chartOptions">
+      </canvas>
+      
+      </div>
+  
+      <div *ngIf="viewMode !== 'global'" class="card shadow-sm border-0 p-3">
+        <h5 class="mb-3">Détails par {{ viewMode === 'metropole' ? 'métropole' : 'type d’espace' }}</h5>
+        <ul class="list-group list-group-flush">
+          <li *ngFor="let item of stats.details" class="list-group-item d-flex justify-content-between align-items-center">
+            {{ item.label }}
+            <span class="badge bg-primary rounded-pill">{{ item.percentage }}%</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  
+    <ng-template #loading>
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-3">Chargement des statistiques...</p>
+      </div>
+    </ng-template>
+  </div>
+  
+  
+  <!-- Offcanvas filtres -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="filtersOffcanvas" aria-labelledby="filtersOffcanvasLabel">
+    <div class="offcanvas-header">
+      <h5 id="filtersOffcanvasLabel">Filtres</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Fermer"></button>
+    </div>
+    <div class="offcanvas-body">
+
+       <div class="mb-3">
+            <label class="form-label">Vue</label>
+            <div class="btn-group w-100" role="group">
+              <button type="button" class="btn" [ngClass]="{'btn-primary': viewMode === 'global', 'btn-outline-primary': viewMode !== 'global'}" (click)="changeViewMode('global')">Globale</button>
+              <button type="button" class="btn" [ngClass]="{'btn-primary': viewMode === 'metropole', 'btn-outline-primary': viewMode !== 'metropole'}" (click)="changeViewMode('metropole')">Métropole</button>
+              <button type="button" class="btn" [ngClass]="{'btn-primary': viewMode === 'type', 'btn-outline-primary': viewMode !== 'type'}" (click)="changeViewMode('type')">Type</button>
+            </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="startDate" class="form-label">Date de début</label>
+        <input type="date" id="startDate" class="form-control" [(ngModel)]="startDate">
+      </div>
+  
+      <div class="mb-3">
+        <label for="endDate" class="form-label">Date de fin</label>
+        <input type="date" id="endDate" class="form-control" [(ngModel)]="endDate">
+      </div>
+  
+  
+      <button class="btn btn-success w-100" data-bs-dismiss="offcanvas" (click)="loadStats()">
+        <i class="bi bi-bar-chart-line-fill me-2"></i> Appliquer les filtres
+      </button>
+    </div>
+  </div>
+  

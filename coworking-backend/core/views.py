@@ -9,6 +9,9 @@ from .models import Profile
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from django.utils.dateparse import parse_datetime
+from datetime import datetime, timedelta
+from django.db.models import Count
+
 
 from .models import CoworkingSpace, Equipment, Booking, CoworkingPayment 
 from .serializers import (
@@ -168,3 +171,132 @@ class CheckBookingAvailabilityView(APIView):
         ).exists()
 
         return Response({'available': not overlap})
+    
+
+# class TakenSlotsView(APIView):
+#     permission_classes = [AllowAny]
+
+#     def post(self, request):
+#         space_id = request.data.get('coworking_space')
+#         date_str = request.data.get('date')  # ex: "2025-04-18"
+
+#         if not space_id or not date_str:
+#             return Response({"error": "Paramètres manquants"}, status=400)
+
+#         date = datetime.strptime(date_str, "%Y-%m-%d")
+#         bookings = Booking.objects.filter(
+#             coworking_space_id=space_id,
+#             start_time__date=date
+#         )
+
+#         # Création des créneaux occupés
+#         taken_slots = set()
+#         for booking in bookings:
+#             start = booking.start_time
+#             end = booking.end_time
+
+#             current = start
+#             while current < end:
+#                 taken_slots.add(current.strftime("%H:%M"))
+#                 current += timedelta(minutes=30)
+
+#         return Response({"taken_slots": sorted(taken_slots)})
+    
+
+class TakenSlotsView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        space_id = request.data.get('coworking_space')
+        start_str = request.data.get('start_date')
+        end_str = request.data.get('end_date') or start_str
+
+        if not space_id or not start_str:
+            return Response({"error": "Paramètres manquants"}, status=400)
+
+        start_date = datetime.strptime(start_str, "%Y-%m-%d").date()
+        end_date = datetime.strptime(end_str, "%Y-%m-%d").date()
+
+        # bookings sur la plage demandée
+        bookings = Booking.objects.filter(
+            coworking_space_id=space_id,
+            start_time__date__gte=start_date,
+            start_time__date__lte=end_date
+        )
+
+        taken_slots = {}
+
+        for booking in bookings:
+            day = booking.start_time.date().isoformat()  # ex: '2025-04-15'
+            if day not in taken_slots:
+                taken_slots[day] = set()
+
+            current = booking.start_time
+            while current < booking.end_time:
+                taken_slots[day].add(current.strftime("%H:%M"))
+                current += timedelta(minutes=30)
+
+        # Convertir en format JSON-serializable
+        result = {day: sorted(list(slots)) for day, slots in taken_slots.items()}
+
+        return Response({"taken_slots": result})
+    
+
+
+class DashboardStatsView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        start = request.data.get("start_date")
+        end = request.data.get("end_date")
+        view_mode = request.data.get("view_mode", "global")  # 'global', 'metropole', 'type'
+
+        try:
+            start_date = datetime.strptime(start, "%Y-%m-%d").date()
+            end_date = datetime.strptime(end, "%Y-%m-%d").date()
+        except:
+            return Response({"error": "Invalid date format"}, status=400)
+
+        bookings = Booking.objects.filter(
+            start_time__date__gte=start_date,
+            end_time__date__lte=end_date
+        )
+
+        data = []
+
+        if view_mode == "metropole":
+            grouped = CoworkingSpace.objects.values("metropole__name").annotate(
+                total_spaces=Count("id")
+            )
+            for group in grouped:
+                name = group["metropole__name"]
+                spaces = CoworkingSpace.objects.filter(metropole__name=name)
+                capacity = sum(space.capacity for space in spaces)
+                occupied = sum(
+                    b.coworking_space.capacity for b in bookings if b.coworking_space.metropole and b.coworking_space.metropole.name == name
+                )
+                percent = round((occupied / capacity) * 100, 1) if capacity else 0
+                data.append({"label": name or "Sans métropole", "value": percent})
+
+        elif view_mode == "type":
+            grouped = CoworkingSpace.objects.values("space_type").annotate(
+                total_spaces=Count("id")
+            )
+            for group in grouped:
+                t = group["space_type"]
+                spaces = CoworkingSpace.objects.filter(space_type=t)
+                capacity = sum(space.capacity for space in spaces)
+                occupied = sum(
+                    b.coworking_space.capacity for b in bookings if b.coworking_space.space_type == t
+                )
+                percent = round((occupied / capacity) * 100, 1) if capacity else 0
+                data.append({"label": t, "value": percent})
+
+        else:  # global
+            total_capacity = sum(space.capacity for space in CoworkingSpace.objects.all())
+            total_occupied = sum(b.coworking_space.capacity for b in bookings)
+            percent = round((total_occupied / total_capacity) * 100, 1) if total_capacity else 0
+            data = [{"label": "Taux global d’occupation", "value": percent}]
+
+        return Response({"stats": data})
+

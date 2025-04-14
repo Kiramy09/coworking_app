@@ -45,11 +45,14 @@ export class PaymentComponent implements OnInit {
       payment_method: 'Carte bancaire (factice)',
       payment_date: new Date().toISOString()
     };
-
+  
     this.coworkingService.createPayment(paymentData).subscribe({
       next: () => {
-        alert('Paiement réussi ');
-        this.router.navigate(['/home']);
+        const modalElement = document.getElementById('paymentSuccessModal');
+        if (modalElement) {
+          const modal = new (window as any).bootstrap.Modal(modalElement);
+          modal.show();
+        }
       },
       error: (err) => {
         console.error('Erreur paiement :', err);
@@ -57,4 +60,12 @@ export class PaymentComponent implements OnInit {
       }
     });
   }
+  
+
+  redirectHome(): void {
+    const modal = (window as any).bootstrap.Modal.getInstance(document.getElementById('paymentSuccessModal'));
+    modal?.hide();
+    this.router.navigate(['/home']);
+  }
+  
 }
