@@ -10,7 +10,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class ReservationComponent implements OnInit {
   bookings: any[] = [];
   userId: number | null = null;
-  selectedBooking: any = null;  // Réservation sélectionnée pour l'annulation
+  selectedBooking: any = null;
   showModal: boolean = false;
   showReviewModal: boolean = false;
   reviewForm: FormGroup;
@@ -30,21 +30,25 @@ export class ReservationComponent implements OnInit {
   }
 
   fetchUserBookings(): void {
-    this.coworkingService.getUserBookings().subscribe(
-      (response: any) => {
-        if (Array.isArray(response) && response.length > 0) {
-          this.userId = response[0]?.customer?.id || null;
-          this.bookings = response.sort((a, b) => new Date(b.end_time).getTime() - new Date(a.end_time).getTime());
+    this.coworkingService.getUserBookings().subscribe({
+      next: (response: any) => {
+        const bookings = response?.bookings;
+          if (Array.isArray(bookings) && bookings.length > 0) {
+          this.userId = response.user_id || null;
+          this.bookings = bookings.sort(
+            (a, b) => new Date(b.end_time).getTime() - new Date(a.end_time).getTime()
+          );
         } else {
           this.userId = null;
           this.bookings = [];
         }
       },
-      error => {
+      error: (error) => {
         console.error('Erreur lors de la récupération des réservations de l\'utilisateur:', error);
       }
-    );
+    });
   }
+  
 
   isBookingPast(endTime: string): boolean {
     const now = new Date();

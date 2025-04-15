@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { catchError, of, throwError, tap, switchMap, BehaviorSubject } from 'rxjs';
+import { Router } from '@angular/router';
+
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -7,8 +10,13 @@ import { Observable } from 'rxjs';
 })
 export class AuthService {
   private baseUrl = 'http://127.0.0.1:8000/api/';
+  private refreshTokenInProgress = false;
+  private tokenSubject = new BehaviorSubject<string | null>(null);
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient ,private router: Router) {
+    const token = localStorage.getItem('access_token');
+    this.tokenSubject.next(token);
+  }
 
   register(user: any): Observable<any> {
     const completeUser = {
@@ -20,7 +28,7 @@ export class AuthService {
       birth_date: user.birth_date || null,
       address: user.address || '',
       activity: user.activity || '',
-      avatar: null  // on gère l'avatar plus tard via `updateProfile`
+      avatar: null
     };
     
   
@@ -76,5 +84,94 @@ export class AuthService {
   getAccessToken(): string | null {
     return localStorage.getItem('access_token');
   }
+
+
+
+  getUserProfile(): Observable<any> {
+    return this.http.get(`${this.baseUrl}profile/info/`).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 401) {
+          return this.handleTokenExpired(() => 
+            this.http.get(`${this.baseUrl}profile/info/`)
+          );
+        }
+        return throwError(() => error);
+      })
+    );
+  }
   
+
+  updateUserProfile(formData: FormData): Observable<any> {
+    return this.http.post(`${this.baseUrl}profile/update/`, formData).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 401) {
+          return this.handleTokenExpired(() => 
+            this.http.post(`${this.baseUrl}profile/update/`, formData)
+          );
+        }
+        return throwError(() => error);
+      })
+    );
+  }
+  
+  
+   uploadAvatar(file: File): Observable<any> {
+      const formData = new FormData();
+      formData.append('avatar', file);
+      
+      return this.http.post(`${this.baseUrl}profile/avatar/`, formData).pipe(
+        catchError((error: HttpErrorResponse) => {
+          if (error.status === 401) {
+            return this.handleTokenExpired(() => 
+              this.http.post(`${this.baseUrl}profile/avatar/`, formData)
+            );
+          }
+          return throwError(() => error);
+        })
+      );
+    }
+
+    public handleTokenExpired<T>(retryCallback: () => Observable<T>): Observable<T> {
+      if (this.refreshTokenInProgress) {
+        // Attendre que le rafraîchissement en cours se termine
+        return this.tokenSubject.pipe(
+          switchMap(token => {
+            if (token) {
+              return retryCallback();
+            }
+            throw new Error('Authentication failed');
+          })
+        );
+      }
+      
+      this.refreshTokenInProgress = true;
+      
+      return this.refreshToken().pipe(
+        switchMap(() => {
+          this.refreshTokenInProgress = false;
+          return retryCallback();
+        }),
+        catchError(error => {
+          this.refreshTokenInProgress = false;
+          this.logout();
+          this.router.navigate(['/login']);
+          return throwError(() => error);
+        })
+      );
+    }
+  
+  
+    logout(): void {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      this.tokenSubject.next(null);
+      console.log('Logged out, tokens removed');
+      this.router.navigate(['/login']);
+    }
+
+    isAuthenticated(): boolean {
+      return !!localStorage.getItem('access_token');
+    }
+
+
 }

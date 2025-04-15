@@ -9,6 +9,7 @@ import { MapViewComponent } from './pages/map-view/map-view.component';
 import { BookingComponent } from './pages/booking/booking.component';
 import { PaymentComponent } from './pages/payment/payment.component';
 import { StatsComponent } from './pages/stats/stats.component';
+import { MonProfilComponent } from './pages/mon-profil/mon-profil.component';
 
 
 
@@ -22,6 +23,7 @@ const routes: Routes = [
   { path: 'booking/:id',component: BookingComponent},
   { path: 'reservation',component:ReservationComponent },
   { path: 'payment/:bookingId', component: PaymentComponent },
+  { path: 'profile', component: MonProfilComponent },
   { path: 'stats', component: StatsComponent }
 
 

@@ -20,6 +20,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgChartsModule } from 'ng2-charts';
 import { StatsComponent } from './pages/stats/stats.component';
+import { MonProfilComponent } from './pages/mon-profil/mon-profil.component';
 
 
 @NgModule({
@@ -31,6 +32,7 @@ import { StatsComponent } from './pages/stats/stats.component';
     LoginComponent,
     MapViewComponent,
     NavbarComponent,
+    MonProfilComponent,
     BookingComponent,
     PaymentComponent,
     StatsComponent,

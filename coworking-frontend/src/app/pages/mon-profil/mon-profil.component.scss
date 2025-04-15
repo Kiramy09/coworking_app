@@ -1,0 +1,377 @@
+// Variables
+$primary-color: #6A5244; // Couleur brune comme dans le header COWO
+$accent-color: #FFC107; // Jaune pour les éléments d'accent
+$text-color: #333;
+$border-color: #e0e0e0;
+$light-bg: #f9f9f9;
+$container-max-width: 1200px;
+$border-radius: 8px;
+$box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+// Mixins
+@mixin card {
+  background-color: white;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+@mixin button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  
+  i {
+    font-size: 16px;
+  }
+}
+
+// Styles généraux
+.profile-container {
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 30px 20px;
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+}
+
+// Header
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  
+  h1 {
+    margin: 0;
+    color: $primary-color;
+    font-size: 32px;
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 12px;
+    
+    button {
+      @include button;
+      
+      &.btn-edit {
+        background-color: $primary-color;
+        color: white;
+        
+        &:hover {
+          background-color: darken($primary-color, 10%);
+        }
+      }
+      
+      &.btn-save {
+        background-color: #28a745;
+        color: white;
+        
+        &:hover {
+          background-color: darken(#28a745, 10%);
+        }
+      }
+      
+      &.btn-cancel {
+        background-color: #dc3545;
+        color: white;
+        
+        &:hover {
+          background-color: darken(#dc3545, 10%);
+        }
+      }
+    }
+  }
+}
+
+// Contenu principal
+.profile-content {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: 30px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Contenu principal
+.profile-main {
+  .profile-section {
+    @include card;
+    
+    h3 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      color: $primary-color;
+      font-size: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid $border-color;
+    }
+  }
+}
+
+// Section avatar et nom
+.profile-avatar-section {
+  @include card;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  
+  .profile-avatar {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 15px;
+    border: 5px solid white;
+    box-shadow: $box-shadow;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .avatar-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 8px 0;
+      
+      .avatar-upload-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        
+        i {
+          margin-bottom: 4px;
+          font-size: 16px;
+        }
+        
+        span {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+  
+  .profile-name {
+    margin: 0 0 5px 0;
+    font-size: 24px;
+    color: $text-color;
+  }
+  
+  .profile-role {
+    margin: 0;
+    color: #777;
+    font-size: 16px;
+  }
+}
+
+// Formulaire
+.profile-form {
+  .form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    
+    @media (max-width: 576px) {
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .form-group {
+      flex: 1;
+    }
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+    
+    &.full-width {
+      width: 100%;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #555;
+    }
+    
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid $border-color;
+      border-radius: 4px;
+      font-size: 14px;
+      
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+      }
+      
+      &.readonly {
+        background-color: $light-bg;
+        cursor: default;
+      }
+    }
+    
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+  }
+  
+  .checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      
+      input[type="checkbox"] {
+        width: auto;
+      }
+    }
+  }
+}
+
+// Préférences en mode lecture
+.profile-preferences {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  
+  .preference-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: $light-bg;
+    padding: 8px 12px;
+    border-radius: $border-radius;
+    
+    i {
+      color: $primary-color;
+    }
+  }
+}
+
+// Sidebar
+.profile-sidebar {
+  .profile-section {
+    @include card;
+    
+    h3 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      color: $primary-color;
+      font-size: 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid $border-color;
+    }
+  }
+  
+  // Statistiques
+  .stats-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    
+    @media (max-width: 1024px) and (min-width: 769px) {
+      grid-template-columns: 1fr;
+    }
+    
+    @media (max-width: 400px) {
+      grid-template-columns: 1fr;
+    }
+    
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      
+      .stat-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: rgba($primary-color, 0.1);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
+        i {
+          color: $primary-color;
+          font-size: 16px;
+        }
+      }
+      
+      .stat-details {
+        display: flex;
+        flex-direction: column;
+        
+        .stat-value {
+          font-size: 18px;
+          font-weight: 600;
+          color: $text-color;
+        }
+        
+        .stat-label {
+          font-size: 12px;
+          color: #777;
+        }
+      }
+    }
+  }
+  
+  // Liens rapides
+  .quick-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    
+    li {
+      margin-bottom: 10px;
+      
+      a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        color: $text-color;
+        text-decoration: none;
+        border-radius: $border-radius;
+        transition: background-color 0.2s ease;
+        
+        i {
+          color: $primary-color;
+          width: 20px;
+          text-align: center;
+        }
+        
+        &:hover {
+          background-color: $light-bg;
+        }
+      }
+    }
+  }
+}

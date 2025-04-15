@@ -112,6 +112,10 @@ class Booking(models.Model):
     # created_at = models.DateTimeField(auto_now_add=True)
     # updated_at = models.DateTimeField(auto_now=True)
     is_paid = models.BooleanField(default=False)
+        # Nouveaux champs pour les avis
+    rating = models.IntegerField(choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')], null=True, blank=True)
+    review_comment = models.TextField(null=True, blank=True)
+    review_date = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         db_table = 'bookings'

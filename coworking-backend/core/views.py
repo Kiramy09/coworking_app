@@ -13,6 +13,9 @@ from datetime import datetime, timedelta
 from django.db.models import Count
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import CustomTokenObtainPairSerializer
+from django.http import JsonResponse
+from rest_framework.decorators import action
+from django.utils import timezone
 
 
 from .models import CoworkingSpace, Equipment, Booking, CoworkingPayment 
@@ -66,41 +69,59 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-class BookingViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    queryset = Booking.objects.all()
-    serializer_class = BookingSerializer
+# class BookingViewSet(viewsets.ModelViewSet):
+#     permission_classes = [IsAuthenticated]
+#     queryset = Booking.objects.all()
+#     serializer_class = BookingSerializer
 
-    def create(self, request, *args, **kwargs):
-        data = request.data.copy()
-        data['customer'] = request.user.id 
-        data['is_paid'] = False
+    # def create(self, request, *args, **kwargs):
+    #     data = request.data.copy()
+    #     data['customer'] = request.user.id 
+    #     data['is_paid'] = False
 
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     serializer = self.get_serializer(data=data)
+    #     serializer.is_valid(raise_exception=True)
+    #     self.perform_create(serializer)
+    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    # @action(detail=True, methods=['post'], url_path='add_review')
+    # def add_review(self, request, pk=None):
+    #     booking = self.get_object()
+
+    #     # Vérifier explicitement l'authentification
+    #     if not request.user.is_authenticated:
+    #         return Response({"error": "Authentification requise"}, status=status.HTTP_401_UNAUTHORIZED)
+        
+    #     # Vérifier que l'utilisateur est bien le propriétaire de la réservation
+    #     if booking.customer != request.user:
+    #         return Response({"error": "Vous ne pouvez évaluer que vos propres réservations"}, 
+    #                     status=status.HTTP_403_FORBIDDEN)
+        
+    #     # Vérifier que la réservation n'a pas déjà été évaluée
+    #     if booking.rating is not None:
+    #         return Response({"error": "Cette réservation a déjà été évaluée"}, 
+    #                     status=status.HTTP_400_BAD_REQUEST)
+        
+    #     # Mettre à jour les champs d'avis
+    #     booking.rating = request.data.get('rating')
+    #     booking.review_comment = request.data.get('review_comment')
+    #     booking.review_date = timezone.now()
+    #     booking.save()
+    #     serializer = self.get_serializer(booking)
+    #     return Response(serializer.data)
+    
+
 
 class CoworkingPaymentViewSet(viewsets.ModelViewSet):
     queryset = CoworkingPayment.objects.all()
     serializer_class = CoworkingPaymentSerializer
-
-# class RegisterView(APIView):
-#     def post(self, request):
-#         serializer = UserSerializer(data=request.data)
-#         if serializer.is_valid():
-#             user = serializer.save()
-#             user.set_password(request.data['password'])  # Hash du mot de passe
-#             user.save()
-#             return Response({'message': 'Utilisateur créé avec succès'}, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
 class RegisterView(APIView):
     def post(self, request):
         serializer = UserWithProfileSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()  # Le serializer s'occupe de créer User + Profile
+            serializer.save()
             return Response({'message': 'Utilisateur créé avec succès'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -145,6 +166,33 @@ class BookingViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    @action(detail=True, methods=['post'], url_path='add_review')
+    def add_review(self, request, pk=None):
+        booking = self.get_object()
+
+        # Vérifier explicitement l'authentification
+        if not request.user.is_authenticated:
+            return Response({"error": "Authentification requise"}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        # Vérifier que l'utilisateur est bien le propriétaire de la réservation
+        if booking.customer != request.user:
+            return Response({"error": "Vous ne pouvez évaluer que vos propres réservations"}, 
+                        status=status.HTTP_403_FORBIDDEN)
+        
+        # Vérifier que la réservation n'a pas déjà été évaluée
+        if booking.rating is not None:
+            return Response({"error": "Cette réservation a déjà été évaluée"}, 
+                        status=status.HTTP_400_BAD_REQUEST)
+        
+        # Mettre à jour les champs d'avis
+        booking.rating = request.data.get('rating')
+        booking.review_comment = request.data.get('review_comment')
+        booking.review_date = timezone.now()
+        booking.save()
+        serializer = self.get_serializer(booking)
+        return Response(serializer.data)
+    
 
     
 
@@ -158,7 +206,7 @@ class MyBookingsView(APIView):
     
 
 class CheckBookingAvailabilityView(APIView):
-    permission_classes = [AllowAny]  # Ou IsAuthenticated si tu veux le restreindre
+    permission_classes = [AllowAny]
 
     def post(self, request):
         space = request.data.get('coworking_space')
@@ -175,36 +223,6 @@ class CheckBookingAvailabilityView(APIView):
         ).exists()
 
         return Response({'available': not overlap})
-    
-
-# class TakenSlotsView(APIView):
-#     permission_classes = [AllowAny]
-
-#     def post(self, request):
-#         space_id = request.data.get('coworking_space')
-#         date_str = request.data.get('date')  # ex: "2025-04-18"
-
-#         if not space_id or not date_str:
-#             return Response({"error": "Paramètres manquants"}, status=400)
-
-#         date = datetime.strptime(date_str, "%Y-%m-%d")
-#         bookings = Booking.objects.filter(
-#             coworking_space_id=space_id,
-#             start_time__date=date
-#         )
-
-#         # Création des créneaux occupés
-#         taken_slots = set()
-#         for booking in bookings:
-#             start = booking.start_time
-#             end = booking.end_time
-
-#             current = start
-#             while current < end:
-#                 taken_slots.add(current.strftime("%H:%M"))
-#                 current += timedelta(minutes=30)
-
-#         return Response({"taken_slots": sorted(taken_slots)})
     
 
 class TakenSlotsView(APIView):
@@ -304,3 +322,159 @@ class DashboardStatsView(APIView):
 
         return Response({"stats": data})
 
+
+# class MyBookingsView(APIView):
+#     permission_classes = [IsAuthenticated]
+#     def get_user_bookings(request):
+#         bookings = Booking.objects.filter(customer=request.user)
+
+#         if not bookings.exists():
+#             return JsonResponse({'user_id': request.user.id, 'bookings': []}, status=200)
+
+#         # Sérialiser les réservations
+#         serializer = BookingSerializer(bookings, many=True)
+#         response_data = {
+#             'user_id': request.user.id,
+#             'bookings': serializer.data
+#         }
+
+#         return JsonResponse(response_data, status=200)
+    
+
+class MyBookingsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        bookings = Booking.objects.filter(customer=request.user)
+
+        if not bookings.exists():
+            return JsonResponse({'user_id': request.user.id, 'bookings': []}, status=200)
+        # Sérialiser les réservations
+        serializer = BookingSerializer(bookings, many=True)
+        response_data = {
+            'user_id': request.user.id,
+            'bookings': serializer.data
+        }
+        return JsonResponse(response_data, status=200)
+    
+
+
+class CancelMybooking(APIView):
+    permission_classes = [IsAuthenticated]
+    def delete(self,request, id):
+        try:
+            booking = Booking.objects.get(id=id, customer=request.user)
+            booking.delete()
+            return Response({'message': 'Réservation annulée avec succès'}, status=status.HTTP_204_NO_CONTENT)
+        except Booking.DoesNotExist:
+            return Response({'error': 'Réservation non trouvée ou non autorisée'}, status=status.HTTP_404_NOT_FOUND)
+        
+
+
+
+# Nouvelles vues pour la gestion du profil utilisateur
+
+class UserProfil(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        try:
+            user = request.user
+            profile, created = Profile.objects.get_or_create(user=user)
+            
+            # Créer un dictionnaire avec les données de l'utilisateur et du profil
+            user_data = UserSerializer(user).data
+            profile_data = ProfileSerializer(profile).data
+            # Combiner les données
+            combined_data = {**user_data, **profile_data}
+            # Ajouter l'URL de l'avatar s'il existe
+            if profile.avatar:
+                combined_data['avatar_url'] = request.build_absolute_uri(profile.avatar.url)
+            else:
+                combined_data['avatar_url'] = None
+            return Response(combined_data)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class UpdateUserProfil(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        """
+        Mettre à jour le profil de l'utilisateur
+        """
+        try:
+            user = request.user
+            profile, created = Profile.objects.get_or_create(user=user)
+            
+            # Mettre à jour les champs de l'utilisateur
+            if 'prenom' in request.data:
+                user.first_name = request.data.get('prenom')
+                user.save(update_fields=['first_name'])
+            
+            if 'nom' in request.data:
+                user.last_name = request.data.get('nom')
+                user.save(update_fields=['last_name'])
+            
+            # Mettre à jour les champs du profil
+            profile_data = {}
+            if 'gender' in request.data:
+                profile_data['gender'] = request.data.get('gender')
+            
+            if 'birth_date' in request.data and request.data.get('birth_date'):
+                profile_data['birth_date'] = request.data.get('birth_date')
+            
+            if 'address' in request.data:
+                profile_data['address'] = request.data.get('address')
+            
+            if 'activity' in request.data:
+                profile_data['activity'] = request.data.get('activity')
+            
+            if profile_data:
+                profile_serializer = ProfileSerializer(profile, data=profile_data, partial=True)
+                if profile_serializer.is_valid():
+                    profile_serializer.save()
+                else:
+                    return Response(profile_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Récupérer et retourner les données combinées mises à jour
+            user_data = UserSerializer(user).data
+            profile_data = ProfileSerializer(profile).data
+            
+            combined_data = {**user_data, **profile_data}
+            
+            # Ajouter l'URL de l'avatar s'il existe
+            if profile.avatar:
+                combined_data['avatar_url'] = request.build_absolute_uri(profile.avatar.url)
+            else:
+                combined_data['avatar_url'] = None
+            
+            return Response(combined_data)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class UpdateUserProfilAvatar(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        """
+        Télécharger et mettre à jour l'avatar de l'utilisateur
+        """
+        try:
+            profile, created = Profile.objects.get_or_create(user=request.user)
+            
+            if 'avatar' not in request.FILES:
+                return Response({'error': 'Aucun fichier fourni'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Mettre à jour l'avatar
+            profile.avatar = request.FILES['avatar']
+            profile.save(update_fields=['avatar'])
+            
+            # Récupérer l'URL de l'avatar
+            avatar_url = request.build_absolute_uri(profile.avatar.url) if profile.avatar else None
+            
+            return Response({
+                'message': 'Avatar mis à jour avec succès',
+                'avatar_url': avatar_url
+            })
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
