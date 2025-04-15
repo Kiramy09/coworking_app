@@ -1,0 +1,22 @@
+<!-- coworking-admin.component.html -->
+<div class="container mt-4">
+    <h2>📋 Ajouter un espace</h2>
+  
+    <form (ngSubmit)="onSubmit()" #spaceForm="ngForm" enctype="multipart/form-data">
+      <div class="mb-2">
+        <input class="form-control" type="text" name="name" [(ngModel)]="space.name" placeholder="Nom" required>
+      </div>
+      <div class="mb-2">
+        <input class="form-control" type="number" name="capacity" [(ngModel)]="space.capacity" placeholder="Capacité" required>
+      </div>
+      <div class="mb-2">
+        <input class="form-control" type="text" name="city" [(ngModel)]="space.city" placeholder="Ville">
+      </div>
+      <div class="mb-2">
+        <input class="form-control" type="file" (change)="onFileSelected($event)">
+      </div>
+  
+      <button class="btn btn-primary">➕ Ajouter</button>
+    </form>
+  </div>
+  

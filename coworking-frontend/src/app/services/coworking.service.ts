@@ -131,6 +131,21 @@ export class CoworkingService {
   );
   }
 
-
-
+  private handleError(error: any): Observable<never> {
+    console.error('❌ Une erreur est survenue :', error);
+  
+    if (error.error) {
+      console.error('💥 Erreur renvoyée par l\'API :', error.error);
+      alert('Erreur API : ' + JSON.stringify(error.error));
+    }
+  
+    return throwError(() => new Error('Erreur lors de la requête HTTP.'));
+  }
+  
+  addSpace(data: FormData): Observable<any> {
+    const headers = this.getAuthHeaders().delete('Content-Type');
+    return this.http.post(`${this.apiUrl}/spaces/`, data, { headers })
+      .pipe(catchError(this.handleError));
+  }
+  
 }
