@@ -67,5 +67,7 @@ export class PaymentComponent implements OnInit {
     modal?.hide();
     this.router.navigate(['/home']);
   }
-  
+  goToMyBookings(): void {
+    this.router.navigate(['/reservation']);
+  }
 }
