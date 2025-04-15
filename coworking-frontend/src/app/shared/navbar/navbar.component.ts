@@ -10,6 +10,10 @@ export class NavbarComponent {
     return !!localStorage.getItem('access_token');
   }
 
+  isAdmin(): boolean {
+    return localStorage.getItem('is_staff') === 'true';
+  }
+
   logout() {
     localStorage.clear();
     window.location.reload();

@@ -11,6 +11,8 @@ from rest_framework.permissions import AllowAny
 from django.utils.dateparse import parse_datetime
 from datetime import datetime, timedelta
 from django.db.models import Count
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import CustomTokenObtainPairSerializer
 
 
 from .models import CoworkingSpace, Equipment, Booking, CoworkingPayment 
@@ -56,6 +58,8 @@ class CoworkingSpaceViewSet(viewsets.ModelViewSet):
         return queryset.distinct()
 
 
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):

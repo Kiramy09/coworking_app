@@ -53,6 +53,7 @@ export class AuthService {
     return this.http.post(`${this.baseUrl}login/`, credentials);
   }
   
+  
   updateProfile(profileData: FormData): Observable<any> {
     return this.http.post(`${this.baseUrl}profile/`, profileData, {
       headers: {
@@ -71,5 +72,9 @@ export class AuthService {
   }
   
   
+  // Récupérer le token d'accès
+  getAccessToken(): string | null {
+    return localStorage.getItem('access_token');
+  }
   
 }

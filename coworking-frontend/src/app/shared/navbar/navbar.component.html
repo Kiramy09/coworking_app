@@ -9,7 +9,7 @@
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
       <ul class="navbar-nav gap-2 align-items-center">
 
-        <!-- Non connecté -->
+        <!-- Si non connecté -->
         <ng-container *ngIf="!isLoggedIn()">
           <li class="nav-item">
             <a class="btn btn-outline-light" routerLink="/register">S’inscrire</a>
@@ -19,21 +19,32 @@
           </li>
         </ng-container>
 
-        <!-- Connecté -->
+        <!-- Si connecté -->
         <ng-container *ngIf="isLoggedIn()">
+          <!-- Menu utilisateur -->
           <li class="nav-item dropdown">
-            <button class="btn btn-light text-dark dropdown-toggle" data-bs-toggle="dropdown">
-              Mon compte
+            <button class="btn btn-light text-dark dropdown-toggle d-flex align-items-center w-auto" data-bs-toggle="dropdown">
+              <i class="bi bi-person-circle me-2"></i> Mon compte
             </button>
-            <ul class="dropdown-menu dropdown-menu-end">
-              <li><a class="dropdown-item" routerLink="/profile">Voir mon profil</a></li>
-              <li><a class="dropdown-item" routerLink="/reservations">Mes réservations</a></li>
+            <ul class="dropdown-menu dropdown-menu-end shadow">
+              <li><a class="dropdown-item" routerLink="/profile"><i class="bi bi-person me-2"></i> Profil</a></li>
+              <li><a class="dropdown-item" routerLink="/reservation"><i class="bi bi-calendar-check me-2"></i> Réservations</a></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item text-danger" (click)="logout()">Déconnexion</a></li>
+              <li><a class="dropdown-item text-danger" (click)="logout()"><i class="bi bi-box-arrow-right me-2"></i> Déconnexion</a></li>
+            </ul>
+          </li>
+
+          <!-- Menu admin (visible uniquement si isAdmin() === true) -->
+          <li class="nav-item dropdown" *ngIf="isAdmin()">
+            <button class="btn btn-warning dropdown-toggle text-dark d-flex align-items-center w-auto" data-bs-toggle="dropdown">
+              <i class="bi bi-shield-lock-fill me-2"></i> Admin
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow">
+              <li><a class="dropdown-item" routerLink="/stats"><i class="bi bi-bar-chart-line me-2"></i> Statistiques</a></li>
+              <li><a class="dropdown-item" routerLink="/admin/spaces"><i class="bi bi-building me-2"></i> Espaces</a></li>
             </ul>
           </li>
         </ng-container>
-
       </ul>
     </div>
   </div>

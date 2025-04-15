@@ -13,9 +13,11 @@ import { CompleteProfileComponent } from './pages/complete-profile/complete-prof
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { MapViewComponent } from './pages/map-view/map-view.component';
 import { LoginComponent } from './pages/login/login.component';
+import { ReservationComponent } from './pages/reservation/reservation.component';
 import { BookingComponent } from './pages/booking/booking.component';
 import { PaymentComponent } from './pages/payment/payment.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { ReactiveFormsModule } from '@angular/forms';
 import { NgChartsModule } from 'ng2-charts';
 import { StatsComponent } from './pages/stats/stats.component';
 
@@ -32,6 +34,7 @@ import { StatsComponent } from './pages/stats/stats.component';
     BookingComponent,
     PaymentComponent,
     StatsComponent,
+    ReservationComponent,
   ],
   imports: [
     BrowserModule,
@@ -40,6 +43,7 @@ import { StatsComponent } from './pages/stats/stats.component';
     FormsModule,
     NgChartsModule,
     CommonModule,
+    ReactiveFormsModule,
   ],
   providers: [
     {

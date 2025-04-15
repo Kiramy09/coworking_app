@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import *
 from .models import User
 from .models import Profile
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 class EquipmentSerializer(serializers.ModelSerializer):
@@ -107,6 +108,19 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ['gender', 'birth_date', 'address', 'activity', 'avatar']
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token['is_staff'] = user.is_staff
+        return token
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        data['is_staff'] = self.user.is_staff  # Ajout dans la réponse frontend
+        return data
     
 
     

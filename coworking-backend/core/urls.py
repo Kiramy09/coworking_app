@@ -1,6 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenRefreshView
+from .views import CustomTokenObtainPairView
 from .views import (CoworkingSpaceViewSet,UserViewSet,BookingViewSet,CoworkingPaymentViewSet,RegisterView,ProfileUpdateView,MyBookingsView,CheckBookingAvailabilityView,TakenSlotsView,DashboardStatsView)
 
 router = DefaultRouter()
@@ -11,7 +12,7 @@ router.register(r'payments', CoworkingPaymentViewSet, basename='payments')
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
-    path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),    
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('profile/', ProfileUpdateView.as_view(), name='update-profile'),
     path('my-bookings/', MyBookingsView.as_view(), name='my-bookings'),
