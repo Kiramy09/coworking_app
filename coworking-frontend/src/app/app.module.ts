@@ -20,7 +20,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgChartsModule } from 'ng2-charts';
 import { StatsComponent } from './pages/stats/stats.component';
-
+import { CoworkingSpacesComponent } from './pages/coworking-spaces/coworking-spaces.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +35,7 @@ import { StatsComponent } from './pages/stats/stats.component';
     PaymentComponent,
     StatsComponent,
     ReservationComponent,
+    CoworkingSpacesComponent,
   ],
   imports: [
     BrowserModule,

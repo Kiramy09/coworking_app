@@ -6,7 +6,7 @@ import { CoworkingService } from '../../services/coworking.service';
   selector: 'app-coworking-admin',
   templateUrl: './coworking-spaces.component.html',
 })
-export class CoworkingAdminComponent {
+export class CoworkingSpacesComponent {
   space: any = {
     name: '',
     capacity: 1,
