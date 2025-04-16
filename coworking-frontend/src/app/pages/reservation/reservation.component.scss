@@ -101,3 +101,30 @@
       color: #ffdb70;
     }
   }
+
+  .filter-controls {
+    .nav-tabs {
+      border-bottom: 1px solid #dee2e6;
+      margin-bottom: 1.5rem;
+      
+      .nav-link {
+        color: #6c757d;
+        cursor: pointer;
+        border: 1px solid transparent;
+        border-top-left-radius: 0.25rem;
+        border-top-right-radius: 0.25rem;
+        padding: 0.5rem 1rem;
+        
+        &:hover {
+          border-color: #e9ecef #e9ecef #dee2e6;
+          color: #495057;
+        }
+        
+        &.active {
+          color: #495057;
+          background-color: #fff;
+          border-color: #dee2e6 #dee2e6 #fff;
+        }
+      }
+    }
+  }

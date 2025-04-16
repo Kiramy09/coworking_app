@@ -14,6 +14,8 @@ export class ReservationComponent implements OnInit {
   showModal: boolean = false;
   showReviewModal: boolean = false;
   reviewForm: FormGroup;
+  filteredBookings: any[] = []; // Pour stocker les réservations filtrées
+  activeFilter: 'current' | 'past' | 'all' = 'current'; //  réservations en cours
 
   constructor(
     private coworkingService: CoworkingService,
@@ -38,6 +40,8 @@ export class ReservationComponent implements OnInit {
           this.bookings = bookings.sort(
             (a, b) => new Date(b.end_time).getTime() - new Date(a.end_time).getTime()
           );
+          // Applique le filtre après avoir récupéré les réservations
+          this.applyFilter(this.activeFilter);
         } else {
           this.userId = null;
           this.bookings = [];
@@ -49,6 +53,27 @@ export class ReservationComponent implements OnInit {
     });
   }
   
+   // methode pour le filtrage
+   applyFilter(filter: 'current' | 'past' | 'all'): void {
+    this.activeFilter = filter;
+    
+    switch (filter) {
+      case 'current':
+        this.filteredBookings = this.bookings.filter(booking => 
+          !this.isBookingPast(booking.end_time)
+        );
+        break;
+      case 'past':
+        this.filteredBookings = this.bookings.filter(booking => 
+          this.isBookingPast(booking.end_time)
+        );
+        break;
+      case 'all':
+      default:
+        this.filteredBookings = [...this.bookings];
+        break;
+    }
+  }
 
   isBookingPast(endTime: string): boolean {
     const now = new Date();
@@ -70,13 +95,13 @@ export class ReservationComponent implements OnInit {
     if (this.selectedBooking) {
       this.coworkingService.cancelBooking(this.selectedBooking.id).subscribe(
         () => {
-          alert('Réservation annulée avec succès.');
+          this.successToast('Réservation annulée avec succès.');
           this.bookings = this.bookings.filter(booking => booking.id !== this.selectedBooking.id);
           this.closeModal();
         },
         error => {
           console.error('Erreur lors de l\'annulation:', error);
-          alert('Erreur lors de l\'annulation de la réservation.');
+          this.errorToast('Erreur lors de l\'annulation de la réservation.');
         }
       );
     }
@@ -103,13 +128,13 @@ export class ReservationComponent implements OnInit {
             this.bookings[index] = response;
           }
           
-          alert('Avis ajouté avec succès.');
+          this.successToast('Avis ajouté avec succès.');
           this.reviewForm.reset();
           this.closeModal();
         },
         error => {
           console.error('Erreur lors de l\'ajout de l\'avis:', error);
-          alert('Erreur lors de l\'ajout de l\'avis.');
+          this.errorToast('Erreur lors de l\'ajout de l\'avis.');
         }
       );
     }
@@ -118,5 +143,73 @@ export class ReservationComponent implements OnInit {
   // Méthode utilitaire pour l'affichage des étoiles
   getStarsArray(rating: number): number[] {
     return Array(rating).fill(0);
+  }
+
+  //methode pour afficher les toats 
+
+  showToast(message: string, type: 'success' | 'danger' | 'warning' | 'info' = 'success'): void {
+    // Créer un élément toast
+    const toastEl = document.createElement('div');
+    toastEl.className = `toast align-items-center text-white bg-${type} border-0`;
+    toastEl.setAttribute('role', 'alert');
+    toastEl.setAttribute('aria-live', 'assertive');
+    toastEl.setAttribute('aria-atomic', 'true');
+    
+    // Contenu du toast
+    toastEl.innerHTML = `
+      <div class="d-flex">
+        <div class="toast-body">
+          ${message}
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    `;
+    
+    // Trouver ou créer le conteneur
+    let container = document.getElementById('toastContainer');
+    
+    // Si le conteneur n'existe pas, le créer
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'toastContainer';
+      container.className = 'toast-container position-fixed top-0 end-0 p-3';
+      document.body.appendChild(container);
+    }
+    
+    // On utilise l'opérateur de non-nullité car on sait que container existe maintenant
+    container!.appendChild(toastEl);
+    
+    // Initialiser le toast avec Bootstrap
+    const bsToast = new (window as any).bootstrap.Toast(toastEl, {
+      autohide: true,
+      delay: 5000
+    });
+    
+    // Afficher le toast
+    bsToast.show();
+    
+    // Supprimer du DOM après disparition
+    toastEl.addEventListener('hidden.bs.toast', () => {
+      // On capture une référence au conteneur qui est forcément non-null ici
+      const parentContainer = document.getElementById('toastContainer');
+      if (parentContainer && parentContainer.contains(toastEl)) {
+        parentContainer.removeChild(toastEl);
+      }
+    });
+  }
+  successToast(message: string): void {
+    this.showToast(message, 'success');
+  }
+  
+  errorToast(message: string): void {
+    this.showToast(message, 'danger');
+  }
+  
+  warningToast(message: string): void {
+    this.showToast(message, 'warning');
+  }
+  
+  infoToast(message: string): void {
+    this.showToast(message, 'info');
   }
 }

@@ -1,24 +1,50 @@
 <div class="container mt-4">
     <h2 class="text-center mb-4">Mes Réservations</h2>
-    <div *ngIf="bookings.length > 0; else noBookings" class="row g-4">
-        <div *ngFor="let booking of bookings" class="col-md-6 col-lg-4">
+    
+    <!-- Contrôles de filtrage -->
+    <div class="filter-controls mb-4">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link" [class.active]="activeFilter === 'current'" 
+                   (click)="applyFilter('current')" href="javascript:void(0)">
+                    <i class="bi bi-clock"></i> Réservations en cours
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" [class.active]="activeFilter === 'past'" 
+                   (click)="applyFilter('past')" href="javascript:void(0)">
+                    <i class="bi bi-clock-history"></i> Réservations passées
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" [class.active]="activeFilter === 'all'" 
+                   (click)="applyFilter('all')" href="javascript:void(0)">
+                    <i class="bi bi-list"></i> Toutes les réservations
+                </a>
+            </li>
+        </ul>
+    </div>
+    
+    <!-- Affichage des réservations filtrées -->
+    <div *ngIf="filteredBookings.length > 0; else noFilteredBookings" class="row g-4">
+        <div *ngFor="let booking of filteredBookings" class="col-md-6 col-lg-4">
             <div class="card" [ngClass]="{'card-past': isBookingPast(booking.end_time)}">
                 <div class="card-img-container" [ngClass]="{'blur-effect': isBookingPast(booking.end_time)}">
                     <img [src]="booking.coworking_space.image" class="card-img-top" alt="Espace de coworking">
                     <div *ngIf="isBookingPast(booking.end_time)" class="past-badge">Passée</div>
                 </div>
                 <div class="card-body">
-                   
                     <h6 class="card-subtitle mb-2">{{ booking.coworking_space.name }}</h6>
                     <p class="card-text">
                         <i class="bi bi-calendar-date"></i> <strong>Jour :</strong> {{ booking.start_time | date:'dd/MM/yyyy' }}<br>
                         <i class="bi bi-clock"></i> <strong>Début :</strong> {{ booking.start_time | date:'HH:mm' }}<br>
                         <i class="bi bi-clock-history"></i> <strong>Fin :</strong> {{ booking.end_time | date:'HH:mm' }}<br>
+                        <!-- Pour le sreservations passées le statut doit passé à payer -->
                         <i class="bi bi-credit-card"></i> <strong>Statut :</strong>
-                        <span class="badge" [ngClass]="booking.is_paid ? 'bg-success' : 'bg-danger'">
-                            {{ booking.is_paid ? 'Payé' : 'Non payé' }}
+                        <span class="badge" [ngClass]="isBookingPast(booking.end_time) ? 'bg-success' : (booking.is_paid ? 'bg-success' : 'bg-danger')">
+                            {{ isBookingPast(booking.end_time) ? 'Payé' : (booking.is_paid ? 'Payé' : 'Non payé') }}
                         </span>
-                    </p>
+                     </p>
                     
                     <!-- Bouton d'annulation pour les réservations actives -->
                     <div *ngIf="!isBookingPast(booking.end_time)" class="mt-3">
@@ -61,9 +87,14 @@
             </div>
         </div>
     </div>
-    <ng-template #noBookings>
-        <div class="alert alert-warning" role="alert">
-            <i class="bi bi-exclamation-triangle-fill"></i> Aucune réservation trouvée.
+    
+    <!-- Message quand aucune réservation ne correspond au filtre -->
+    <ng-template #noFilteredBookings>
+        <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle"></i>
+            <span *ngIf="activeFilter === 'current'">Vous n'avez pas de réservations en cours.</span>
+            <span *ngIf="activeFilter === 'past'">Aucune reservation.</span>
+            <span *ngIf="activeFilter === 'all'">Vous n'avez aucune réservation.</span>
         </div>
     </ng-template>
   
@@ -120,7 +151,7 @@
                         <i class="bi bi-send"></i> Soumettre
                     </button>
                 </div>
-            </form> 
+            </form>
         </div>
     </div>
 </div>
