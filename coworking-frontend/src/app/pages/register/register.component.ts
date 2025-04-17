@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from './../../services/auth.service';
 
@@ -8,45 +9,55 @@ import { AuthService } from './../../services/auth.service';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent {
-  user = {
-    first_name: '',
-    last_name: '',
-    email: '',
-    password: '',
-    gender: '',           // ← facultatif pour l'instant
-    birth_date: null,     // ← idem
-    address: '',
-    activity: '',
-    avatar: null          // ← null ou un fichier si tu veux
-  };
-  
-
+  registerForm: FormGroup;
   confirmPassword = '';
   errorMessage = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router, private fb: FormBuilder) {
+    this.registerForm = this.fb.group({
+      first_name: ['', Validators.required],
+      last_name: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(7),
+          Validators.maxLength(15),
+          Validators.pattern('.*[0-9].*')  // regex pour au moins un chiffre
+        ]
+      ],
+      confirmPassword: ['', Validators.required],
+      gender: [''],
+      birth_date: [null],
+      address: [''],
+      activity: [''],
+      avatar: [null]
+    });
+  }
 
   isSubmitting = false;
 
-onRegister() {
-  if (this.user.password !== this.confirmPassword) {
-    alert("Les mots de passe ne correspondent pas !");
-    return;
-  }
+  onSubmit() {
+    if (this.registerForm.valid && this.registerForm.get('password')?.value === this.registerForm.get('confirmPassword')?.value) {
+      this.isSubmitting = true;
 
-  this.isSubmitting = true;
-
-  this.authService.register(this.user).subscribe({
-    next: (res) => {
-      this.isSubmitting = false;
-      this.router.navigate(['/complete-profile']);
-    },
-    error: (err) => {
-      this.isSubmitting = false;
-      alert("Une erreur est survenue.");
+      this.authService.register(this.registerForm.value).subscribe({
+        next: (res) => {
+          this.isSubmitting = false;
+          this.router.navigate(['/complete-profile']);
+        },
+        error: (err) => {
+          this.isSubmitting = false;
+          alert("Une erreur est survenue.");
+        }
+      });
+    } else {
+      if (this.registerForm.get('password')?.value !== this.registerForm.get('confirmPassword')?.value) {
+        alert("Les mots de passe ne correspondent pas !");
+      } else {
+        console.error('Form is invalid');
+      }
     }
-  });
-}
-
-  
+  }
 }

@@ -1,16 +1,16 @@
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { AppComponent } from './app.component';
+import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
-import { HomeComponent } from './pages/home/home.component';
-import { RegisterComponent } from './pages/register/register.component';
+import { AppComponent } from './app.component';
 import { CompleteProfileComponent } from './pages/complete-profile/complete-profile.component';
-import { NavbarComponent } from './shared/navbar/navbar.component';
-import { MapViewComponent } from './pages/map-view/map-view.component';
+import { HomeComponent } from './pages/home/home.component';
 import { LoginComponent } from './pages/login/login.component';
+import { MapViewComponent } from './pages/map-view/map-view.component';
+import { RegisterComponent } from './pages/register/register.component';
 import { ReservationComponent } from './pages/reservation/reservation.component';
+import { NavbarComponent } from './shared/navbar/navbar.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +28,7 @@ import { ReservationComponent } from './pages/reservation/reservation.component'
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
+    ReactiveFormsModule  
   ],
   providers: [],
   bootstrap: [AppComponent]
