@@ -1,5 +1,5 @@
-<!-- coworking-spaces.component.html -->
 <div class="container mt-4">
+  <div class="container mt-4">
     <h2>📋 Ajouter un espace</h2>
   
     <form (ngSubmit)="onSubmit()" #spaceForm="ngForm" enctype="multipart/form-data">
@@ -7,10 +7,31 @@
         <input class="form-control" type="text" name="name" [(ngModel)]="space.name" placeholder="Nom" required>
       </div>
       <div class="mb-2">
+        <input class="form-control" type="text" name="description" [(ngModel)]="space.description" placeholder="Description" required>
+      </div>
+      <div class="mb-2">
+        <input class="form-control" type="text" name="city" [(ngModel)]="space.city" placeholder="Ville" required>
+      </div>
+      <div class="mb-2">
+        <input class="form-control" type="text" name="address" [(ngModel)]="space.address" placeholder="Adresse" required>
+      </div>
+      <div class="mb-2">
+        <input class="form-control" type="number" name="price_per_hour" [(ngModel)]="space.price_per_hour" placeholder="Prix par heure" required>
+      </div>
+      <div class="mb-2">
         <input class="form-control" type="number" name="capacity" [(ngModel)]="space.capacity" placeholder="Capacité" required>
       </div>
       <div class="mb-2">
-        <input class="form-control" type="text" name="city" [(ngModel)]="space.city" placeholder="Ville">
+        <input class="form-control" type="number" name="latitude" [(ngModel)]="space.latitude" placeholder="Latitude">
+      </div>
+      <div class="mb-2">
+        <input class="form-control" type="number" name="longitude" [(ngModel)]="space.longitude" placeholder="Longitude">
+      </div>
+      <div class="mb-2">
+        <input class="form-control" type="text" name="space_type" [(ngModel)]="space.space_type" placeholder="Type d'espace">
+      </div>
+      <div class="mb-2">
+        <input class="form-control" type="number" name="metropole_id" [(ngModel)]="space.metropole_id" placeholder="ID Métropole" required>
       </div>
       <div class="mb-2">
         <input class="form-control" type="file" (change)="onFileSelected($event)">
@@ -20,3 +41,15 @@
     </form>
   </div>
   
+
+  <hr>
+
+  <div *ngIf="spaces.length">
+    <h4>📍 Espaces enregistrés :</h4>
+    <ul class="list-group mt-2">
+      <li *ngFor="let sp of spaces" class="list-group-item">
+        <strong>{{ sp.name }}</strong> – {{ sp.city }} ({{ sp.space_type }}) | 💺 Capacité : {{ sp.capacity }}
+      </li>
+    </ul>
+  </div>
+</div>

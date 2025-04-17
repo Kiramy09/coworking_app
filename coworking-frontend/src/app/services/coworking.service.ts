@@ -142,10 +142,17 @@ export class CoworkingService {
     return throwError(() => new Error('Erreur lors de la requête HTTP.'));
   }
   
-  addSpace(data: FormData): Observable<any> {
-    const headers = this.getAuthHeaders().delete('Content-Type');
-    return this.http.post(`${this.apiUrl}/spaces/`, data, { headers })
+  addSpace(space: FormData): Observable<any> {
+    const token = localStorage.getItem('access_token');
+  
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}` // ⛔️ Ne surtout PAS mettre Content-Type ici !
+    });
+  
+    return this.http.post<any>(`${this.apiUrl}/spaces/`, space, { headers })
       .pipe(catchError(this.handleError));
   }
+  
+  
   
 }

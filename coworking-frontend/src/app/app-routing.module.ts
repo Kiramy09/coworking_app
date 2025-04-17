@@ -24,7 +24,7 @@ const routes: Routes = [
   { path: 'reservation',component:ReservationComponent },
   { path: 'payment/:bookingId', component: PaymentComponent },
   { path: 'stats', component: StatsComponent },
-  { path: 'coworking-space', component: CoworkingSpacesComponent }
+  { path: 'coworking-spaces', component: CoworkingSpacesComponent }
 
 
 ];
