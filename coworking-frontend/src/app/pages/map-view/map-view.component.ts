@@ -73,6 +73,11 @@ export class MapViewComponent implements OnInit, AfterViewInit {
     }).addTo(this.map);
   }
 
+  isAdmin(): boolean {
+    return localStorage.getItem('is_staff') === 'true';
+  }
+
+  
   loadSpaces(): void {
     const params: any = {};
     if (this.selectedType) {

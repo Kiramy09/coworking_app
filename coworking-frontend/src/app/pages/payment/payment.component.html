@@ -3,7 +3,7 @@
       <h4 class="mb-3 text-center">Paiement</h4>
   
       <div *ngIf="booking">
-        <p><strong>Espace :</strong> {{ booking.coworking_space.name }}</p>
+        <p><strong>Espace :</strong> {{ booking.coworking_space_info?.name }}</p>
         <p><strong>Total à payer :</strong> {{ totalAmount }} €</p>
       </div>
   
@@ -39,11 +39,13 @@
         <h4 class="mb-2">Paiement confirmé !</h4>
         <p class="text-muted">Votre réservation a bien été enregistrée.</p>
         <!-- <button class="btn btn-success mt-3 w-100" (click)="redirectHome()">Retour à l’accueil</button> -->
-        <div class="d-flex justify-content-between mt-4 gap-2">
-          <button class="btn btn-outline-primary w-50" (click)="redirectHome()">Accueil</button>
-          <button class="btn btn-success w-50" (click)="goToMyBookings()">Mes réservations</button>
+        <div class="d-flex flex-column gap-2 mt-3">
+          <button class="btn btn-outline-primary w-100" (click)="downloadInvoice()">📄 Télécharger la facture (PDF)</button>
+          <div class="d-flex justify-content-between gap-2">
+            <button class="btn btn-outline-secondary w-50" (click)="redirectHome()">Accueil</button>
+            <button class="btn btn-success w-50" (click)="goToMyBookings()">Mes réservations</button>
+          </div>
         </div>
-        
       </div>
     </div>
   </div>

@@ -47,6 +47,7 @@ class CoworkingSpace(models.Model):
     equipments = models.ManyToManyField(Equipment, related_name='spaces')
     price_per_hour = models.DecimalField(max_digits=5, decimal_places=2)
     capacity = models.PositiveIntegerField()
+    is_visible = models.BooleanField(default=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

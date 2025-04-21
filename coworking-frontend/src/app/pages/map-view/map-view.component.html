@@ -99,9 +99,19 @@
           <h6 class="card-title mb-1">{{ space.name }}</h6>
           <small class="text-muted d-block">{{ space.address }}</small>
           <!-- <a [routerLink]="['/booking', space.id]" class="btn btn-primary btn-sm mt-2">Réserver</a> -->
-          <a *ngIf="authService.isLoggedIn()" [routerLink]="['/booking', space.id]" class="btn btn-primary btn-sm mt-2">
+          <!-- <a *ngIf="authService.isLoggedIn()" [routerLink]="['/booking', space.id]" class="btn btn-primary btn-sm mt-2">
             Réserver
-          </a>
+          </a> -->
+          <!-- Si connecté -->
+          <ng-container *ngIf="authService.isLoggedIn()">
+            <a *ngIf="!isAdmin()" [routerLink]="['/booking', space.id]" class="btn btn-primary btn-sm mt-2">
+              Réserver
+            </a>
+            <a *ngIf="isAdmin()" [routerLink]="['/admin/spaces', space.id]" class="btn btn-warning btn-sm mt-2">
+              Gérer
+            </a>            
+          </ng-container>
+
           <span *ngIf="!authService.isLoggedIn()" class="text-muted small">
             <a [routerLink]="['/login']">Connectez-vous</a> pour réserver
           </span>

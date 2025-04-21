@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CoworkingService } from '../../services/coworking.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-reservation',
@@ -17,7 +18,8 @@ export class ReservationComponent implements OnInit {
 
   constructor(
     private coworkingService: CoworkingService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private router: Router
   ) {
     this.reviewForm = this.fb.group({
       rating: ['', [Validators.required, Validators.min(1), Validators.max(5)]],
@@ -113,6 +115,10 @@ export class ReservationComponent implements OnInit {
         }
       );
     }
+  }
+
+  goToPayment(bookingId: number): void {
+    this.router.navigate(['/payment', bookingId]);
   }
 
   // Méthode utilitaire pour l'affichage des étoiles

@@ -21,6 +21,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NgChartsModule } from 'ng2-charts';
 import { StatsComponent } from './pages/stats/stats.component';
 import { MonProfilComponent } from './pages/mon-profil/mon-profil.component';
+import { AdminSpaceDetailComponent } from './pages/admin-space-detail/admin-space-detail.component'
+import { InvoicesComponent } from './pages/invoices/invoices.component';  
+import { UserManagementComponent } from './pages/user-management/user-management.component';
 
 
 @NgModule({
@@ -37,6 +40,9 @@ import { MonProfilComponent } from './pages/mon-profil/mon-profil.component';
     PaymentComponent,
     StatsComponent,
     ReservationComponent,
+    AdminSpaceDetailComponent,
+    InvoicesComponent,
+    UserManagementComponent,
   ],
   imports: [
     BrowserModule,

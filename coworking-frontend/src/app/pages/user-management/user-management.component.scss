@@ -1,0 +1,8 @@
+.table td, .table th {
+    vertical-align: middle;
+  }
+  
+  .btn-group .btn i {
+    pointer-events: none; // évite le flicker lors du hover sur l’icône
+  }
+  

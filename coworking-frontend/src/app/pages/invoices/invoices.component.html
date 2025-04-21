@@ -1,0 +1,30 @@
+<div class="invoice-page container py-5">
+    <h2 class="mb-4 text-center">🧾 Mes Factures</h2>
+  
+    <div *ngIf="payments.length > 0; else noInvoice">
+      <div class="row g-4">
+        <div *ngFor="let payment of payments" class="col-md-6 col-lg-4">
+          <div class="invoice-card shadow-sm p-4 h-100">
+            <h5 class="text-primary mb-2">{{ payment.booking.coworking_space_info.name }}</h5>
+            <p class="mb-1"><strong>Date :</strong> {{ payment.payment_date | date:'dd/MM/yyyy HH:mm' }}</p>
+            <p class="mb-1"><strong>Durée :</strong> 
+              {{ payment.booking.start_time | date:'shortTime' }} - 
+              {{ payment.booking.end_time | date:'shortTime' }}</p>
+            <p class="mb-1"><strong>Total :</strong> {{ payment.amount }} €</p>
+            <p class="mb-3"><strong>Méthode de paiement :</strong> {{ payment.payment_method }}</p>
+            <button class="btn btn-outline-dark w-100" (click)="downloadPDF(payment)">
+              <i class="bi bi-download"></i> Télécharger la facture (PDF)
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <ng-template #noInvoice>
+      <div class="text-center text-muted">
+        <i class="bi bi-receipt fs-1 d-block mb-3"></i>
+        <p>Vous n'avez pas de factures pour l'instant.</p>
+      </div>
+    </ng-template>
+  </div>
+  

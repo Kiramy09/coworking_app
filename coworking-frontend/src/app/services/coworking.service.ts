@@ -104,6 +104,76 @@ export class CoworkingService {
     return this.http.post<any>(url, reviewData, { headers: this.getAuthHeaders() });
   }
   
+  getReservationsBySpace(spaceId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/spaces/${spaceId}/reservations/`, {headers: this.getAuthHeaders()});
+  }
+  
+  updateSpace(id: number, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/spaces/${id}/`, data);
+  }
+  
+  getEquipments(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/equipments/`);
+  }
+
+  updateBooking(id: number, data: any): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/bookings/${id}/`, data, {
+      headers: this.getAuthHeaders()
+    });
+  }
+  
+
+  updateSpaceWithFormData(id: number, data: FormData): Observable<any> {
+    const token = localStorage.getItem('access_token');
+    const headers = token? new HttpHeaders({'Authorization': `Bearer ${token}`}): new HttpHeaders();
+    return this.http.put(`${this.apiUrl}/spaces/${id}/`, data, { headers });
+  }
+
+  toggleSpaceVisibility(spaceId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/spaces/${spaceId}/toggle-visibility/`, {}, {
+      headers: this.getAuthHeaders()
+    });
+  }
+  
+  deleteSpace(spaceId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/spaces/${spaceId}/`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+  
+  cancelBookingAsAdmin(bookingId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/bookings/${bookingId}/`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+  
+  getMyPayments(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/payments/mine`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+  
+  getAllUsers(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/users/`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+  deleteUser(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/users/${id}/`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  updateUserRole(id: number, data: any): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/users/${id}/`, data, { headers: this.getAuthHeaders() });
+  }
+  
+  // getUserBookingsById(userId: number): Observable<any[]> {
+  //   return this.http.get<any[]>(`${this.apiUrl}/users/${userId}/bookings`, {
+  //     headers: this.getAuthHeaders()
+  //   });
+  // }
+    
   
 
 

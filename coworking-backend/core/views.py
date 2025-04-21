@@ -31,6 +31,12 @@ from .serializers import (
 User = get_user_model()
 
 # views.py
+
+class EquipmentViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Equipment.objects.all()
+    serializer_class = EquipmentSerializer
+
+
 class CoworkingSpaceViewSet(viewsets.ModelViewSet):
     queryset = CoworkingSpace.objects.all()
     serializer_class = CoworkingSpaceSerializer
@@ -59,6 +65,19 @@ class CoworkingSpaceViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(equipments__name__icontains=equipment)
 
         return queryset.distinct()
+    @action(detail=True, methods=['get'], url_path='reservations', permission_classes=[IsAuthenticated])
+    def get_reservations(self, request, pk=None):
+        space = self.get_object()
+        bookings = Booking.objects.filter(coworking_space=space).order_by('-start_time')
+        serializer = BookingSerializer(bookings, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['post'], url_path='toggle-visibility')
+    def toggle_visibility(self, request, pk=None):
+        space = self.get_object()
+        space.is_visible = not space.is_visible
+        space.save()
+        return Response({'success': True, 'is_visible': space.is_visible})
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -68,6 +87,20 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    @action(detail=True, methods=['get'], url_path='bookings', permission_classes=[IsAuthenticated])
+    def get_user_bookings(self, request, pk=None):
+        if not request.user.is_staff:
+            return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+
+        try:
+            user = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            return Response({'error': 'Utilisateur introuvable'}, status=status.HTTP_404_NOT_FOUND)
+
+        bookings = Booking.objects.filter(customer=user)
+        serializer = BookingSerializer(bookings, many=True)
+        return Response(serializer.data)
 
 # class BookingViewSet(viewsets.ModelViewSet):
 #     permission_classes = [IsAuthenticated]
@@ -115,6 +148,14 @@ class UserViewSet(viewsets.ModelViewSet):
 class CoworkingPaymentViewSet(viewsets.ModelViewSet):
     queryset = CoworkingPayment.objects.all()
     serializer_class = CoworkingPaymentSerializer
+    permission_classes = [IsAuthenticated]
+
+    @action(detail=False, methods=['get'], url_path='mine')
+    def my_payments(self, request):
+        user = request.user
+        payments = CoworkingPayment.objects.filter(booking__customer=user).select_related('booking__coworking_space')
+        serializer = self.get_serializer(payments, many=True)
+        return Response(serializer.data)
     
 
 class RegisterView(APIView):
@@ -145,7 +186,7 @@ class BookingViewSet(viewsets.ModelViewSet):
     serializer_class = BookingSerializer
 
     def create(self, request, *args, **kwargs):
-        space = request.data['coworking_space']
+        space = request.data.get('coworking_space')         
         start = request.data['start_time']
         end = request.data['end_time']
 
@@ -192,6 +233,16 @@ class BookingViewSet(viewsets.ModelViewSet):
         booking.save()
         serializer = self.get_serializer(booking)
         return Response(serializer.data)
+    
+    def destroy(self, request, *args, **kwargs):
+        booking = self.get_object()
+
+        # Vérification : seul un admin peut supprimer une réservation
+        if not request.user.is_staff:
+            return Response({'error': 'Accès interdit'}, status=status.HTTP_403_FORBIDDEN)
+        booking.delete()
+        return Response({'message': 'Réservation supprimée'}, status=status.HTTP_204_NO_CONTENT)
+
     
 
     
