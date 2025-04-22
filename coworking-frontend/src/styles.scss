@@ -1,1 +1,50 @@
 /* You can add global styles to this file, and also import other style files */
+/* Bas de page */
+.footer {
+    background-color: #3e2723;
+    color: #ffffff;
+    padding: 20px 0;
+    margin-top: auto; /* Permet de pousser le footer en bas */
+    text-align: center;
+  
+    a {
+      color: #d7ccc8;
+      text-decoration: none;
+      transition: color 0.2s ease-in-out;
+  
+      &:hover {
+        color: #ffffff;
+      }
+    }
+  
+    h5 {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      color: #ffccbc;
+    }
+  
+    p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+  
+    hr {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+  
+    .container {
+      max-width: 1200px;
+      margin: auto;
+    }
+  
+    .text-center {
+      color: #a1887f;
+      font-size: 0.9rem;
+    }
+  
+    .py-3 {
+      padding-top: 15px;
+      padding-bottom: 15px;
+    }
+  }
+  
