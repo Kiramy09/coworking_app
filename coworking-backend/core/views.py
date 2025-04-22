@@ -12,11 +12,12 @@ from django.utils.dateparse import parse_datetime
 from datetime import datetime, timedelta
 from django.db.models import Count
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.parsers import MultiPartParser, FormParser
 from .serializers import CustomTokenObtainPairSerializer
 from django.http import JsonResponse
 from rest_framework.decorators import action
 from django.utils import timezone
-
+from rest_framework.permissions import IsAdminUser
 
 from .models import CoworkingSpace, Equipment, Booking, CoworkingPayment 
 from .serializers import (
@@ -40,6 +41,12 @@ class EquipmentViewSet(viewsets.ReadOnlyModelViewSet):
 class CoworkingSpaceViewSet(viewsets.ModelViewSet):
     queryset = CoworkingSpace.objects.all()
     serializer_class = CoworkingSpaceSerializer
+    parser_classes = [MultiPartParser, FormParser]  # ➕ pour accepter les fichiers
+
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [IsAdminUser()]
+        return super().get_permissions()
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -51,7 +58,6 @@ class CoworkingSpaceViewSet(viewsets.ModelViewSet):
         if metropole:
             queryset = queryset.filter(metropole__name__iexact=metropole)
 
-        # Filtres avancés
         min_capacity = self.request.query_params.get('min_capacity')
         if min_capacity:
             queryset = queryset.filter(capacity__gte=min_capacity)
@@ -65,13 +71,14 @@ class CoworkingSpaceViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(equipments__name__icontains=equipment)
 
         return queryset.distinct()
+
     @action(detail=True, methods=['get'], url_path='reservations', permission_classes=[IsAuthenticated])
     def get_reservations(self, request, pk=None):
         space = self.get_object()
         bookings = Booking.objects.filter(coworking_space=space).order_by('-start_time')
         serializer = BookingSerializer(bookings, many=True)
         return Response(serializer.data)
-    
+
     @action(detail=True, methods=['post'], url_path='toggle-visibility')
     def toggle_visibility(self, request, pk=None):
         space = self.get_object()

@@ -3,7 +3,7 @@
     <h2 class="section-title">
       <i class="bi bi-building text-primary"></i> Espaces de coworking
     </h2>
-    <a routerLink="/admin/spaces/add" class="btn btn-sm btn-primary shadow-sm">
+    <a class="btn btn-sm btn-primary shadow-sm"  data-bs-toggle="modal" data-bs-target="#addSpaceModal">
       <i class="bi bi-plus-lg"></i> Ajouter un espace de coworking
     </a>
   </div>
@@ -53,6 +53,58 @@
           <button class="btn btn-danger" (click)="confirmDelete()">Confirmer</button>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL Ajout d’un espace -->
+<div class="modal fade" id="addSpaceModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content p-4">
+      <h3 class="modal-title text-center mb-3 text-primary">
+        <i class="bi bi-building-add"></i> Ajouter un espace
+      </h3>
+      <form (ngSubmit)="submitNewSpace()" #newSpaceForm="ngForm">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <input type="text" class="form-control" placeholder="Nom" name="name" required [(ngModel)]="newSpace.name">
+          </div>
+          <div class="col-md-6">
+            <input type="text" class="form-control" placeholder="Description" name="description" required [(ngModel)]="newSpace.description">
+          </div>
+          <div class="col-md-6">
+            <input type="text" class="form-control" placeholder="Ville" name="city" [(ngModel)]="newSpace.city">
+          </div>
+          <div class="col-md-6">
+            <input type="text" class="form-control" placeholder="Adresse" name="address" [(ngModel)]="newSpace.address">
+          </div>
+          <div class="col-md-4">
+            <input type="number" class="form-control" placeholder="Prix/heure (€)" name="price_per_hour" [(ngModel)]="newSpace.price_per_hour">
+          </div>
+          <div class="col-md-4">
+            <input type="number" class="form-control" placeholder="Capacité" name="capacity" [(ngModel)]="newSpace.capacity">
+          </div>
+          <div class="col-md-4">
+            <input type="number" class="form-control" placeholder="ID Métropole" name="metropole_id" [(ngModel)]="newSpace.metropole_id">
+          </div>
+          <div class="col-md-6">
+            <input type="number" class="form-control" placeholder="Latitude" name="latitude" [(ngModel)]="newSpace.latitude">
+          </div>
+          <div class="col-md-6">
+            <input type="number" class="form-control" placeholder="Longitude" name="longitude" [(ngModel)]="newSpace.longitude">
+          </div>
+          <div class="col-12">
+            <input type="text" class="form-control" placeholder="Type d'espace (bureau, salle...)" name="space_type" [(ngModel)]="newSpace.space_type">
+          </div>
+          <div class="col-12">
+            <input type="file" class="form-control" (change)="onNewFileSelected($event)">
+          </div>
+        </div>
+        <div class="mt-4 d-flex justify-content-end gap-2">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="submit" class="btn btn-primary">Ajouter</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

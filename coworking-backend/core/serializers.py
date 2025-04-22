@@ -32,18 +32,20 @@ class CoworkingSpaceSerializer(serializers.ModelSerializer):
     equipments = serializers.PrimaryKeyRelatedField(
         queryset=Equipment.objects.all(),
         many=True,
+        required=False
     )
     equipments_info = EquipmentSerializer(source='equipments', many=True, read_only=True)
     image = serializers.ImageField(required=False)
-    metropole = serializers.StringRelatedField()
+    metropole = serializers.StringRelatedField(read_only=True)
+    metropole_id = serializers.PrimaryKeyRelatedField(queryset=Metropole.objects.all(), write_only=True, source='metropole')
 
     class Meta:
         model = CoworkingSpace
         fields = [
             'id', 'name', 'description', 'address', 'city', 'metropole',
+            'metropole_id',  # ➕ pour le POST
             'capacity', 'price_per_hour', 'image',
-            'equipments',           # utilisé pour les PUT/POST
-            'equipments_info',      # utilisé pour l'affichage (GET)
+            'equipments', 'equipments_info',
             'latitude', 'longitude'
         ]
 

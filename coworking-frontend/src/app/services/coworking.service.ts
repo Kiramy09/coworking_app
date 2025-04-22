@@ -168,6 +168,12 @@ export class CoworkingService {
     return this.http.patch(`${this.apiUrl}/users/${id}/`, data, { headers: this.getAuthHeaders() });
   }
   
+  addSpace(formData: FormData): Observable<any> {
+    return this.http.post(`${this.apiUrl}/spaces/`, formData, {
+      headers: this.getAuthHeaders().delete('Content-Type') // Laisse FormData gérer le type
+    });
+  }
+  
   // getUserBookingsById(userId: number): Observable<any[]> {
   //   return this.http.get<any[]>(`${this.apiUrl}/users/${userId}/bookings`, {
   //     headers: this.getAuthHeaders()
