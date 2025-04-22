@@ -24,6 +24,7 @@ import { MonProfilComponent } from './pages/mon-profil/mon-profil.component';
 import { AdminSpaceDetailComponent } from './pages/admin-space-detail/admin-space-detail.component'
 import { InvoicesComponent } from './pages/invoices/invoices.component';  
 import { UserManagementComponent } from './pages/user-management/user-management.component';
+import { CoworkingManagementComponent } from './pages/coworking-management/coworking-management.component';
 
 
 @NgModule({
@@ -43,6 +44,7 @@ import { UserManagementComponent } from './pages/user-management/user-management
     AdminSpaceDetailComponent,
     InvoicesComponent,
     UserManagementComponent,
+    CoworkingManagementComponent,
   ],
   imports: [
     BrowserModule,

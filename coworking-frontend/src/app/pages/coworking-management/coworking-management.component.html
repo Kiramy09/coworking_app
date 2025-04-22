@@ -1,0 +1,58 @@
+<div class="coworking-list container py-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="section-title">
+      <i class="bi bi-building text-primary"></i> Espaces de coworking
+    </h2>
+    <a routerLink="/admin/spaces/add" class="btn btn-sm btn-primary shadow-sm">
+      <i class="bi bi-plus-lg"></i> Ajouter un espace de coworking
+    </a>
+  </div>
+
+  <div *ngIf="loading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
+
+  <div *ngIf="!loading && spaces.length > 0; else noSpaces">
+    <div class="list-group shadow-sm">
+      <div class="list-group-item list-group-item-action flex-column align-items-start space-item animate"
+           *ngFor="let space of spaces; let i = index"
+           [style.animationDelay]="(i * 100) + 'ms'">
+        <div class="d-flex w-100 justify-content-between align-items-center">
+          <h4 class="space-title mb-1 text-primary fw-bold">{{ space.name }}</h4>
+          <div class="btn-group btn-group-sm text-center action-buttons">
+            <a [routerLink]="['/admin/spaces', space.id]" class="btn btn-outline-primary" data-bs-toggle="tooltip" title="Modifier">
+              <i class="bi bi-pencil-square"></i>
+            </a>
+            <button class="btn btn-outline-danger" (click)="openDeleteModal(space)" data-bs-toggle="tooltip" title="Supprimer">
+              <i class="bi bi-trash3"></i>
+            </button>
+          </div>
+        </div>
+        <p class="mb-1 text-muted">
+          <i class="bi bi-geo-alt"></i> {{ space.city }} &nbsp; | &nbsp;
+          <i class="bi bi-people"></i> {{ space.capacity }} pers &nbsp; | &nbsp;
+          <i class="bi bi-currency-euro"></i> {{ space.price_per_hour }} /h
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noSpaces>
+  </ng-template>
+
+  <!-- Modal suppression -->
+  <div class="modal fade" id="deleteSpaceModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content text-center p-4 shadow border-0">
+        <h5 class="modal-title mb-3 text-danger fw-bold">
+          <i class="bi bi-trash3-fill"></i> Supprimer l'espace ?
+        </h5>
+        <p>Confirmez la suppression de <strong>{{ selectedSpace?.name }}</strong> ?</p>
+        <div class="d-flex justify-content-center gap-2 mt-4">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button class="btn btn-danger" (click)="confirmDelete()">Confirmer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
