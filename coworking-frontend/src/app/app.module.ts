@@ -25,6 +25,7 @@ import { AdminSpaceDetailComponent } from './pages/admin-space-detail/admin-spac
 import { InvoicesComponent } from './pages/invoices/invoices.component';  
 import { UserManagementComponent } from './pages/user-management/user-management.component';
 import { FooterComponent } from './shared/footer/footer.component';
+import { SpacesComponent } from './pages/spaces/spaces.component';
 
 
 
@@ -45,6 +46,7 @@ import { FooterComponent } from './shared/footer/footer.component';
     AdminSpaceDetailComponent,
     InvoicesComponent,
     UserManagementComponent,
+    SpacesComponent,
   ],
   imports: [
     BrowserModule,

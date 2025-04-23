@@ -177,6 +177,39 @@ export class CoworkingService {
   updateUserRole(id: number, data: any): Observable<any> {
     return this.http.patch(`${this.apiUrl}/users/${id}/`, data, { headers: this.getAuthHeaders() });
   }
+
+    // Obtenir la map metropole → villes
+    getMetropoleCityMap(): Observable<{ [key: string]: string[] }> {
+      return this.http.get<{ [key: string]: string[] }>(`${this.apiUrl}/metropole-cities-map/`);
+    }
+  
+    // Obtenir la liste des métropoles (id, name)
+    getMetropoles(): Observable<any[]> {
+      return this.http.get<any[]>(`${this.apiUrl}/metropoles/`);
+    }
+  
+    // Créer un espace
+    createSpace(data: any): Observable<any> {
+      return this.http.post(`${this.apiUrl}/spaces/`, data);
+    }
+
+    createSpaceWithFormData(data: FormData): Observable<any> {
+      const token = localStorage.getItem('access_token');
+      const headers = token ? new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      }) : new HttpHeaders();
+    
+      return this.http.post(`${this.apiUrl}/spaces/`, data, { headers });
+    }
+
+    getAllSpaces() {
+      return this.http.get<any[]>(`${this.apiUrl}/spaces/`);
+    }
+    
+
+    
+    
+    
   
   // getUserBookingsById(userId: number): Observable<any[]> {
   //   return this.http.get<any[]>(`${this.apiUrl}/users/${userId}/bookings`, {

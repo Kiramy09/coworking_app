@@ -3,21 +3,63 @@
     <h2 class="text-center fw-bold mb-1">Bienvenue !</h2>
     <p class="text-center text-muted mb-4">Nous sommes heureux de vous voir rejoindre nos clients !</p>
 
-    <form (ngSubmit)="onRegister()" #registerForm="ngForm">
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
       <div class="mb-3">
-        <input class="form-control form-control-lg" type="text" name="first_name" placeholder="Prénom" [(ngModel)]="user.first_name" required>
+        <input class="form-control form-control-lg" type="text" placeholder="Prénom" formControlName="first_name" required>
       </div>
       <div class="mb-3">
-        <input class="form-control form-control-lg" type="text" name="last_name" placeholder="Nom" [(ngModel)]="user.last_name" required>
+        <input class="form-control form-control-lg" type="text" placeholder="Nom" formControlName="last_name" required>
       </div>
       <div class="mb-3">
-        <input class="form-control form-control-lg" type="email" name="email" placeholder="Email" [(ngModel)]="user.email" required>
+        <input class="form-control form-control-lg" type="email" placeholder="Email" formControlName="email" required>
+        
+        <!-- Message d'erreur si le champ est touché et invalide -->
+        <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid" class="text-danger mt-1 small">
+          <!-- Erreur si l'email est requis -->
+          <div *ngIf="registerForm.get('email')?.errors?.['required']">
+            L'email est requis.
+          </div>
+          <!-- Erreur si le format de l'email est incorrect -->
+          <div *ngIf="registerForm.get('email')?.errors?.['email']">
+            Adresse email invalide.
+          </div>
+        </div>
       </div>
       <div class="mb-3">
-        <input class="form-control form-control-lg" type="password" name="password" placeholder="Mot de passe" [(ngModel)]="user.password" required>
+        <input class="form-control form-control-lg" type="password" placeholder="Mot de passe" formControlName="password" required>
+
+        <!-- Message d'erreur si le champ est touché et invalide -->
+        <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid" class="text-danger mt-1 small">
+          <!-- Erreur si le mot de passe est requis -->
+          <div *ngIf="registerForm.get('password')?.errors?.['required']">
+            Le mot de passe est requis.
+          </div>
+          <!-- Erreur si le mot de passe est trop court -->
+          <div *ngIf="registerForm.get('password')?.errors?.['minlength']">
+            Le mot de passe doit comporter au moins 7 caractères.
+          </div>
+          <!-- Erreur si le mot de passe est trop long -->
+          <div *ngIf="registerForm.get('password')?.errors?.['maxlength']">
+            Le mot de passe ne peut pas dépasser 15 caractères.
+          </div>
+          <!-- Erreur si le mot de passe ne contient pas de chiffre -->
+          <div *ngIf="registerForm.get('password')?.errors?.['pattern']">
+            Le mot de passe doit contenir au moins un chiffre.
+          </div>
+        </div>
       </div>
       <div class="mb-4">
-        <input class="form-control form-control-lg" type="password" name="confirmPassword" placeholder="Confirmer le mot de passe" [(ngModel)]="confirmPassword" required>
+        <input class="form-control form-control-lg" type="password" placeholder="Confirmer le mot de passe" formControlName="confirmPassword" required>
+
+        <!-- Message d'erreur si les mots de passe ne correspondent pas -->
+        <div *ngIf="registerForm.get('confirmPassword')?.touched && registerForm.get('confirmPassword')?.invalid" class="text-danger mt-1 small">
+          <div *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">
+            La confirmation du mot de passe est requise.
+          </div>
+          <div *ngIf="registerForm.get('confirmPassword')?.value !== registerForm.get('password')?.value">
+            Les mots de passe ne correspondent pas.
+          </div>
+        </div>
       </div>
 
       <div class="d-grid">

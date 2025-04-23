@@ -18,7 +18,7 @@ from rest_framework.decorators import action
 from django.utils import timezone
 
 
-from .models import CoworkingSpace, Equipment, Booking, CoworkingPayment 
+from .models import CoworkingSpace, Equipment, Booking, CoworkingPayment, Metropole
 from .serializers import (
     CoworkingSpaceSerializer,
     EquipmentSerializer,
@@ -26,6 +26,7 @@ from .serializers import (
     BookingSerializer,
     CoworkingPaymentSerializer,
     UserWithProfileSerializer, 
+    MetropoleSerializer,
 )
 
 User = get_user_model()
@@ -35,6 +36,29 @@ User = get_user_model()
 class EquipmentViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Equipment.objects.all()
     serializer_class = EquipmentSerializer
+
+class MetropoleViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Metropole.objects.all()
+    serializer_class = MetropoleSerializer
+
+
+class MetropoleCitiesMapView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        VILLE_METROPOLE = {
+            "Bordeaux": [
+                "Bordeaux", "Pessac", "Talence", "Mérignac", "Bègles",
+                "Gradignan", "Cenon", "Le Bouscat", "Floirac", "Lormont"
+            ],
+            "Paris": ["Paris", "Nanterre", "Issy-les-Moulineaux", "Saint-Denis"],
+            "Lyon": ["Lyon", "Villeurbanne", "Vénissieux"],
+            "Marseille": ["Marseille", "Aubagne"],
+            "Toulouse": ["Toulouse", "Blagnac", "Colomiers"],
+            "Nice": ["Nice", "Cagnes-sur-Mer"],
+        }
+
+        return Response(VILLE_METROPOLE)
 
 
 class CoworkingSpaceViewSet(viewsets.ModelViewSet):

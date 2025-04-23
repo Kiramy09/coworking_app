@@ -29,6 +29,8 @@ class EquipmentSerializer(serializers.ModelSerializer):
 #         fields = '__all__'
 
 class CoworkingSpaceSerializer(serializers.ModelSerializer):
+
+
     equipments = serializers.PrimaryKeyRelatedField(
         queryset=Equipment.objects.all(),
         many=True,
@@ -39,8 +41,8 @@ class CoworkingSpaceSerializer(serializers.ModelSerializer):
     metropole = serializers.PrimaryKeyRelatedField(
         queryset=Metropole.objects.all()
     )
-    # metropole_name = serializers.StringRelatedField(source='metropole', read_only=True)
 
+    # metropole_name = serializers.StringRelatedField(source='metropole', read_only=True)
 
     class Meta:
         model = CoworkingSpace
@@ -49,8 +51,27 @@ class CoworkingSpaceSerializer(serializers.ModelSerializer):
             'capacity', 'price_per_hour', 'image',
             'equipments',           # utilisé pour les PUT/POST
             'equipments_info',      # utilisé pour l'affichage (GET)
-            'latitude', 'longitude'
+            'latitude', 'longitude',
+            'space_type',
+            
         ]
+    def create(self, validated_data):
+        metropole_value = self.initial_data.get('metropole')
+        if isinstance(metropole_value, str):
+            try:
+                validated_data['metropole'] = Metropole.objects.get(pk=int(metropole_value))
+            except Metropole.DoesNotExist:
+                raise serializers.ValidationError({"metropole": "Métropole introuvable."})
+        return super().create(validated_data)
+    def update(self, instance, validated_data):
+        metropole_value = self.initial_data.get('metropole')
+        if isinstance(metropole_value, str):
+            try:
+                validated_data['metropole'] = Metropole.objects.get(pk=int(metropole_value))
+            except Metropole.DoesNotExist:
+                raise serializers.ValidationError({"metropole": "Métropole introuvable."})
+        return super().update(instance, validated_data)
+
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -125,6 +146,11 @@ class CoworkingPaymentSerializer(serializers.ModelSerializer):
         rep = super().to_representation(instance)
         rep['booking'] = BookingSerializer(instance.booking).data
         return rep
+    
+class MetropoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Metropole
+        fields = ['id', 'name']
 
 
 class UserWithProfileSerializer(serializers.ModelSerializer):

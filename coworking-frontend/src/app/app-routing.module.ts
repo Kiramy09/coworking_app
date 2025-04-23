@@ -15,7 +15,9 @@ import { authGuard } from './guards/auth.guard';
 import {InvoicesComponent } from './pages/invoices/invoices.component';
 import { UserManagementComponent } from './pages/user-management/user-management.component';
 import {ContactComponent} from './pages/contact/contact.component';
-
+import {TermsOfUseComponent} from './pages/terms-of-use/terms-of-use.component';
+import { OurStoryComponent } from './pages/our-story/our-story.component';
+import { SpacesComponent } from './pages/spaces/spaces.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -33,6 +35,11 @@ const routes: Routes = [
   { path: 'invoices', component: InvoicesComponent },
   {path: 'admin/users',component: UserManagementComponent,canActivate: [authGuard]},
   {path: 'contact', component: ContactComponent },
+  {path: 'cgu',component: TermsOfUseComponent},
+  {path: 'our-story', component: OurStoryComponent },
+  {path: 'admin/spaces', component: SpacesComponent},
+  
+  
 
 
 ];

@@ -1,12 +1,33 @@
-.footer {
-    background-color: #3b2c23 !important;// marron foncé
+
+  
+  .footer {
+    background-color: #3b2c23 !important;
     color: white;
+    font-size: 0.9rem;
   
     a {
       transition: color 0.3s ease;
       &:hover {
-        color: #ffc107; // jaune doré
+        color: #ffc107;
       }
+    }
+  
+    h5 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+  
+    p {
+      margin: 0.2rem 0;
+    }
+  
+    hr {
+      margin-top: 0.8rem;
+      margin-bottom: 0.5rem;
+    }
+  
+    .small {
+      font-size: 0.75rem;
     }
   }
   

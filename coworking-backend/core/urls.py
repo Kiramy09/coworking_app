@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView
 from .views import CustomTokenObtainPairView
-from .views import (CoworkingSpaceViewSet,UserViewSet,BookingViewSet,CoworkingPaymentViewSet,RegisterView,ProfileUpdateView,MyBookingsView,CheckBookingAvailabilityView,TakenSlotsView,DashboardStatsView,MyBookingsView,CancelMybooking,UserProfil,UpdateUserProfil,UpdateUserProfilAvatar,EquipmentViewSet)
+from .views import (CoworkingSpaceViewSet,UserViewSet,BookingViewSet,CoworkingPaymentViewSet,RegisterView,ProfileUpdateView,MyBookingsView,CheckBookingAvailabilityView,TakenSlotsView,DashboardStatsView,MyBookingsView,CancelMybooking,UserProfil,UpdateUserProfil,UpdateUserProfilAvatar,EquipmentViewSet,MetropoleViewSet,MetropoleCitiesMapView)
 
 router = DefaultRouter()
 router.register(r'spaces', CoworkingSpaceViewSet, basename='spaces')
@@ -10,6 +10,8 @@ router.register(r'users', UserViewSet)
 router.register(r'bookings', BookingViewSet, basename='bookings')
 router.register(r'payments', CoworkingPaymentViewSet, basename='payments')
 router.register(r'equipments', EquipmentViewSet, basename='equipments')
+router.register(r'metropoles', MetropoleViewSet)
+
 
 
 urlpatterns = [
@@ -33,6 +35,10 @@ urlpatterns = [
 
     # Dashboard
     path('dashboard/', DashboardStatsView.as_view(), name='dashboard-stats'),
+
+    #Admin
+    path('metropole-cities-map/', MetropoleCitiesMapView.as_view(), name='metropole-cities-map'),
+
     # ViewSets
    path('', include(router.urls)),  
 ]
