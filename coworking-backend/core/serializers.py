@@ -3,6 +3,8 @@ from .models import *
 from .models import User
 from .models import Profile
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.utils.timezone import make_aware, is_naive
+from datetime import datetime
 
 
 class EquipmentSerializer(serializers.ModelSerializer):
@@ -133,6 +135,14 @@ class BookingSerializer(serializers.ModelSerializer):
 
     def get_customer_name(self, obj):
         return f"{obj.customer.first_name} {obj.customer.last_name}"
+    
+    def validate(self, data):
+        # Rendre aware les datetimes si besoin
+        for field in ['start_time', 'end_time']:
+            value = data.get(field)
+            if value and isinstance(value, datetime) and is_naive(value):
+                data[field] = make_aware(value)
+        return data
 
 
 class CoworkingPaymentSerializer(serializers.ModelSerializer):
