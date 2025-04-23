@@ -1,0 +1,112 @@
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>Gestion des Espaces de Coworking</h2>
+      <button class="btn btn-primary" (click)="openAddModal()">
+        <i class="bi bi-plus-circle"></i> Ajouter un espace
+      </button>
+    </div>
+    
+    <!-- Modal d'ajout d'espace -->
+    <div *ngIf="showAddModal" class="modal-overlay">
+      <div class="modal-content">
+        <h4><i class="bi bi-plus-circle"></i> Ajouter un nouvel espace</h4>
+        
+        <form [formGroup]="spaceForm" (ngSubmit)="submitForm()">
+          <div class="form-group mb-3">
+            <label for="name">Nom de l'espace *</label>
+            <input type="text" id="name" formControlName="name" class="form-control">
+            <div *ngIf="spaceForm.get('name')?.invalid && spaceForm.get('name')?.touched" class="text-danger">
+              Nom requis
+            </div>
+          </div>
+          
+          <div class="form-group mb-3">
+            <label for="description">Description *</label>
+            <textarea id="description" formControlName="description" rows="3" class="form-control"></textarea>
+            <div *ngIf="spaceForm.get('description')?.invalid && spaceForm.get('description')?.touched" class="text-danger">
+              Description requise
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="city">Ville *</label>
+                <input type="text" id="city" formControlName="city" class="form-control">
+                <div *ngIf="spaceForm.get('city')?.invalid && spaceForm.get('city')?.touched" class="text-danger">
+                  Ville requise
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="metropole">Métropole *</label>
+                <select id="metropole" formControlName="metropole" class="form-control">
+                  <option value="" disabled selected>Choisissez une métropole</option>
+                  <option *ngFor="let metropole of metropoles" [value]="metropole.name">
+                    {{ metropole.name }}
+                  </option>
+                </select>
+                <div *ngIf="spaceForm.get('metropole')?.invalid && spaceForm.get('metropole')?.touched" class="text-danger">
+                  Métropole requise
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="address">Adresse *</label>
+                <input type="text" id="address" formControlName="address" class="form-control">
+                <div *ngIf="spaceForm.get('address')?.invalid && spaceForm.get('address')?.touched" class="text-danger">
+                  Adresse requise
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="space_type">Type d'espace *</label>
+                <select id="space_type" formControlName="space_type" class="form-control">
+                  <option value="meeting_room">Salle de réunion</option>
+                  <option value="office">Bureau individuel</option>
+                  <option value="open_space">Espace ouvert</option>
+                  <option value="other">Autre</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="price_per_hour">Prix par heure (€) *</label>
+                <input type="number" id="price_per_hour" formControlName="price_per_hour" min="0" step="0.01" class="form-control">
+                <div *ngIf="spaceForm.get('price_per_hour')?.invalid && spaceForm.get('price_per_hour')?.touched" class="text-danger">
+                  Prix requis
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="capacity">Capacité (personnes) *</label>
+                <input type="number" id="capacity" formControlName="capacity" min="1" class="form-control">
+                <div *ngIf="spaceForm.get('capacity')?.invalid && spaceForm.get('capacity')?.touched" class="text-danger">
+                  Capacité requise
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="d-flex justify-content-end gap-2 mt-4">
+            <button type="button" class="btn btn-secondary" (click)="closeModal()">
+              <i class="bi bi-x-circle"></i> Annuler
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="spaceForm.invalid">
+              <i class="bi bi-check-circle"></i> Enregistrer
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
