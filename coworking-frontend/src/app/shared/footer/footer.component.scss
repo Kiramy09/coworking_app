@@ -1,0 +1,12 @@
+.footer {
+    background-color: #3b2c23 !important;// marron foncé
+    color: white;
+  
+    a {
+      transition: color 0.3s ease;
+      &:hover {
+        color: #ffc107; // jaune doré
+      }
+    }
+  }
+  

@@ -1,12 +1,47 @@
 <div class="container mt-4">
+
     <h2 class="text-center mb-4">Mes Réservations</h2>
-    <div *ngIf="bookings.length > 0; else noBookings" class="row g-4">
-        <div *ngFor="let booking of bookings" class="col-md-6 col-lg-4">
-            <div class="card" [ngClass]="{'card-past': isBookingPast(booking.end_time)}">
-                <div class="card-img-container" [ngClass]="{'blur-effect': isBookingPast(booking.end_time)}">
-                    <img [src]="booking.coworking_space_info.image" class="card-img-top" alt="Espace de coworking">
-                    <div *ngIf="isBookingPast(booking.end_time)" class="past-badge">Passée</div>
+
+        <!-- Contrôles de filtrage -->
+        <div class="filter-controls mb-4">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link" [class.active]="activeFilter === 'current'" 
+                       (click)="applyFilter('current')" href="javascript:void(0)">
+                        <i class="bi bi-clock"></i> Réservations à venir
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" [class.active]="activeFilter === 'past'" 
+                       (click)="applyFilter('past')" href="javascript:void(0)">
+                        <i class="bi bi-clock-history"></i> Réservations passées
+                    </a>
+                </li>
+                <!-- <li class="nav-item">
+                    <a class="nav-link" [class.active]="activeFilter === 'all'" 
+                       (click)="applyFilter('all')" href="javascript:void(0)">
+                        <i class="bi bi-list"></i> Toutes les réservations
+                    </a>
+                </li> -->
+                <li class="nav-item">
+                    <a class="nav-link" [class.active]="activeFilter === 'unpaid'" 
+                       (click)="applyFilter('unpaid')" href="javascript:void(0)">
+                      <i class="bi bi-cash-coin"></i> Réservations à payer
+                    </a>
+                  </li>                  
+            </ul>
+        </div>
+    <!-- <div *ngIf="bookings.length > 0; else noBookings" class="row g-4"> -->
+    <div *ngIf="!isLoading && bookings.length > 0; else noBookings" class="row g-4">
+
+        <!-- <div *ngFor="let booking of bookings" class="col-md-6 col-lg-4"> -->
+        <div *ngFor="let booking of filteredBookings" class="col-md-6 col-lg-4">
+            <div class="card" [ngClass]="{'card-past': booking.is_past}">
+                <div class="card-img-container" [ngClass]="{'blur-effect': booking.is_past}">
+                    <img [attr.loading]="'lazy'" [src]="booking.coworking_space_info.image" class="card-img-top" alt="Espace de coworking">
+                    <div *ngIf="booking.is_past" class="past-badge">Passée</div>
                 </div>
+            
                 <div class="card-body">
                    
                     <h6 class="card-subtitle mb-2">{{ booking.coworking_space_info.name }}</h6>
@@ -21,7 +56,7 @@
                     </p>
                     
                     <!-- Bouton d'annulation pour les réservations actives -->
-                    <div *ngIf="!isBookingPast(booking.end_time)" class="mt-3">
+                    <div *ngIf="!booking.is_past" class="mt-3">
                         <button class="btn btn-outline-danger btn-sm w-100" (click)="openCancelModal(booking)">
                             <i class="bi bi-trash"></i> Annuler la réservation
                         </button>
@@ -35,7 +70,7 @@
   
                     
                     <!-- Section pour les avis (réservations passées) -->
-                    <div *ngIf="isBookingPast(booking.end_time)" class="mt-3">
+                    <div *ngIf="booking.is_past" class="mt-3">
                         <div *ngIf="booking.rating" class="review-section p-2 rounded">
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <h6 class="mb-0"><i class="bi bi-chat-quote"></i> Votre avis</h6>
@@ -68,9 +103,18 @@
             </div>
         </div>
     </div>
+    <div *ngIf="isLoading" class="text-center my-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Chargement...</span>
+        </div>
+        <p class="mt-2">Chargement des réservations en cours...</p>
+    </div>
+      
     <ng-template #noBookings>
-        <div class="alert alert-warning" role="alert">
+        <div *ngIf="!isLoading && bookings.length === 0">
+            <div class="alert alert-warning" role="alert">
             <i class="bi bi-exclamation-triangle-fill"></i> Aucune réservation trouvée.
+            </div>
         </div>
     </ng-template>
   
@@ -131,3 +175,5 @@
         </div>
     </div>
 </div>
+
+

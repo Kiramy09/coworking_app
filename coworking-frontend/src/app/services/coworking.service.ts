@@ -109,8 +109,11 @@ export class CoworkingService {
   }
   
   updateSpace(id: number, data: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/spaces/${id}/`, data);
+    return this.http.patch(`${this.apiUrl}/spaces/${id}/`, data, {
+      headers: this.getAuthHeaders()
+    });
   }
+  
   
   getEquipments(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/equipments/`);
@@ -129,11 +132,18 @@ export class CoworkingService {
     return this.http.put(`${this.apiUrl}/spaces/${id}/`, data, { headers });
   }
 
+  // toggleSpaceVisibility(spaceId: number): Observable<any> {
+  //   return this.http.post(`${this.apiUrl}/spaces/${spaceId}/toggle-visibility/`, {}, {
+  //     headers: this.getAuthHeaders()
+  //   });
+  // }
+
   toggleSpaceVisibility(spaceId: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/spaces/${spaceId}/toggle-visibility/`, {}, {
+    return this.http.patch(`${this.apiUrl}/spaces/${spaceId}/toggle-visibility/`, {}, {
       headers: this.getAuthHeaders()
     });
   }
+  
   
   deleteSpace(spaceId: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/spaces/${spaceId}/`, {

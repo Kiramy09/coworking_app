@@ -154,41 +154,60 @@ export class AdminSpaceDetailComponent implements OnInit {
     const selectedEquipments = this.allEquipments
       .filter(e => e.checked)
       .map(e => e.id);
-
-    const formData = new FormData();
-
-    formData.append('name', this.editForm.name);
-    formData.append('address', this.editForm.address);
-    formData.append('city', this.editForm.city);
-    formData.append('capacity', this.editForm.capacity);
-    formData.append('price_per_hour', this.editForm.price_per_hour);
-    formData.append('description', this.editForm.description);
-
-    selectedEquipments.forEach(id => {
-      formData.append('equipments', id.toString());
-    });
-
+  
+    const dataToSend: any = {
+      name: this.editForm.name,
+      address: this.editForm.address,
+      metropole:this.editForm.metropole,
+      city: this.editForm.city,
+      capacity: this.editForm.capacity,
+      price_per_hour: this.editForm.price_per_hour,
+      description: this.editForm.description,
+      equipments: selectedEquipments,
+    };
+  
+    // ⚠️ Si une nouvelle image a été sélectionnée, on utilise FormData + PUT
     if (this.editForm.image && typeof this.editForm.image !== 'string') {
-      formData.append('image', this.editForm.image);
-    }
-    
-    this.coworkingService.updateSpaceWithFormData(this.spaceId, formData).subscribe({
-      next: (updated) => {
-        this.space = updated;
-        this.editForm = { ...updated };
-        this.editMode = false;
-        this.loadEquipments();
-        const modalEl = document.getElementById('updateSuccessModal');
-        if (modalEl && (window as any).bootstrap) {
-          const modal = new (window as any).bootstrap.Modal(modalEl);
-          modal.show();
+      const formData = new FormData();
+      for (const key in dataToSend) {
+        if (Array.isArray(dataToSend[key])) {
+          dataToSend[key].forEach((id: any) => formData.append('equipments', id.toString()));
+        } else {
+          formData.append(key, dataToSend[key]);
         }
-        
-      },
-      error: (err) => {
-        console.error("Erreur de mise à jour :", err);
-        alert("Erreur lors de la sauvegarde.");
       }
-    });
+      formData.append('image', this.editForm.image);
+  
+      this.coworkingService.updateSpaceWithFormData(this.spaceId, formData).subscribe({
+        next: (updated) => this.onSaveSuccess(updated),
+        error: (err) => this.onSaveError(err)
+      });
+  
+    } else {
+      // Sinon → PATCH classique en JSON
+      this.coworkingService.updateSpace(this.spaceId, dataToSend).subscribe({
+        next: (updated) => this.onSaveSuccess(updated),
+        error: (err) => this.onSaveError(err)
+      });
+    }
   }
+  
+  private onSaveSuccess(updated: any): void {
+    this.space = updated;
+    this.editForm = { ...updated };
+    this.editMode = false;
+    this.loadEquipments();
+  
+    const modalEl = document.getElementById('updateSuccessModal');
+    if (modalEl && (window as any).bootstrap) {
+      const modal = new (window as any).bootstrap.Modal(modalEl);
+      modal.show();
+    }
+  }
+  
+  private onSaveError(err: any): void {
+    console.error("Erreur de mise à jour :", err);
+    alert("Erreur lors de la sauvegarde.");
+  }
+  
 }

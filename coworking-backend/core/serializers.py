@@ -35,7 +35,12 @@ class CoworkingSpaceSerializer(serializers.ModelSerializer):
     )
     equipments_info = EquipmentSerializer(source='equipments', many=True, read_only=True)
     image = serializers.ImageField(required=False)
-    metropole = serializers.StringRelatedField()
+    # metropole = serializers.StringRelatedField()
+    metropole = serializers.PrimaryKeyRelatedField(
+        queryset=Metropole.objects.all()
+    )
+    # metropole_name = serializers.StringRelatedField(source='metropole', read_only=True)
+
 
     class Meta:
         model = CoworkingSpace

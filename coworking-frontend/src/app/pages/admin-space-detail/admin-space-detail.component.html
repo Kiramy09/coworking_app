@@ -65,9 +65,11 @@
           </h4>
             <div *ngIf="!editMode">
                 <p><i class="bi bi-geo-alt-fill text-danger me-2"></i><strong>Adresse :</strong> {{ space.address }}</p>
+                <!-- <p><i class="bi bi-card-text text-muted me-2"></i><strong>Metropole :</strong><br> {{ space.metropole }}</p> -->
                 <p><i class="bi bi-people-fill text-purple me-2"></i><strong>Capacité :</strong> {{ space.capacity }} personnes</p>
                 <p><i class="bi bi-cash-coin text-success me-2"></i><strong>Tarif :</strong> {{ space.price_per_hour }} €/heure</p>
                 <p><i class="bi bi-card-text text-muted me-2"></i><strong>Description :</strong><br> {{ space.description }}</p>
+
             </div>
 
           <form *ngIf="editMode" (ngSubmit)="saveChanges()" class="mb-4">
@@ -89,6 +91,9 @@
               <label class="form-label fw-bold">Adresse</label>
               <input class="form-control" [(ngModel)]="editForm.address" name="address" required>
             </div>
+
+            <!-- Champ masqué totalement -->
+            <input type="hidden" [value]="editForm.metropole" [(ngModel)]="editForm.metropole" name="metropole">
           
             <div class="mb-3">
               <label class="form-label fw-bold">Capacité</label>

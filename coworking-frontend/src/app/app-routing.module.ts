@@ -14,22 +14,8 @@ import { AdminSpaceDetailComponent } from './pages/admin-space-detail/admin-spac
 import { authGuard } from './guards/auth.guard';
 import {InvoicesComponent } from './pages/invoices/invoices.component';
 import { UserManagementComponent } from './pages/user-management/user-management.component';
+import {ContactComponent} from './pages/contact/contact.component';
 
-// const routes: Routes = [
-//   { path: '', redirectTo: 'home', pathMatch: 'full' },
-//   { path: 'home', component: HomeComponent },
-//   { path: 'register', component: RegisterComponent }, 
-//   { path: 'complete-profile', component: CompleteProfileComponent },
-//   { path: 'login', component: LoginComponent },
-//   { path: 'explore', component: MapViewComponent },
-//   { path: 'booking/:id',component: BookingComponent},
-//   { path: 'reservation',component:ReservationComponent },
-//   { path: 'payment/:bookingId', component: PaymentComponent },
-//   { path: 'profile', component: MonProfilComponent },
-//   { path: 'stats', component: StatsComponent },
-//   { path: 'admin/spaces/:id', component: AdminSpaceDetailComponent },
-
-// ];
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -45,12 +31,18 @@ const routes: Routes = [
   { path: 'stats', component: StatsComponent, canActivate: [authGuard] },
   { path: 'admin/spaces/:id', component: AdminSpaceDetailComponent, canActivate: [authGuard] },
   { path: 'invoices', component: InvoicesComponent },
-  {path: 'admin/users',component: UserManagementComponent,canActivate: [authGuard],}
+  {path: 'admin/users',component: UserManagementComponent,canActivate: [authGuard]},
+  {path: 'contact', component: ContactComponent },
+
 
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [    RouterModule.forRoot(routes, {
+    scrollPositionRestoration: 'enabled', // ← remet le scroll en haut à chaque navigation
+    anchorScrolling: 'enabled',           // ← permet le scroll sur des ancres (si jamais)
+    scrollOffset: [0, 0]                  // ← facultatif, ajuste le scroll (par ex. pour header fixe)
+  })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

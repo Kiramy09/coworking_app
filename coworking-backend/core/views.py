@@ -72,12 +72,13 @@ class CoworkingSpaceViewSet(viewsets.ModelViewSet):
         serializer = BookingSerializer(bookings, many=True)
         return Response(serializer.data)
     
-    @action(detail=True, methods=['post'], url_path='toggle-visibility')
+    @action(detail=True, methods=['patch'], url_path='toggle-visibility')
     def toggle_visibility(self, request, pk=None):
         space = self.get_object()
         space.is_visible = not space.is_visible
-        space.save()
+        space.save(update_fields=["is_visible"])  # Ne touche qu'à is_visible
         return Response({'success': True, 'is_visible': space.is_visible})
+
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
