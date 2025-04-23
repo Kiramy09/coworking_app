@@ -9,13 +9,6 @@
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
       <ul class="navbar-nav gap-3 align-items-center">
 
-        <!-- Liens visibles pour tout le monde -->
-        <!-- <li class="nav-item">
-          <a class="nav-link text-white fw-semibold" routerLink="/search">Rechercher</a>
-        </li> -->
-
-
-
         <!-- Dropdown Admin -->
         <li class="nav-item dropdown" *ngIf="isAdmin()">
           <a class="nav-link dropdown-toggle text-warning fw-semibold" href="#" data-bs-toggle="dropdown">
@@ -28,13 +21,16 @@
           </ul>
         </li>
 
-        <!-- Dropdown Profil -->
-        <li class="nav-item dropdown" *ngIf="isLoggedIn()">
-          <a class="nav-link dropdown-toggle text-white fw-semibold" href="#" data-bs-toggle="dropdown">
-            Mon profil
-          </a>
-          <ul class="dropdown-menu shadow">
-            <li><a class="dropdown-item" routerLink="/profile">Profil</a></li>
+        <!-- Avatar + prénom -->
+        <li class="nav-item dropdown d-flex align-items-center gap-2" *ngIf="isLoggedIn()">
+          <img [src]="avatarUrl || defaultAvatar" alt="Avatar" class="rounded-circle shadow-sm border" width="38" height="38"
+               data-bs-toggle="dropdown" style="cursor: pointer;">
+               <a class="nav-link dropdown-toggle text-white fw-semibold fs-5" href="#" data-bs-toggle="dropdown">
+                {{ userFirstName }}
+              </a>
+              
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+            <li><a class="dropdown-item" routerLink="/profile">Mon compte</a></li>
             <li><a class="dropdown-item" routerLink="/reservation">Réservations</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item text-danger" (click)="logout()">Déconnexion</a></li>
@@ -43,9 +39,6 @@
 
         <!-- Si non connecté -->
         <ng-container *ngIf="!isLoggedIn()">
-          <!-- <li class="nav-item">
-            <a class="nav-link text-white" routerLink="/register">S’inscrire</a>
-          </li> -->
           <li class="nav-item">
             <a class="nav-link text-white" routerLink="/login">Connexion</a>
           </li>
