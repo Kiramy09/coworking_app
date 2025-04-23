@@ -3,9 +3,9 @@ from rest_framework import viewsets, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .serializers import ProfileSerializer
-from .models import Profile
+from .models import Metropole, Profile
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from django.utils.dateparse import parse_datetime
@@ -529,3 +529,56 @@ class UpdateUserProfilAvatar(APIView):
             })
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class AdminCoworkingSpaceViewSet(viewsets.ModelViewSet):
+    """ViewSet pour gérer les espaces de coworking (admin)"""
+    queryset = CoworkingSpace.objects.all()
+    serializer_class = CoworkingSpaceSerializer
+    permission_classes = [IsAuthenticated, IsAdminUser]  # Seulement les admins
+
+     # Action personnalisée pour récupérer les métropoles
+    @action(detail=False, methods=['get'], url_path='metropoles')
+    def get_metropoles(self, request):
+        """Retourne la liste des métropoles"""
+        metropoles = Metropole.objects.all().values('id', 'name')
+        return Response(metropoles, status=status.HTTP_200_OK)
+    
+    def create(self, request, *args, **kwargs):
+        """Surcharge de la méthode create pour gérer les cas spéciaux"""
+        data = request.data.copy()
+        
+         # Log des données reçues
+        print("Données reçues pour création :", data)
+
+        # Gestion de la métropole
+        metropole_name = data.get('metropole')
+        if metropole_name:
+            try:
+                metropole = Metropole.objects.get(name=metropole_name)
+                data['metropole'] = metropole.id  # Convertir en ID pour le serializer
+            except Metropole.DoesNotExist:
+                return Response(
+                    {"error": f"La métropole '{metropole_name}' n'existe pas."},
+                    status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Appeler la méthode standard pour créer l'espace
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        
+        try:
+            # Créer l'instance mais désactiver la logique automatique de la méthode save
+            instance = serializer.save()
+            
+            # Si des équipements sont fournis, les associer
+            if 'equipments' in data:
+                equipment_ids = data.getlist('equipments')
+                if equipment_ids:
+                    instance.equipments.set(equipment_ids)
+            
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )

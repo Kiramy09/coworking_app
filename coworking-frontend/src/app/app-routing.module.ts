@@ -14,6 +14,7 @@ import { AdminSpaceDetailComponent } from './pages/admin-space-detail/admin-spac
 import { authGuard } from './guards/auth.guard';
 import {InvoicesComponent } from './pages/invoices/invoices.component';
 import { UserManagementComponent } from './pages/user-management/user-management.component';
+import { SpacesComponent } from './pages/spaces/spaces.component';
 
 // const routes: Routes = [
 //   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -45,7 +46,8 @@ const routes: Routes = [
   { path: 'stats', component: StatsComponent, canActivate: [authGuard] },
   { path: 'admin/spaces/:id', component: AdminSpaceDetailComponent, canActivate: [authGuard] },
   { path: 'invoices', component: InvoicesComponent },
-  {path: 'admin/users',component: UserManagementComponent,canActivate: [authGuard],}
+  {path: 'admin/users',component: UserManagementComponent,canActivate: [authGuard],},
+  {path: 'admin/spaces',component: SpacesComponent,canActivate: [authGuard]}
 
 ];
 

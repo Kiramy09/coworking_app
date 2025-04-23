@@ -174,6 +174,19 @@ export class CoworkingService {
   //   });
   // }
     
+  // pour l'ajout d'un espace coworking par l'admin
+  getAllSpaces(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/admin/spaces/`, { headers: this.getAuthHeaders() });
+  }
+  
+  getAllMetropoles(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/admin/spaces/metropoles/`, { headers: this.getAuthHeaders() });
+  }
+  createSpace(spaceData: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/admin/spaces/`,  spaceData, { headers: this.getAuthHeaders() });
+  }
+
+  
   
 
 

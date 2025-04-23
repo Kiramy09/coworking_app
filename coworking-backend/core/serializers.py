@@ -29,13 +29,14 @@ class EquipmentSerializer(serializers.ModelSerializer):
 #         fields = '__all__'
 
 class CoworkingSpaceSerializer(serializers.ModelSerializer):
+    # Utiliser le nom de la métropole au lieu de l'ID
+    metropole = serializers.CharField(source='metropole.name', required=False, allow_null=True)
     equipments = serializers.PrimaryKeyRelatedField(
         queryset=Equipment.objects.all(),
         many=True,
     )
     equipments_info = EquipmentSerializer(source='equipments', many=True, read_only=True)
     image = serializers.ImageField(required=False)
-    metropole = serializers.StringRelatedField()
 
     class Meta:
         model = CoworkingSpace
@@ -47,6 +48,28 @@ class CoworkingSpaceSerializer(serializers.ModelSerializer):
             'latitude', 'longitude'
         ]
 
+    def validate_metropole(self, value):
+        """Valider que le nom de la métropole existe."""
+        if value:
+            try:
+                return Metropole.objects.get(name=value)
+            except Metropole.DoesNotExist:
+                raise serializers.ValidationError(f"La métropole '{value}' n'existe pas.")
+        return None
+
+    def update(self, instance, validated_data):
+        """Gérer la mise à jour de la métropole."""
+        metropole_data = validated_data.pop('metropole', None)
+        if metropole_data:
+            instance.metropole = metropole_data
+        return super().update(instance, validated_data)
+
+    def create(self, validated_data):
+        """Gérer la création avec le nom de la métropole."""
+        metropole_data = validated_data.pop('metropole', None)
+        if metropole_data:
+            validated_data['metropole'] = metropole_data
+        return super().create(validated_data)
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)

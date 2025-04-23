@@ -24,6 +24,9 @@ import { MonProfilComponent } from './pages/mon-profil/mon-profil.component';
 import { AdminSpaceDetailComponent } from './pages/admin-space-detail/admin-space-detail.component'
 import { InvoicesComponent } from './pages/invoices/invoices.component';  
 import { UserManagementComponent } from './pages/user-management/user-management.component';
+import { SpacesComponent } from './pages/spaces/spaces.component';
+
+
 
 
 @NgModule({
@@ -43,6 +46,7 @@ import { UserManagementComponent } from './pages/user-management/user-management
     AdminSpaceDetailComponent,
     InvoicesComponent,
     UserManagementComponent,
+    SpacesComponent,
   ],
   imports: [
     BrowserModule,
