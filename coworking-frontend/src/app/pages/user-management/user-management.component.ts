@@ -14,7 +14,6 @@ export class UserManagementComponent implements OnInit {
   loading = false;
   selectedUser: any = null;
 
-  // Properties for toast notifications
   toastMessage: string = '';
   toastType: string = '';
   showToast: boolean = false;
@@ -23,25 +22,31 @@ export class UserManagementComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchUsers();
-    setTimeout(() => this.enableTooltips(), 100); // activer tooltips Bootstrap
+    setTimeout(() => this.enableTooltips(), 100);
   }
 
   fetchUsers() {
     this.loading = true;
     this.coworkingService.getAllUsers().subscribe({
       next: (res) => {
-        this.users = res.map(user => {
-          const hasRealAvatar = !!user.avatar_url && user.avatar_url.includes('cloudinary');
-          return {
-            ...user,
-            avatar_url: hasRealAvatar
-              ? user.avatar_url
-              : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.first_name + ' ' + user.last_name)}&background=0D8ABC&color=fff&size=64`
-          };
-        });
+        this.users = res
+          .map(user => {
+            const hasRealAvatar = !!user.avatar_url && user.avatar_url.includes('cloudinary');
+            return {
+              ...user,
+              avatar_url: hasRealAvatar
+                ? user.avatar_url
+                : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.first_name + ' ' + user.last_name)}&background=0D8ABC&color=fff&size=64`
+            };
+          })
+          .sort((a, b) => b.is_staff - a.is_staff); // Admins en premier
+
         this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.showErrorToast("Erreur lors du chargement des utilisateurs.");
       }
-      
     });
   }
 
@@ -60,8 +65,7 @@ export class UserManagementComponent implements OnInit {
     this.coworkingService.deleteUser(this.selectedUser.id).subscribe(() => {
       this.users = this.users.filter(u => u.id !== this.selectedUser.id);
       bootstrap.Modal.getInstance(document.getElementById('deleteUserModal'))?.hide();
-       // Affichage du toast de succès
-       this.showSuccessToast(`L'utilisateur ${this.selectedUser.name || this.selectedUser.email} a été supprimé avec succès`);
+      this.showSuccessToast(`L'utilisateur ${this.selectedUser.first_name || this.selectedUser.email} a été supprimé.`);
     });
   }
 
@@ -75,14 +79,13 @@ export class UserManagementComponent implements OnInit {
     const updated = {
       is_staff: !this.selectedUser.is_staff
     };
-  
+
     this.coworkingService.updateUserRole(this.selectedUser.id, updated).subscribe((res) => {
       this.selectedUser.is_staff = res.is_staff;
       bootstrap.Modal.getInstance(document.getElementById('adminUserModal'))?.hide();
 
-        // Affichage du toast de succès
-        const actionText = res.is_staff ? 'est maintenant administrateur' : 'n\'est plus administrateur';
-        this.showSuccessToast(`L'utilisateur ${this.selectedUser.name || this.selectedUser.email} ${actionText}`);
+      const actionText = res.is_staff ? 'est maintenant administrateur' : 'n\'est plus administrateur';
+      this.showSuccessToast(`L'utilisateur ${this.selectedUser.first_name || this.selectedUser.email} ${actionText}`);
     });
   }
 
@@ -91,13 +94,11 @@ export class UserManagementComponent implements OnInit {
     tooltipTriggerList.map((tooltipTriggerEl: any) => new bootstrap.Tooltip(tooltipTriggerEl));
   }
 
-  // Méthodes utilitaires pour afficher les toasts
   showSuccessToast(message: string): void {
     this.toastMessage = message;
     this.toastType = 'success';
     this.showToast = true;
-    
-    // Auto-masquer après 3 secondes
+
     setTimeout(() => {
       this.showToast = false;
     }, 3000);
@@ -107,8 +108,7 @@ export class UserManagementComponent implements OnInit {
     this.toastMessage = message;
     this.toastType = 'danger';
     this.showToast = true;
-    
-    // Auto-masquer après 5 secondes pour les erreurs 
+
     setTimeout(() => {
       this.showToast = false;
     }, 5000);
