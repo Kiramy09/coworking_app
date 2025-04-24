@@ -1,3 +1,18 @@
+<!-- Toast Notifications -->
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 1050">
+  <div *ngIf="showToast" class="toast show" role="alert" aria-live="assertive" aria-atomic="true"
+       [ngClass]="{'bg-success text-white': toastType === 'success', 'bg-danger text-white': toastType === 'danger'}">
+    <div class="toast-header">
+      <i class="bi me-2" [ngClass]="{'bi-check-circle-fill': toastType === 'success', 'bi-exclamation-triangle-fill': toastType === 'danger'}"></i>
+      <strong class="me-auto">{{ toastType === 'success' ? 'Succès' : 'Erreur' }}</strong>
+      <button type="button" class="btn-close" aria-label="Close" (click)="showToast = false"></button>
+    </div>
+    <div class="toast-body">
+      {{ toastMessage }}
+    </div>
+  </div>
+</div>
+
 <div class="profile-container">
     <div class="form-wrapper">
       <h2 class="text-center fw-bold mb-1">Complétez votre profil</h2>
@@ -40,6 +55,7 @@
             <option>Développeur</option>
             <option>Designer</option>
             <option>Freelance</option>
+            <option>Autre</option>
           </select>
         </div>
   

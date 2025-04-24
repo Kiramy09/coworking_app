@@ -9,6 +9,10 @@ import { AuthService } from './../../services/auth.service';
   styleUrls: ['./complete-profile.component.scss']
 })
 export class CompleteProfileComponent {
+
+  toastMessage: string = '';
+  toastType: string = '';
+  showToast: boolean = false;
   constructor(
     private http: HttpClient,
     private router: Router,
@@ -36,6 +40,11 @@ export class CompleteProfileComponent {
   }
 
   onSubmit(): void {
+    // Vérifier si tous les champs requis sont remplis
+    if (!this.profile.gender || !this.profile.birth_date || !this.profile.activity) {
+      this.showErrorToast('Veuillez remplir tous les champs obligatoires.');
+      return;
+    }
     const formData = new FormData();
     formData.append('gender', this.profile.gender);
     formData.append('birth_date', this.profile.birth_date);
@@ -48,14 +57,41 @@ export class CompleteProfileComponent {
 
     this.authService.updateProfile(formData).subscribe({
       next: (res) => {
-        console.log('Profil mis à jour', res);
-        alert('Profil complété avec succès !');
-        this.router.navigate(['/']);
+        this.showSuccessToast('Profil complété avec succès !');
+  
+        // Ajout d'un délai avant la redirection
+        setTimeout(() => {
+          this.router.navigate(['/']);
+        }, 2000);
       },
       error: (err) => {
         console.error('Erreur lors de la mise à jour du profil', err);
-        alert('Erreur lors de la mise à jour du profil.');
+        this.showErrorToast('Erreur lors de la mise à jour du profil.');
       }
     });
   }
+
+   // Méthodes utilitaires pour afficher les toasts
+  showSuccessToast(message: string): void {
+    this.toastMessage = message;
+    this.toastType = 'success';
+    this.showToast = true;
+    
+    // Auto-masquer après 3 secondes
+    setTimeout(() => {
+      this.showToast = false;
+    }, 3000);
+  }
+
+  showErrorToast(message: string): void {
+    this.toastMessage = message;
+    this.toastType = 'danger';
+    this.showToast = true;
+    
+    // Auto-masquer après 5 secondes pour les erreurs 
+    setTimeout(() => {
+      this.showToast = false;
+    }, 5000);
+  }
+
 }

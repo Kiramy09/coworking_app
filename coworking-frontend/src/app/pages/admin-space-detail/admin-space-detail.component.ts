@@ -19,6 +19,10 @@ export class AdminSpaceDetailComponent implements OnInit {
   successMessageVisible = false;
   reservationToDelete: number | null = null;
 
+  toastMessage: string = '';
+  toastType: string = '';
+  showToast: boolean = false;
+
 
   constructor(
     private route: ActivatedRoute,
@@ -107,12 +111,12 @@ export class AdminSpaceDetailComponent implements OnInit {
     this.coworkingService.deleteSpace(this.spaceId).subscribe({
       next: () => {
         // Rediriger ou afficher un message
-        alert('Espace supprimé avec succès.');
+        this.showSuccessToast('Espace supprimé avec succès.');
         window.location.href = '/admin/spaces';
       },
       error: (err) => {
         console.error('Erreur suppression espace :', err);
-        alert('Erreur lors de la suppression.');
+        this.showErrorToast('Erreur lors de la suppression.');
       }
     });
   }
@@ -142,10 +146,12 @@ export class AdminSpaceDetailComponent implements OnInit {
           const modal = (window as any).bootstrap.Modal.getInstance(modalEl);
           modal?.hide();
         }
+        // Afficher le toast de succès
+        this.showSuccessToast('Réservation supprimée avec succès.');
       },
       error: (err) => {
         console.error('Erreur lors de la suppression de la réservation :', err);
-        alert("Impossible de supprimer la réservation.");
+        this.showErrorToast("Impossible de supprimer la réservation.");
       }
     });
   }
@@ -166,7 +172,7 @@ export class AdminSpaceDetailComponent implements OnInit {
       equipments: selectedEquipments,
     };
   
-    // ⚠️ Si une nouvelle image a été sélectionnée, on utilise FormData + PUT
+    //  Si une nouvelle image a été sélectionnée, on utilise FormData + PUT
     if (this.editForm.image && typeof this.editForm.image !== 'string') {
       const formData = new FormData();
       for (const key in dataToSend) {
@@ -207,7 +213,30 @@ export class AdminSpaceDetailComponent implements OnInit {
   
   private onSaveError(err: any): void {
     console.error("Erreur de mise à jour :", err);
-    alert("Erreur lors de la sauvegarde.");
+    this.showErrorToast("Erreur lors de la sauvegarde des modifications.");
+  }
+
+   // Méthodes utilitaires pour afficher les toasts
+  showSuccessToast(message: string): void {
+    this.toastMessage = message;
+    this.toastType = 'success';
+    this.showToast = true;
+    
+    // Auto-masquer après 3 secondes
+    setTimeout(() => {
+      this.showToast = false;
+    }, 3000);
+  }
+
+  showErrorToast(message: string): void {
+    this.toastMessage = message;
+    this.toastType = 'danger';
+    this.showToast = true;
+    
+    // Auto-masquer après 5 secondes pour les erreurs 
+    setTimeout(() => {
+      this.showToast = false;
+    }, 5000);
   }
   
 }

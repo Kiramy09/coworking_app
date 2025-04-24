@@ -13,6 +13,10 @@ export class RegisterComponent {
   confirmPassword = '';
   errorMessage = '';
 
+  toastMessage: string = '';
+  toastType: string = '';
+  showToast: boolean = false;
+
   constructor(private authService: AuthService, private router: Router, private fb: FormBuilder) {
     this.registerForm = this.fb.group({
       first_name: ['', Validators.required],
@@ -45,19 +49,50 @@ export class RegisterComponent {
       this.authService.register(this.registerForm.value).subscribe({
         next: (res) => {
           this.isSubmitting = false;
-          this.router.navigate(['/complete-profile']);
+          
+          this.showSuccessToast("Inscription réussie ! Vous allez être redirigé...");
+          
+          // Rediriger après un court délai pour laisser le temps de voir le toast
+          setTimeout(() => {
+            this.router.navigate(['/complete-profile']);
+          }, 2000);
         },
         error: (err) => {
           this.isSubmitting = false;
-          alert("Une erreur est survenue.");
+          
+          const errorMessage = err.error?.message || "Une erreur est survenue lors de l'inscription.";
+          this.showErrorToast(errorMessage);
         }
       });
     } else {
       if (this.registerForm.get('password')?.value !== this.registerForm.get('confirmPassword')?.value) {
-        alert("Les mots de passe ne correspondent pas !");
-      } else {
-        console.error('Form is invalid');
+        this.showErrorToast("Les mots de passe ne correspondent pas !");
+      } else if (!this.registerForm.valid) {
+        this.showErrorToast("Veuillez remplir correctement tous les champs obligatoires.");
       }
     }
+  }
+
+  // Méthodes utilitaires pour afficher les toasts
+  showSuccessToast(message: string): void {
+    this.toastMessage = message;
+    this.toastType = 'success';
+    this.showToast = true;
+    
+    // Auto-masquer après 3 secondes
+    setTimeout(() => {
+      this.showToast = false;
+    }, 3000);
+  }
+
+  showErrorToast(message: string): void {
+    this.toastMessage = message;
+    this.toastType = 'danger';
+    this.showToast = true;
+    
+    // Auto-masquer après 5 secondes pour les erreurs 
+    setTimeout(() => {
+      this.showToast = false;
+    }, 5000);
   }
 }
