@@ -9,7 +9,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 export class NavbarComponent implements OnInit {
   userFirstName = 'Utilisateur';
   avatarUrl: string | null = null;
-  defaultAvatar = 'https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff&size=64';
+  defaultAvatar = 'assets/default-avatar.png';
 
   constructor(private http: HttpClient) {}
 

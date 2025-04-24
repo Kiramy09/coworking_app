@@ -40,37 +40,36 @@ export class CompleteProfileComponent {
   }
 
   onSubmit(): void {
-    // Vérifier si tous les champs requis sont remplis
     if (!this.profile.gender || !this.profile.birth_date || !this.profile.activity) {
       this.showErrorToast('Veuillez remplir tous les champs obligatoires.');
       return;
     }
+  
     const formData = new FormData();
     formData.append('gender', this.profile.gender);
     formData.append('birth_date', this.profile.birth_date);
     formData.append('address', this.profile.address);
     formData.append('activity', this.profile.activity);
-
+  
     if (this.profile.avatar) {
       formData.append('avatar', this.profile.avatar);
-    }
-
-    this.authService.updateProfile(formData).subscribe({
-      next: (res) => {
-        this.showSuccessToast('Profil complété avec succès !');
+    } else {
+      // 👉 Charger une image par défaut depuis les assets
+      fetch('assets/default-avatar.png')
+        .then(res => res.blob())
+        .then(blob => {
+          const defaultFile = new File([blob], 'default-avatar.png', { type: 'image/png' });
+          formData.append('avatar', defaultFile);
   
-        // Ajout d'un délai avant la redirection
-        setTimeout(() => {
-          this.router.navigate(['/']);
-        }, 2000);
-      },
-      error: (err) => {
-        console.error('Erreur lors de la mise à jour du profil', err);
-        this.showErrorToast('Erreur lors de la mise à jour du profil.');
-      }
-    });
+          this.sendForm(formData);
+        });
+      return; // on attend fetch
+    }
+  
+    // Si avatar fourni → envoie direct
+    this.sendForm(formData);
   }
-
+  
    // Méthodes utilitaires pour afficher les toasts
   showSuccessToast(message: string): void {
     this.toastMessage = message;
@@ -93,5 +92,17 @@ export class CompleteProfileComponent {
       this.showToast = false;
     }, 5000);
   }
-
+  private sendForm(formData: FormData): void {
+    this.authService.updateProfile(formData).subscribe({
+      next: () => {
+        this.showSuccessToast('Profil complété avec succès !');
+        setTimeout(() => this.router.navigate(['/']), 2000);
+      },
+      error: (err) => {
+        console.error('Erreur lors de la mise à jour du profil', err);
+        this.showErrorToast('Erreur lors de la mise à jour du profil.');
+      }
+    });
+  }
+  
 }
