@@ -1,25 +1,24 @@
 .invoice-page {
-    h2 {
-      font-weight: 700;
+  h2 {
+    font-weight: 700;
+  }
+
+  .invoice-card {
+    border-radius: 16px;
+    background: #fff;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
     }
-  
-    .invoice-card {
-      border-radius: 16px;
-      background: #fff;
-      transition: all 0.3s ease;
-  
-      &:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-      }
-  
-      button {
-        margin-top: 10px;
-      }
-    }
-  
-    .text-muted {
-      opacity: 0.7;
+
+    button {
+      margin-top: 10px;
     }
   }
-  
+
+  .text-muted {
+    opacity: 0.7;
+  }
+}

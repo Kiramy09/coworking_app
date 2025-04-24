@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CoworkingService } from '../../services/coworking.service';
 import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 @Component({
   selector: 'app-invoices',
@@ -15,7 +16,7 @@ export class InvoicesComponent implements OnInit {
   ngOnInit(): void {
     this.coworkingService.getMyPayments().subscribe({
       next: (data) => this.payments = data,
-      error: (err) => console.error('Failed to load invoices:', err)
+      error: (err) => console.error('Erreur lors du chargement des paiements :', err)
     });
   }
 
@@ -26,20 +27,47 @@ export class InvoicesComponent implements OnInit {
     const start = new Date(booking.start_time).toLocaleString();
     const end = new Date(booking.end_time).toLocaleString();
 
-    doc.setFontSize(16);
-    doc.text('INVOICE', 20, 20);
+    // Titre
+    doc.setFontSize(18);
+    doc.setTextColor(33, 37, 41);
+    doc.text('FACTURE COWO', 20, 20);
+
+    // Info date et ID
+    doc.setFontSize(11);
+    doc.setTextColor(100);
+    doc.text(`Date : ${date}`, 20, 30);
+    doc.text(`Facture ID : #${payment.id}`, 20, 37);
+
+    // Tableau détails
+    autoTable(doc, {
+      startY: 45,
+      theme: 'grid',
+      headStyles: { fillColor: [13, 110, 253] },
+      styles: { fontSize: 11 },
+      head: [['Détail', 'Information']],
+      body: [
+        ['Client', booking.customer_name],
+        ['Espace coworking', booking.coworking_space_info.name],
+        ['Adresse', booking.coworking_space_info.address || 'Non précisée'],
+        ['Début', start],
+        ['Fin', end],
+        ['Méthode de paiement', payment.payment_method]
+      ]
+    });
+
+    const finalY = (doc as any).lastAutoTable.finalY || 100;
+
+    // Total
     doc.setFontSize(12);
-    doc.text(`Date: ${date}`, 20, 30);
-    doc.text(`Customer: ${booking.customer_name}`, 20, 40);
-    doc.text(`Coworking Space: ${booking.coworking_space_info.name}`, 20, 50);
-    doc.text(`Start: ${start}`, 20, 60);
-    doc.text(`End: ${end}`, 20, 70);
-    doc.text(`Total Paid: €${payment.amount}`, 20, 80);
-    doc.text(`Payment Method: ${payment.payment_method}`, 20, 90);
+    doc.setTextColor(0);
+    doc.text(`Total payé : €${payment.amount}`, 20, finalY + 15);
 
+    // Footer
     doc.setFontSize(10);
-    doc.text('Thank you for using our service!', 20, 110);
+    doc.setTextColor(100);
+    doc.text('Merci pour votre confiance. À très bientôt sur COWO.', 20, finalY + 30);
 
-    doc.save(`invoice_${payment.id}.pdf`);
+    // Télécharger le PDF
+    doc.save(`facture_${payment.id}.pdf`);
   }
 }
