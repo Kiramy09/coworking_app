@@ -13,7 +13,8 @@ export class AuthService {
   private refreshTokenInProgress = false;
   private tokenSubject = new BehaviorSubject<string | null>(null);
   public isLoggedIn$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(this.isAuthenticated());
-  public currentUser$ = new BehaviorSubject<any>(null);
+  private currentUserSubject = new BehaviorSubject<any>(null);
+public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient ,private router: Router) {
     const token = localStorage.getItem('access_token');
@@ -90,11 +91,17 @@ export class AuthService {
 
 
   getUserProfile(): Observable<any> {
-    return this.http.get(`${this.baseUrl}profile/info/`).pipe(
+    return this.http.get<any>(`${this.baseUrl}profile/info/`).pipe(
+      tap(user => {
+        // Met à jour le BehaviorSubject
+        this.currentUserSubject.next(user);
+      }),
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {
-          return this.handleTokenExpired(() => 
-            this.http.get(`${this.baseUrl}profile/info/`)
+          return this.handleTokenExpired(() =>
+            this.http.get<any>(`${this.baseUrl}profile/info/`).pipe(
+              tap(user => this.currentUserSubject.next(user))
+            )
           );
         }
         return throwError(() => error);

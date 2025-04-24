@@ -14,20 +14,20 @@ export class NavbarComponent implements OnInit {
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
-  this.authService.currentUser$.subscribe((user) => {
-    if (user) {
-      this.userFirstName = user.first_name || 'Utilisateur';
-      this.avatarUrl = user.avatar_url
-        ? user.avatar_url
-        : `https://ui-avatars.com/api/?name=${user.first_name}&background=0D8ABC&color=fff&size=64`;
+    if (this.isLoggedIn()) {
+      this.authService.currentUser$.subscribe((user) => {
+        if (user) {
+          this.userFirstName = user.first_name || 'Utilisateur';
+          this.avatarUrl = user.avatar_url
+            ? user.avatar_url
+            : `https://ui-avatars.com/api/?name=${user.first_name}&background=0D8ABC&color=fff&size=64`;
+        }
+      });
+  
+      // Charge le profil uniquement si pas déjà chargé
+      this.authService.getUserProfile().subscribe(); // utile si pas déjà fait ailleurs
     }
-  });
-
-  if (this.isLoggedIn()) {
-    // Si on a déjà le token, on force le chargement du profil
-    this.authService.getUserProfile().subscribe();
   }
-}
 
 
   loadUserProfile(): void {
