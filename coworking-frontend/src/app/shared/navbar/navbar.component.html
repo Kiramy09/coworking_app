@@ -17,7 +17,9 @@
 
 
         <!-- Dropdown Admin -->
-        <li class="nav-item dropdown" *ngIf="isAdmin()">
+        <!-- <li class="nav-item dropdown" *ngIf="isAdmin()"> -->
+        <li class="nav-item dropdown" *ngIf="isAdmin() && isLoggedIn()">
+
           <a class="nav-link dropdown-toggle text-warning fw-semibold" href="#" data-bs-toggle="dropdown">
             Administration
           </a>
