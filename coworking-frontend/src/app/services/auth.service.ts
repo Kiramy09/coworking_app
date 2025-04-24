@@ -12,6 +12,8 @@ export class AuthService {
   private baseUrl = 'http://127.0.0.1:8000/api/';
   private refreshTokenInProgress = false;
   private tokenSubject = new BehaviorSubject<string | null>(null);
+  public isLoggedIn$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(this.isAuthenticated());
+  public currentUser$ = new BehaviorSubject<any>(null);
 
   constructor(private http: HttpClient ,private router: Router) {
     const token = localStorage.getItem('access_token');
