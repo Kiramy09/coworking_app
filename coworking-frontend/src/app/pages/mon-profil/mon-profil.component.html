@@ -128,7 +128,7 @@
           <ul class="quick-links">
             <li *ngIf="!isAdmin()"><a routerLink="/reservation"><i class="fas fa-calendar"></i> Mes réservations</a></li>
             <li><a routerLink="/favoris"><i class="fas fa-heart"></i> Mes espaces favoris</a></li>
-            <li><a routerLink="/invoices"><i class="fas fa-file-invoice"></i> Mes factures</a></li>
+            <li *ngIf="!isAdmin()"><a routerLink="/invoices"><i class="fas fa-file-invoice"></i> Mes factures</a></li>
             <li><a routerLink="/notifications"><i class="fas fa-bell"></i> Notifications</a></li>
           </ul>
         </div>
