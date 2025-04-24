@@ -1,9 +1,12 @@
-<!-- BOUTON -->
+<!-- TOAST -->
 <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050">
   <div *ngIf="showToast" class="toast show" role="alert" aria-live="assertive" aria-atomic="true"
        [ngClass]="{'bg-success text-white': toastType === 'success', 'bg-danger text-white': toastType === 'danger'}">
     <div class="toast-header">
-      <i class="bi me-2" [ngClass]="{'bi-check-circle-fill': toastType === 'success', 'bi-exclamation-triangle-fill': toastType === 'danger'}"></i>
+      <i class="bi me-2" [ngClass]="{
+          'bi-check-circle-fill': toastType === 'success',
+          'bi-exclamation-triangle-fill': toastType === 'danger'
+        }"></i>
       <strong class="me-auto">{{ toastType === 'success' ? 'Succès' : 'Erreur' }}</strong>
       <button type="button" class="btn-close" aria-label="Close" (click)="showToast = false"></button>
     </div>
@@ -12,192 +15,171 @@
     </div>
   </div>
 </div>
-<div class="text-end mb-3">
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSpaceModal">
+
+<div class="d-flex justify-content-between align-items-center mt-5 mb-4 px-3">
+  <h2 class="section-title mb-0">
+    <i class="bi bi-building text-primary me-2"></i> Espaces de coworking
+  </h2>
+  <div class="me-3">
+    <button class="btn btn-primary rounded-pill px-4 py-2" data-bs-toggle="modal" data-bs-target="#addSpaceModal">
       <i class="bi bi-plus-circle me-1"></i> Ajouter un espace
     </button>
   </div>
-  
-  <!-- MODALE Bootstrap -->
-  <div class="modal fade" id="addSpaceModal" tabindex="-1" aria-labelledby="addSpaceModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content p-4">
-        <div class="modal-header">
-          <h5 class="modal-title fw-bold" id="addSpaceModalLabel">Ajouter un nouvel espace</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-        </div>
-        <div class="modal-body">
-          <!-- FORMULAIRE -->
-          <form (ngSubmit)="submitForm()">
+</div>
+
+<!-- MODALE Bootstrap stylisée -->
+<div class="modal fade" id="addSpaceModal" tabindex="-1" aria-labelledby="addSpaceModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content p-4 shadow border-0 rounded-4">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold text-primary" id="addSpaceModalLabel">
+          <i class="bi bi-building-add me-2"></i> Ajouter un nouvel espace
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+
+      <div class="modal-body pt-0">
+        <form (ngSubmit)="submitForm()">
+          <div class="row g-3">
 
             <!-- Type d'espace -->
-            <div class="mb-3">
-                <label>Type d'espace</label>
-                <select class="form-control" [(ngModel)]="form.space_type" name="space_type" required>
+            <div class="col-md-6">
+              <label class="form-label">Type d'espace</label>
+              <select class="form-select" [(ngModel)]="form.space_type" name="space_type" required>
                 <option value="" disabled selected>Choisir un type</option>
                 <option value="office">Bureau</option>
                 <option value="meeting_room">Salle de réunion</option>
                 <option value="open_space">Open Space</option>
                 <option value="other">Autre</option>
-                </select>
+              </select>
             </div>
-  
+
             <!-- Nom -->
-            <div class="mb-3">
-              <label>Nom</label>
+            <div class="col-md-6">
+              <label class="form-label">Nom</label>
               <input type="text" class="form-control" [(ngModel)]="form.name" name="name" required>
             </div>
-  
+
             <!-- Métropole -->
-            <div class="mb-3">
-              <label>Métropole</label>
-                <!-- Template HTML -->
-                <select class="form-control"
-                        [(ngModel)]="form.metropole"
-                        name="metropole"
-                        (change)="onMetropoleChangeById(form.metropole)"
-                        required>
+            <div class="col-md-6">
+              <label class="form-label">Métropole</label>
+              <select class="form-select" [(ngModel)]="form.metropole" name="metropole"
+                      (change)="onMetropoleChangeById(form.metropole)" required>
                 <option *ngFor="let metro of metropoleList" [value]="metro.id">{{ metro.name }}</option>
-                </select>
+              </select>
             </div>
-  
+
             <!-- Ville -->
-            <div class="mb-3">
-              <label>Ville</label>
-              <select class="form-control" [(ngModel)]="form.city" name="city" required>
+            <div class="col-md-6">
+              <label class="form-label">Ville</label>
+              <select class="form-select" [(ngModel)]="form.city" name="city" required>
                 <option *ngFor="let city of availableCities" [value]="city">{{ city }}</option>
               </select>
             </div>
-  
+
             <!-- Adresse -->
-            <!-- <div class="mb-3">
-              <label>Adresse</label>
-              <input type="text" class="form-control" [(ngModel)]="form.address" name="address" (blur)="getCoordinates()" required>
-              <small *ngIf="isAddressValid === false" class="text-danger">Adresse introuvable.</small>
-            </div> -->
-            <!-- Adresse -->
-            <div class="mb-3 position-relative">
-                <label>Adresse</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  [(ngModel)]="form.address"
-                  name="address"
-                  (input)="onAddressInput()"
-                  required
-                  autocomplete="off"
-                />
-                <ul class="list-group position-absolute w-100 zindex-dropdown" *ngIf="searchResults.length">
-                  <li
-                    *ngFor="let result of searchResults"
+            <div class="col-12 position-relative">
+              <label class="form-label">Adresse</label>
+              <input type="text" class="form-control" [(ngModel)]="form.address" name="address"
+                     (input)="onAddressInput()" required autocomplete="off" />
+              <ul class="list-group position-absolute w-100 zindex-dropdown mt-1" *ngIf="searchResults.length">
+                <li *ngFor="let result of searchResults"
                     class="list-group-item list-group-item-action"
                     (click)="selectSuggestion(result)">
-                    {{ result.display_name }}
-                  </li>
-                </ul>
-              
-                <small *ngIf="isAddressValid === false" class="text-danger">
-                  Adresse incohérente avec la ville sélectionnée.
-                </small>
-              </div>
-              
-            
-  
+                  {{ result.display_name }}
+                </li>
+              </ul>
+              <small *ngIf="isAddressValid === false" class="text-danger">
+                Adresse incohérente avec la ville sélectionnée.
+              </small>
+            </div>
+
             <!-- Capacité -->
-            <div class="mb-3">
-              <label>Capacité</label>
+            <div class="col-md-4">
+              <label class="form-label">Capacité</label>
               <input type="number" class="form-control" [(ngModel)]="form.capacity" name="capacity" required>
             </div>
-  
+
             <!-- Tarif -->
-            <div class="mb-3">
-              <label>Tarif (€/heure)</label>
+            <div class="col-md-4">
+              <label class="form-label">Tarif (€/heure)</label>
               <input type="number" class="form-control" [(ngModel)]="form.price_per_hour" name="price_per_hour" required>
-            </div>
-  
-            <!-- Description -->
-            <div class="mb-3">
-              <label>Description</label>
-              <textarea class="form-control" rows="3" [(ngModel)]="form.description" name="description"></textarea>
             </div>
 
             <!-- Image -->
-            <div class="mb-3">
-                <label>Image</label>
-                <input type="file" class="form-control" (change)="onImageSelected($event)">
-                <div *ngIf="previewUrl" class="mt-2">
-                <img [src]="previewUrl" alt="Prévisualisation" class="img-fluid rounded shadow" style="max-height: 200px;">
-                </div>
+            <div class="col-md-4">
+              <label class="form-label">Image</label>
+              <input type="file" class="form-control" (change)="onImageSelected($event)">
+              <div *ngIf="previewUrl" class="mt-2">
+                <img [src]="previewUrl" alt="Prévisualisation" class="img-fluid rounded shadow border" style="max-height: 150px;">
+              </div>
             </div>
-  
-  
-            <div class="text-end">
-              <button type="submit" class="btn btn-success">
-                <i class="bi bi-check-circle me-1"></i> Ajouter
-              </button>
+
+            <!-- Description -->
+            <div class="col-12">
+              <label class="form-label">Description</label>
+              <textarea class="form-control" rows="3" [(ngModel)]="form.description" name="description"></textarea>
             </div>
-  
-          </form>
-        </div>
+          </div>
+
+          <!-- Bouton de validation -->
+          <div class="text-end pt-3">
+            <button type="submit" class="btn btn-success px-4 rounded-pill">
+              <i class="bi bi-check-circle me-2"></i> Ajouter
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
-  
-<!-- SPINNER DE CHARGEMENT -->
-<div *ngIf="loading" class="spinner-wrapper">
+</div>
+
+
+  <!-- SPINNER -->
+  <div *ngIf="loading" class="text-center my-5">
     <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
       <span class="visually-hidden">Chargement...</span>
     </div>
   </div>
-  
-  <!-- TABLEAU DES SALLES -->
-<div *ngIf="spaces && spaces.length > 0; else noSpaces">
-    <div class="table-responsive">
-      <table class="table table-bordered table-hover align-middle shadow-sm">
-        <thead class="table-light">
-          <tr>
-            <th><i class="bi bi-type"></i> Nom</th>
-            <th><i class="bi bi-tag"></i> Type</th>
-            <th><i class="bi bi-geo-alt"></i> Ville</th>
-            <th><i class="bi bi-people-fill"></i> Capacité</th>
-            <th><i class="bi bi-currency-euro"></i> Tarif (€/h)</th>
-            <th class="text-center"><i class="bi bi-gear"></i> Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let space of spaces">
-            <td>{{ space.name }}</td>
-            <td>{{ space.space_type | titlecase }}</td>
-            <td>{{ space.city }}</td>
-            <td>{{ space.capacity }}</td>
-            <td>{{ space.price_per_hour }}</td>
-            <td class="text-center">
-              <div class="btn-group">
-                <button class="btn btn-outline-warning btn-sm" (click)="editSpace(space)">
-                  <i class="bi bi-pencil-square"></i>
-                </button>
-                <button class="btn btn-outline-danger btn-sm" (click)="openDeleteModal(space)">
-                  <i class="bi bi-trash3"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+
+  <!-- LISTE DES ESPACES -->
+   <div class="container py-5">
+  <div *ngIf="!loading && spaces.length > 0; else noSpaces">
+    <div class="list-group shadow-sm">
+      <div class="list-group-item list-group-item-action flex-column align-items-start space-item animate"
+           *ngFor="let space of spaces; let i = index"
+           [style.animationDelay]="(i * 100) + 'ms'">
+        <div class="d-flex w-100 justify-content-between align-items-center">
+          <h4 class="space-title mb-1 text-primary fw-bold">{{ space.name }}</h4>
+          <div class="btn-group btn-group-sm text-center action-buttons">
+            <button class="btn btn-outline-primary" (click)="editSpace(space)" title="Modifier">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+            <button class="btn btn-outline-danger" (click)="openDeleteModal(space)" title="Supprimer">
+              <i class="bi bi-trash3"></i>
+            </button>
+          </div>
+        </div>
+        <p class="mb-1 text-muted">
+          <i class="bi bi-tag"></i> {{ space.space_type | titlecase }} &nbsp;|&nbsp;
+          <i class="bi bi-geo-alt"></i> {{ space.city }} &nbsp;|&nbsp;
+          <i class="bi bi-people"></i> {{ space.capacity }} pers &nbsp;|&nbsp;
+          <i class="bi bi-currency-euro"></i> {{ space.price_per_hour }} /h
+        </p>
+      </div>
     </div>
   </div>
-  
+</div>
   <ng-template #noSpaces>
-    <!-- <div class="alert alert-warning text-center mt-4">
-      <i class="bi bi-exclamation-triangle-fill"></i> Aucun espace trouvé.
-    </div> -->
   </ng-template>
-  
-  <!-- MODALE DE SUPPRESSION -->
+
+  <!-- MODALE SUPPRESSION -->
   <div class="modal fade" id="deleteSpaceModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content text-center p-4">
-        <h5 class="modal-title mb-3"><i class="bi bi-trash3-fill text-danger"></i> Supprimer l’espace</h5>
+        <h5 class="modal-title mb-3">
+          <i class="bi bi-trash3-fill text-danger"></i> Supprimer l’espace
+        </h5>
         <p>Confirmez-vous la suppression de <strong>{{ selectedSpace?.name }}</strong> ?</p>
         <div class="d-flex justify-content-center gap-2 mt-3">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
@@ -206,4 +188,3 @@
       </div>
     </div>
   </div>
-  

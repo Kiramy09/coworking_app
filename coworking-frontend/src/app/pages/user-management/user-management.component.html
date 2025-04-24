@@ -1,17 +1,4 @@
 <div class="user-management container py-5">
-  <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050">
-    <div *ngIf="showToast" class="toast show" role="alert" aria-live="assertive" aria-atomic="true"
-         [ngClass]="{'bg-success text-white': toastType === 'success', 'bg-danger text-white': toastType === 'danger'}">
-      <div class="toast-header">
-        <i class="bi me-2" [ngClass]="{'bi-check-circle-fill': toastType === 'success', 'bi-exclamation-triangle-fill': toastType === 'danger'}"></i>
-        <strong class="me-auto">{{ toastType === 'success' ? 'Succès' : 'Erreur' }}</strong>
-        <button type="button" class="btn-close" aria-label="Close" (click)="showToast = false"></button>
-      </div>
-      <div class="toast-body">
-        {{ toastMessage }}
-      </div>
-    </div>
-  </div>
   <h2 class="text-center mb-4"><i class="bi bi-people-fill text-primary"></i> Gestion des utilisateurs</h2>
 
   <div *ngIf="loading" class="text-center">
@@ -19,64 +6,52 @@
   </div>
 
   <div *ngIf="!loading && users.length > 0; else noUsers">
-    <div class="table-responsive">
-      <table class="table table-bordered table-hover align-middle shadow-sm">
-        <thead class="table-light">
-          <tr>
-            <th><i class="bi bi-person-vcard"></i> Nom</th>
-            <th><i class="bi bi-envelope-at"></i> Email</th>
-            <th><i class="bi bi-person-badge"></i> Rôle</th>
-            <th class="text-center"><i class="bi bi-gear"></i> Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let user of users">
-            <td>{{ user.first_name }} {{ user.last_name }}</td>
-            <td>{{ user.email }}</td>
-            <td>
-              <span class="badge" [ngClass]="user.is_staff ? 'bg-success' : 'bg-secondary'">
-                {{ user.is_staff ? 'Admin' : 'Utilisateur' }}
-              </span>
-            </td>
-            <td class="text-center">
-              <div class="btn-group" role="group">
-                <!-- <button class="btn btn-outline-primary btn-sm"
-                        data-bs-toggle="tooltip"
-                        data-bs-title="Voir ses réservations"
-                        (click)="viewReservations(user.id)">
-                  <i class="bi bi-calendar-event"></i>
-                </button> -->
-                <button class="btn btn-outline-warning btn-sm"
-                        data-bs-toggle="tooltip"
-                        [attr.data-bs-title]="user.is_staff ? 'Retirer les droits admin' : 'Donner les droits admin'"
-                        (click)="openAdminModal(user)">
-                  <i class="bi bi-person-gear"></i>
-                </button>
-                <button class="btn btn-outline-danger btn-sm"
-                        data-bs-toggle="tooltip"
-                        data-bs-title="Supprimer l'utilisateur"
-                        (click)="openDeleteModal(user)">
-                  <i class="bi bi-trash3"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="list-group shadow-sm mt-3">
+      <div
+        *ngFor="let user of users; let i = index"
+        class="list-group-item list-group-item-action space-item animate d-flex align-items-center justify-content-between"
+        [style.animationDelay]="(i * 100) + 'ms'"
+      >
+        <div class="d-flex flex-column">
+          <h5 class="mb-1 fw-bold text-primary">{{ user.first_name }} {{ user.last_name }}</h5>
+          <p class="mb-0 text-muted"><i class="bi bi-envelope"></i> {{ user.email }}</p>
+        </div>
+
+        <div class="text-end d-flex flex-column align-items-end">
+          
+          <div class="btn-group btn-group-sm action-buttons">
+
+          <span class="badge px-3 py-2 mb-2 fw-semibold mt-3" [ngClass]="user.is_staff ? 'bg-success' : 'bg-secondary'">
+            {{ user.is_staff ? 'Administrateur' : 'Utilisateur' }}
+          </span>
+            <button class="btn btn-outline-warning"
+                    (click)="openAdminModal(user)"
+                    data-bs-toggle="tooltip"
+                    [attr.data-bs-title]="user.is_staff ? 'Retirer les droits admin' : 'Donner les droits admin'">
+              <i class="bi bi-person-gear"></i>
+            </button>
+            <button class="btn btn-outline-danger"
+                    (click)="openDeleteModal(user)"
+                    data-bs-toggle="tooltip"
+                    data-bs-title="Supprimer l'utilisateur">
+              <i class="bi bi-trash3"></i>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
   <ng-template #noUsers>
-    <div class="alert alert-warning text-center">
-      <i class="bi bi-exclamation-triangle-fill"></i> Aucun utilisateur trouvé.
-    </div>
   </ng-template>
 
   <!-- Modal suppression -->
   <div class="modal fade" id="deleteUserModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content text-center p-4">
-        <h5 class="modal-title mb-3"><i class="bi bi-trash3-fill text-danger"></i> Supprimer l'utilisateur ?</h5>
+        <h5 class="modal-title mb-3">
+          <i class="bi bi-trash3-fill text-danger"></i> Supprimer l'utilisateur ?
+        </h5>
         <p>Êtes-vous sûr de vouloir supprimer <strong>{{ selectedUser?.email }}</strong> ?</p>
         <div class="d-flex justify-content-center gap-2 mt-3">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
@@ -90,7 +65,9 @@
   <div class="modal fade" id="adminUserModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content text-center p-4">
-        <h5 class="modal-title mb-3"><i class="bi bi-person-gear text-warning"></i> Modifier le rôle</h5>
+        <h5 class="modal-title mb-3">
+          <i class="bi bi-person-gear text-warning"></i> Modifier le rôle
+        </h5>
         <p>
           Voulez-vous
           <strong>{{ selectedUser?.is_staff ? 'retirer les droits admin' : 'donner les droits admin' }}</strong>

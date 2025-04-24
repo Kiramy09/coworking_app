@@ -30,13 +30,18 @@ export class UserManagementComponent implements OnInit {
     this.loading = true;
     this.coworkingService.getAllUsers().subscribe({
       next: (res) => {
-        this.users = res;
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Erreur chargement utilisateurs:', err);
+        this.users = res.map(user => {
+          const hasRealAvatar = !!user.avatar_url && user.avatar_url.includes('cloudinary');
+          return {
+            ...user,
+            avatar_url: hasRealAvatar
+              ? user.avatar_url
+              : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.first_name + ' ' + user.last_name)}&background=0D8ABC&color=fff&size=64`
+          };
+        });
         this.loading = false;
       }
+      
     });
   }
 
@@ -80,7 +85,6 @@ export class UserManagementComponent implements OnInit {
         this.showSuccessToast(`L'utilisateur ${this.selectedUser.name || this.selectedUser.email} ${actionText}`);
     });
   }
-  
 
   enableTooltips() {
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -88,25 +92,25 @@ export class UserManagementComponent implements OnInit {
   }
 
   // Méthodes utilitaires pour afficher les toasts
-showSuccessToast(message: string): void {
-  this.toastMessage = message;
-  this.toastType = 'success';
-  this.showToast = true;
-  
-  // Auto-masquer après 3 secondes
-  setTimeout(() => {
-    this.showToast = false;
-  }, 3000);
-}
+  showSuccessToast(message: string): void {
+    this.toastMessage = message;
+    this.toastType = 'success';
+    this.showToast = true;
+    
+    // Auto-masquer après 3 secondes
+    setTimeout(() => {
+      this.showToast = false;
+    }, 3000);
+  }
 
-showErrorToast(message: string): void {
-  this.toastMessage = message;
-  this.toastType = 'danger';
-  this.showToast = true;
-  
-  // Auto-masquer après 5 secondes pour les erreurs 
-  setTimeout(() => {
-    this.showToast = false;
-  }, 5000);
-}
+  showErrorToast(message: string): void {
+    this.toastMessage = message;
+    this.toastType = 'danger';
+    this.showToast = true;
+    
+    // Auto-masquer après 5 secondes pour les erreurs 
+    setTimeout(() => {
+      this.showToast = false;
+    }, 5000);
+  }
 }

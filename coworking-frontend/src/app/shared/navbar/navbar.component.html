@@ -29,18 +29,19 @@
         </li>
 
         <!-- Dropdown Profil -->
-        <li class="nav-item dropdown" *ngIf="isLoggedIn()">
-          <a class="nav-link dropdown-toggle text-white fw-semibold" href="#" data-bs-toggle="dropdown">
-            Mon profil
+        <li class="nav-item dropdown d-flex align-items-center" *ngIf="isLoggedIn()">
+          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" data-bs-toggle="dropdown">
+            <img [src]="avatarUrl || defaultAvatar" alt="Avatar" class="rounded-circle me-2 shadow-sm border" width="38" height="38">
+            <span class="text-white fw-semibold">{{ userFirstName }}</span>
           </a>
           <ul class="dropdown-menu shadow">
             <li><a class="dropdown-item" routerLink="/profile">Profil</a></li>
-
             <li *ngIf="!isAdmin()"><a class="dropdown-item" routerLink="/reservation">Réservations</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item text-danger" (click)="logout()">Déconnexion</a></li>
           </ul>
         </li>
+        
 
         <!-- Si non connecté -->
         <ng-container *ngIf="!isLoggedIn()">

@@ -1,8 +1,83 @@
-.table td, .table th {
-    vertical-align: middle;
+.section-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  border-left: 5px solid #0d6efd;
+  padding-left: 12px;
+}
+
+.list-group-item.space-item {
+  background-color: #ffffff;
+  border-left: 4px solid transparent;
+  transition: all 0.3s ease;
+  border-radius: 0.75rem;
+  margin-bottom: 16px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  animation: fadeSlideUp 0.5s ease forwards;
+}
+
+.list-group-item.space-item:hover {
+  background-color: #f9fbfc;
+  border-left-color: #0d6efd;
+  transform: scale(1.01);
+}
+
+.space-item h5 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #0d6efd;
+  margin-bottom: 0.4rem;
+}
+
+.space-item .badge {
+  font-size: 0.7rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 2rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: inline-block;
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.space-item .badge.bg-success {
+  background-color: #ffffff;
+  color: #afd6b9;
+}
+
+.space-item .badge.bg-secondary {
+  background-color: #e3e3e3;
+  color: #444;
+}
+
+.space-item .btn-group {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+}
+
+.space-item .btn-group .btn {
+  transition: all 0.2s ease-in-out;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8rem;
+  border-radius: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.space-item .btn-group .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  
-  .btn-group .btn i {
-    pointer-events: none; // évite le flicker lors du hover sur l’icône
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
+}
