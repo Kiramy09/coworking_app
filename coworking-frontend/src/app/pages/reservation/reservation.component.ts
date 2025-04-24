@@ -33,7 +33,7 @@ export class ReservationComponent implements OnInit {
   ngOnInit(): void {
     this.fetchUserBookings();
   }
-
+  
   fetchUserBookings(): void {
     this.isLoading = true;
     this.coworkingService.getUserBookings().subscribe({

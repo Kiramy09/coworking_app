@@ -100,6 +100,9 @@ export class MonProfilComponent implements OnInit {
     this.isEditing = true;
   }
 
+  isAdmin(): boolean {
+    return localStorage.getItem('is_staff') === 'true';
+  }
   cancelEditing(): void {
     this.isEditing = false;
     this.loadUserProfile(); // Pour recharger les données pour annuler les modifications

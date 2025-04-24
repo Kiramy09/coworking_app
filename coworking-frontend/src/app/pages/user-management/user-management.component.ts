@@ -14,6 +14,11 @@ export class UserManagementComponent implements OnInit {
   loading = false;
   selectedUser: any = null;
 
+  // Properties for toast notifications
+  toastMessage: string = '';
+  toastType: string = '';
+  showToast: boolean = false;
+
   constructor(private coworkingService: CoworkingService, private router: Router) {}
 
   ngOnInit(): void {
@@ -50,6 +55,8 @@ export class UserManagementComponent implements OnInit {
     this.coworkingService.deleteUser(this.selectedUser.id).subscribe(() => {
       this.users = this.users.filter(u => u.id !== this.selectedUser.id);
       bootstrap.Modal.getInstance(document.getElementById('deleteUserModal'))?.hide();
+       // Affichage du toast de succès
+       this.showSuccessToast(`L'utilisateur ${this.selectedUser.name || this.selectedUser.email} a été supprimé avec succès`);
     });
   }
 
@@ -67,6 +74,10 @@ export class UserManagementComponent implements OnInit {
     this.coworkingService.updateUserRole(this.selectedUser.id, updated).subscribe((res) => {
       this.selectedUser.is_staff = res.is_staff;
       bootstrap.Modal.getInstance(document.getElementById('adminUserModal'))?.hide();
+
+        // Affichage du toast de succès
+        const actionText = res.is_staff ? 'est maintenant administrateur' : 'n\'est plus administrateur';
+        this.showSuccessToast(`L'utilisateur ${this.selectedUser.name || this.selectedUser.email} ${actionText}`);
     });
   }
   
@@ -75,4 +86,27 @@ export class UserManagementComponent implements OnInit {
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map((tooltipTriggerEl: any) => new bootstrap.Tooltip(tooltipTriggerEl));
   }
+
+  // Méthodes utilitaires pour afficher les toasts
+showSuccessToast(message: string): void {
+  this.toastMessage = message;
+  this.toastType = 'success';
+  this.showToast = true;
+  
+  // Auto-masquer après 3 secondes
+  setTimeout(() => {
+    this.showToast = false;
+  }, 3000);
+}
+
+showErrorToast(message: string): void {
+  this.toastMessage = message;
+  this.toastType = 'danger';
+  this.showToast = true;
+  
+  // Auto-masquer après 5 secondes pour les erreurs 
+  setTimeout(() => {
+    this.showToast = false;
+  }, 5000);
+}
 }

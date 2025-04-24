@@ -23,7 +23,7 @@
         <!-- Section photo de profil -->
         <div class="profile-avatar-section">
           <div class="profile-avatar">
-            <img [src]="avatarUrl || 'assets/images/default-avatar.png'" alt="Photo de profil">
+            <img [src]="avatarUrl || 'assets/default-avatar.png'" alt="Photo de profil">
             <div class="avatar-overlay" *ngIf="isEditing">
               <label for="avatar-upload" class="avatar-upload-btn">
                 <i class="fas fa-camera"></i>
@@ -126,7 +126,7 @@
         <div class="profile-section">
           <h3>Accès rapide</h3>
           <ul class="quick-links">
-            <li><a routerLink="/reservation"><i class="fas fa-calendar"></i> Mes réservations</a></li>
+            <li *ngIf="!isAdmin()"><a routerLink="/reservation"><i class="fas fa-calendar"></i> Mes réservations</a></li>
             <li><a routerLink="/favoris"><i class="fas fa-heart"></i> Mes espaces favoris</a></li>
             <li><a routerLink="/invoices"><i class="fas fa-file-invoice"></i> Mes factures</a></li>
             <li><a routerLink="/notifications"><i class="fas fa-bell"></i> Notifications</a></li>

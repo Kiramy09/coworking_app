@@ -24,6 +24,11 @@ export class SpacesComponent implements OnInit {
   selectedSpace: any = null;
   loading = false;
 
+  toastMessage: string = '';
+  toastType: string = '';
+  showToast: boolean = false;
+
+
   form: any = {
     name: '',
     metropole: null,
@@ -85,8 +90,15 @@ export class SpacesComponent implements OnInit {
       next: () => {
         this.spaces = this.spaces.filter(s => s.id !== this.selectedSpace.id);
         bootstrap.Modal.getInstance(document.getElementById('deleteSpaceModal'))?.hide();
+         // Affichage du toast de succès
+        this.showSuccessToast(`L'espace "${this.selectedSpace.name}" a été supprimé avec succès`);
       },
-      error: (err) => console.error("Erreur suppression espace:", err)
+      error: (err) => {
+        console.error("Erreur suppression espace:", err);
+        
+        // Affichage du toast d'erreur
+        this.showErrorToast(`Erreur lors de la suppression de l'espace: ${err.message || 'Veuillez réessayer'}`);
+      }
     });
   }
   
@@ -208,14 +220,49 @@ export class SpacesComponent implements OnInit {
   
     this.coworkingService.createSpaceWithFormData(formData).subscribe({
       next: () => {
-        alert('Espace ajouté avec succès !');
+        this.showSuccessToast('Espace ajouté avec succès !');
         this.resetForm(); // Facultatif : tu peux ajouter cette fonction pour tout réinitialiser
+
+         // Fermer la modal Bootstrap
+      const modalElement = document.getElementById('addSpaceModal');
+      if (modalElement) {
+        const modal = bootstrap.Modal.getInstance(modalElement);
+        if (modal) {
+          modal.hide();
+        }
+      }
+      
+      // Rafraîchir la liste des espaces
+      this.fetchSpaces();
       },
       error: err => {
         console.error(err);
-        alert('Erreur lors de l\'ajout.');
+        this.showErrorToast(`Erreur lors de l'ajout de l'espace: ${err.message || 'Veuillez réessayer'}`);
       }
     });
   }
+
+  // Méthodes utilitaires pour afficher les toasts
+showSuccessToast(message: string): void {
+  this.toastMessage = message;
+  this.toastType = 'success';
+  this.showToast = true;
+  
+  // Auto-masquer après 3 secondes
+  setTimeout(() => {
+    this.showToast = false;
+  }, 3000);
+}
+
+showErrorToast(message: string): void {
+  this.toastMessage = message;
+  this.toastType = 'danger';
+  this.showToast = true;
+  
+  // Auto-masquer après 5 secondes pour les erreurs 
+  setTimeout(() => {
+    this.showToast = false;
+  }, 5000);
+}
   
 }
